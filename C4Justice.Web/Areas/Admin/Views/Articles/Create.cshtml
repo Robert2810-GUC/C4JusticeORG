@@ -1,0 +1,65 @@
+@model C4Justice.Web.Models.Article
+@{
+    ViewData["Title"] = "New Article";
+}
+
+<div class="row g-4">
+<div class="col-lg-8">
+<div class="admin-card">
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <label class="admin-form-label">Title *</label>
+            <input asp-for="Title" class="admin-form-control" placeholder="Article title" required />
+        </div>
+        <div class="mb-3">
+            <label class="admin-form-label">Excerpt (short summary)</label>
+            <textarea asp-for="Excerpt" class="admin-form-control" rows="2" placeholder="One or two sentence summary shown in listings"></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="admin-form-label">Content *</label>
+            <textarea asp-for="Content" id="richContent" class="admin-form-control" rows="12" placeholder="Write article content here..." required></textarea>
+        </div>
+        <button type="submit" class="btn-sm-admin btn-primary-admin" style="padding:10px 28px;">Save Article</button>
+        <a href="/Admin/Articles" class="btn-sm-admin btn-ghost-admin" style="padding:10px 20px;">Cancel</a>
+    </form>
+</div>
+</div>
+<div class="col-lg-4">
+<div class="admin-card">
+    <h6 style="color:#e6edf3;font-weight:700;margin-bottom:16px;">Publish Settings</h6>
+    <div class="mb-3">
+        <label class="admin-form-label">Category</label>
+        <select asp-for="Category" class="admin-form-control">
+            <option value="General">General</option>
+            <option value="Political">Political</option>
+            <option value="Racial">Racial</option>
+            <option value="Economic">Economic</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Environmental">Environmental</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="admin-form-label">Featured Image URL (optional)</label>
+        <input asp-for="FeaturedImageUrl" class="admin-form-control" placeholder="/uploads/..." />
+    </div>
+    <div class="d-flex align-items-center gap-2 mt-3">
+        <input asp-for="IsPublished" type="checkbox" style="width:16px;height:16px;" />
+        <label class="admin-form-label mb-0">Publish immediately</label>
+    </div>
+</div>
+</div>
+</div>
+
+@section Scripts {
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+tinymce.init({
+    selector: '#richContent',
+    plugins: 'lists link image code',
+    toolbar: 'undo redo | bold italic | bullist numlist | link | code',
+    skin: 'oxide-dark', content_css: 'dark',
+    height: 400, menubar: false
+});
+</script>
+}

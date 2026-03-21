@@ -1,0 +1,44 @@
+@model IEnumerable<C4Justice.Web.Models.SiteEvent>
+@{
+    ViewData["Title"] = "Events";
+}
+
+@section TopbarActions {
+    <a href="/Admin/Events/Create" class="btn-sm-admin btn-primary-admin"><i class="fas fa-plus me-1"></i>New Event</a>
+}
+
+<div class="admin-card">
+    <table class="admin-table">
+        <thead>
+            <tr><th>Title</th><th>Date</th><th>Location</th><th>Category</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+        @foreach (var e in Model)
+        {
+            <tr>
+                <td style="font-weight:600;color:#e6edf3;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">@e.Title</td>
+                <td style="font-size:.82rem;">
+                    @e.EventDate.ToString("MMM d, yyyy")
+                    @if (!e.IsUpcoming) { <span class="badge-inactive" style="margin-left:4px;">Past</span> }
+                </td>
+                <td style="font-size:.82rem;color:#8b949e;">@(e.Location ?? "—")</td>
+                <td><span class="badge-cat">@(e.Category ?? "General")</span></td>
+                <td><span class="@(e.IsActive ? "badge-active" : "badge-inactive")">@(e.IsActive ? "Active" : "Hidden")</span></td>
+                <td>
+                    <div class="d-flex gap-2">
+                        <a href="/Admin/Events/Edit/@e.Id" class="btn-sm-admin btn-ghost-admin" style="padding:4px 10px;font-size:.75rem;">Edit</a>
+                        <form method="post" asp-action="Delete" asp-route-id="@e.Id" style="display:inline;" onsubmit="return confirm('Delete this event?')">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-sm-admin" style="padding:4px 10px;font-size:.75rem;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="6" style="color:#8b949e;text-align:center;padding:32px;">No events yet.</td></tr>
+        }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,49 @@
+@model IEnumerable<C4Justice.Web.Models.Article>
+@{
+    ViewData["Title"] = "Articles";
+}
+
+@section TopbarActions {
+    <a href="/Admin/Articles/Create" class="btn-sm-admin btn-primary-admin"><i class="fas fa-plus me-1"></i>New Article</a>
+}
+
+<div class="admin-card">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Title</th><th>Category</th><th>Status</th><th>Published</th><th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var a in Model)
+        {
+            <tr>
+                <td style="max-width:280px;">
+                    <div style="font-weight:600;color:#e6edf3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">@a.Title</div>
+                    <div style="font-size:.75rem;color:#8b949e;">/Opinion/@a.Slug</div>
+                </td>
+                <td><span class="badge-cat">@a.Category</span></td>
+                <td><span class="@(a.IsPublished ? "badge-active" : "badge-inactive")">@(a.IsPublished ? "Published" : "Draft")</span></td>
+                <td style="font-size:.8rem;color:#8b949e;">@(a.PublishedAt?.ToString("MMM d, yyyy") ?? "—")</td>
+                <td>
+                    <div class="d-flex gap-2">
+                        <a href="/Admin/Articles/Edit/@a.Id" class="btn-sm-admin btn-ghost-admin" style="padding:4px 10px;font-size:.75rem;">Edit</a>
+                        <form method="post" asp-action="TogglePublish" asp-route-id="@a.Id" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-sm-admin btn-ghost-admin" style="padding:4px 10px;font-size:.75rem;">@(a.IsPublished ? "Unpublish" : "Publish")</button>
+                        </form>
+                        <form method="post" asp-action="Delete" asp-route-id="@a.Id" style="display:inline;" onsubmit="return confirm('Delete this article?')">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-sm-admin" style="padding:4px 10px;font-size:.75rem;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="5" style="color:#8b949e;text-align:center;padding:32px;">No articles yet.</td></tr>
+        }
+        </tbody>
+    </table>
+</div>

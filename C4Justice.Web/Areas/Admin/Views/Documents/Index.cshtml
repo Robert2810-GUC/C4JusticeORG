@@ -1,0 +1,48 @@
+@model IEnumerable<C4Justice.Web.Models.SiteDocument>
+@{
+    ViewData["Title"] = "Documents";
+}
+
+@section TopbarActions {
+    <a href="/Admin/Documents/Create" class="btn-sm-admin btn-primary-admin"><i class="fas fa-upload me-1"></i>Upload Document</a>
+}
+
+<div class="admin-card">
+    <table class="admin-table">
+        <thead>
+            <tr><th>Title</th><th>Category</th><th>File</th><th>Size</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+        @foreach (var d in Model)
+        {
+            <tr>
+                <td style="font-weight:600;color:#e6edf3;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">@d.Title</td>
+                <td><span class="badge-cat">@d.Category</span></td>
+                <td style="font-size:.78rem;">
+                    <a href="@d.FileUrl" target="_blank" style="color:#60a5fa;">
+                        <i class="fas fa-@(d.FileType == "pdf" ? "file-pdf" : "file") me-1"></i>@d.FileName
+                    </a>
+                </td>
+                <td style="font-size:.78rem;color:#8b949e;">@d.FileSizeDisplay</td>
+                <td><span class="@(d.IsPublished ? "badge-active" : "badge-inactive")">@(d.IsPublished ? "Published" : "Hidden")</span></td>
+                <td>
+                    <div class="d-flex gap-2">
+                        <form method="post" asp-action="TogglePublish" asp-route-id="@d.Id" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-sm-admin btn-ghost-admin" style="padding:4px 10px;font-size:.75rem;">@(d.IsPublished ? "Hide" : "Show")</button>
+                        </form>
+                        <form method="post" asp-action="Delete" asp-route-id="@d.Id" style="display:inline;" onsubmit="return confirm('Delete this document?')">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-sm-admin" style="padding:4px 10px;font-size:.75rem;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="6" style="color:#8b949e;text-align:center;padding:32px;">No documents yet.</td></tr>
+        }
+        </tbody>
+    </table>
+</div>

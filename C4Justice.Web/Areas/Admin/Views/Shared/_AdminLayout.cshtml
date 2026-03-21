@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] — C4J Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        :root { --sidebar-w: 240px; --sidebar-bg: #161b22; --topbar-h: 56px; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif; background: #0d1117; color: #e6edf3; }
+
+        /* SIDEBAR */
+        .admin-sidebar {
+            position: fixed; top: 0; left: 0; width: var(--sidebar-w);
+            height: 100vh; background: var(--sidebar-bg);
+            border-right: 1px solid #30363d; display: flex; flex-direction: column;
+            z-index: 100; overflow-y: auto;
+        }
+        .sidebar-brand { padding: 20px 20px 16px; border-bottom: 1px solid #30363d; }
+        .sidebar-brand-title { font-size: 1.1rem; font-weight: 800; color: #b91c1c; letter-spacing: -0.5px; }
+        .sidebar-brand-sub { font-size: 0.7rem; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-nav { padding: 16px 12px; flex: 1; }
+        .sidebar-section { font-size: 0.65rem; font-weight: 700; letter-spacing: 1.5px; color: #484f58; text-transform: uppercase; padding: 8px 8px 4px; margin-top: 8px; }
+        .sidebar-link {
+            display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+            border-radius: 8px; color: #8b949e; text-decoration: none;
+            font-size: 0.875rem; font-weight: 500; transition: all .15s;
+            margin-bottom: 2px;
+        }
+        .sidebar-link:hover { background: #21262d; color: #e6edf3; }
+        .sidebar-link.active { background: rgba(185,28,28,.15); color: #fca5a5; }
+        .sidebar-link i { width: 16px; text-align: center; font-size: 0.85rem; }
+        .sidebar-badge { margin-left: auto; background: #b91c1c; color: white; font-size: 0.65rem; padding: 2px 7px; border-radius: 10px; font-weight: 700; }
+        .sidebar-footer { padding: 16px; border-top: 1px solid #30363d; }
+        .sidebar-user { display: flex; align-items: center; gap: 10px; }
+        .sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(185,28,28,.3); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; color: #fca5a5; }
+        .sidebar-username { font-size: 0.8rem; font-weight: 600; color: #e6edf3; }
+        .sidebar-role { font-size: 0.7rem; color: #8b949e; }
+
+        /* TOPBAR */
+        .admin-topbar {
+            position: fixed; top: 0; left: var(--sidebar-w); right: 0;
+            height: var(--topbar-h); background: #161b22;
+            border-bottom: 1px solid #30363d; display: flex;
+            align-items: center; padding: 0 24px; z-index: 99; gap: 16px;
+        }
+        .topbar-title { font-size: 0.95rem; font-weight: 600; color: #e6edf3; flex: 1; }
+        .topbar-action { display: flex; align-items: center; gap: 8px; }
+        .btn-sm-admin { padding: 6px 14px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: none; cursor: pointer; transition: all .15s; text-decoration: none; }
+        .btn-primary-admin { background: #b91c1c; color: white; }
+        .btn-primary-admin:hover { background: #991b1b; color: white; }
+        .btn-ghost-admin { background: transparent; color: #8b949e; border: 1px solid #30363d; }
+        .btn-ghost-admin:hover { background: #21262d; color: #e6edf3; }
+
+        /* MAIN */
+        .admin-main { margin-left: var(--sidebar-w); margin-top: var(--topbar-h); padding: 28px; min-height: calc(100vh - var(--topbar-h)); }
+
+        /* CARDS */
+        .admin-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 24px; }
+        .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 20px 24px; }
+        .stat-card-num { font-size: 2rem; font-weight: 800; color: #e6edf3; line-height: 1; }
+        .stat-card-label { font-size: 0.78rem; color: #8b949e; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
+        .stat-card-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+
+        /* TABLE */
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #8b949e; padding: 10px 16px; border-bottom: 1px solid #30363d; background: #0d1117; }
+        .admin-table td { padding: 12px 16px; border-bottom: 1px solid #21262d; font-size: 0.875rem; color: #c9d1d9; vertical-align: middle; }
+        .admin-table tr:hover td { background: #1c2128; }
+        .admin-table tr:last-child td { border-bottom: none; }
+
+        /* BADGES */
+        .badge-active { background: rgba(34,197,94,.15); color: #4ade80; font-size: .72rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+        .badge-inactive { background: rgba(239,68,68,.1); color: #f87171; font-size: .72rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+        .badge-cat { background: rgba(217,119,6,.1); color: #fbbf24; font-size: .72rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+
+        /* FORMS */
+        .admin-form-label { font-size: 0.82rem; font-weight: 600; color: #8b949e; margin-bottom: 6px; display: block; }
+        .admin-form-control { width: 100%; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 9px 12px; color: #e6edf3; font-size: 0.875rem; transition: border-color .15s; }
+        .admin-form-control:focus { outline: none; border-color: #b91c1c; box-shadow: 0 0 0 3px rgba(185,28,28,.15); }
+        select.admin-form-control option { background: #161b22; }
+        textarea.admin-form-control { resize: vertical; min-height: 100px; }
+
+        /* ALERTS */
+        .admin-alert-success { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.2); color: #4ade80; padding: 10px 16px; border-radius: 8px; font-size: .875rem; margin-bottom: 20px; }
+
+        /* SECTION HEADER */
+        .admin-section-title { font-size: 1.1rem; font-weight: 700; color: #e6edf3; margin-bottom: 4px; }
+        .admin-section-sub { font-size: 0.8rem; color: #8b949e; margin-bottom: 24px; }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="admin-sidebar">
+    <div class="sidebar-brand">
+        <div class="sidebar-brand-title">C4J Admin</div>
+        <div class="sidebar-brand-sub">Management Panel</div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">Main</div>
+        <a href="/Admin/Dashboard" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
+            <i class="fas fa-chart-pie"></i> Dashboard
+        </a>
+        <div class="sidebar-section">Content</div>
+        <a href="/Admin/Slider" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Slider" ? "active" : "")">
+            <i class="fas fa-images"></i> Hero Slider
+        </a>
+        <a href="/Admin/Articles" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Articles" ? "active" : "")">
+            <i class="fas fa-pen-nib"></i> Articles
+        </a>
+        <a href="/Admin/Events" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Events" ? "active" : "")">
+            <i class="fas fa-calendar-days"></i> Events
+        </a>
+        <a href="/Admin/Documents" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Documents" ? "active" : "")">
+            <i class="fas fa-file-lines"></i> Documents
+        </a>
+        <div class="sidebar-section">Site</div>
+        <a href="/Admin/Slider" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Slider" ? "active" : "")">
+            <i class="fas fa-images"></i> Slider Images
+        </a>
+        <a href="/Admin/Settings" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Settings" ? "active" : "")">
+            <i class="fas fa-sliders"></i> Site Settings
+        </a>
+        <a href="/" target="_blank" class="sidebar-link">
+            <i class="fas fa-external-link-alt"></i> View Site
+        </a>
+    </nav>
+        <div class="sidebar-avatar">
+            @(Context.Session.GetString("AdminUsername")?[0].ToString().ToUpper() ?? "A")
+        </div>
+        <div>
+            <div class="sidebar-username">
+                @(Context.Session.GetString("AdminUsername") ?? "admin")
+            </div>
+            <div class="sidebar-role">Administrator</div>
+        </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="admin-topbar">
+    <div class="topbar-title">@ViewData["Title"]</div>
+    <div class="topbar-action">
+        @RenderSection("TopbarActions", required: false)
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="admin-main">
+    @if (TempData["Success"] != null)
+    {
+        <div class="admin-alert-success"><i class="fas fa-check-circle me-2"></i>@TempData["Success"]</div>
+    }
+    @RenderBody()
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+@RenderSection("Scripts", required: false)
+</body>
+</html>

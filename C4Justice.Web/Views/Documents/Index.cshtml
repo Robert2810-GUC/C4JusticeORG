@@ -1,0 +1,73 @@
+@{
+    ViewData["Title"] = "Documents &amp; Resources";
+    var documents = ViewBag.Documents as List<C4Justice.Web.Models.SiteDocument> ?? new();
+    var categories = ViewBag.Categories as List<string> ?? new();
+    var activeCategory = ViewBag.ActiveCategory as string;
+}
+
+<!-- Page Hero -->
+<section class="page-hero">
+    <div class="page-hero-particles"></div>
+    <div class="container-xl">
+        <div class="page-hero-content text-center" data-aos="fade-up">
+            <span class="page-hero-label">Reports &amp; Resources</span>
+            <h1 class="page-hero-title">Documents</h1>
+            <nav aria-label="breadcrumb" class="page-hero-breadcrumb">
+                <ol class="breadcrumb justify-content-center">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active">Documents</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</section>
+
+<section class="py-section">
+    <div class="container-xl">
+
+        @if (categories.Any())
+        {
+            <div class="d-flex flex-wrap gap-2 mb-5 justify-content-center" data-aos="fade-up">
+                <a href="/Documents" class="filter-pill @(activeCategory == null ? "active" : "")">All</a>
+                @foreach (var cat in categories)
+                { <a href="/Documents?category=@cat" class="filter-pill @(activeCategory == cat ? "active" : "")">@cat</a> }
+            </div>
+        }
+
+        @if (documents.Any())
+        {
+            <div class="row g-3">
+            @foreach (var d in documents)
+            {
+                <div class="col-lg-6" data-aos="fade-up">
+                    <div class="doc-card">
+                        <div class="doc-icon">
+                            <i class="fas fa-@(d.FileType == "pdf" ? "file-pdf" : d.FileType is "png" or "jpg" or "jpeg" ? "file-image" : "file-lines")"></i>
+                        </div>
+                        <div class="doc-info">
+                            <div class="doc-title">@d.Title</div>
+                            @if (!string.IsNullOrWhiteSpace(d.Description))
+                            { <div class="doc-desc">@d.Description</div> }
+                            <div class="doc-meta">
+                                <span class="doc-category">@d.Category</span>
+                                @if (!string.IsNullOrWhiteSpace(d.FileSizeDisplay)) { <span>@d.FileSizeDisplay</span> }
+                                <span>@(d.PublishedAt?.ToString("MMM yyyy") ?? "")</span>
+                            </div>
+                        </div>
+                        <a href="@d.FileUrl" target="_blank" download class="doc-download-btn" title="Download">
+                            <i class="fas fa-download"></i>
+                        </a>
+                    </div>
+                </div>
+            }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-file-lines" style="font-size:3rem;color:var(--c4-border);margin-bottom:16px;display:block;"></i>
+                <p style="color:var(--c4-text-muted);">No documents published yet. Check back soon.</p>
+            </div>
+        }
+    </div>
+</section>

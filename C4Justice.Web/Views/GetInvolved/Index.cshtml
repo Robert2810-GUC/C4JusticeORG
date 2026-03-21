@@ -1,0 +1,223 @@
+@model C4Justice.Web.Models.ContactViewModel
+@{
+    ViewData["Title"] = "Get Involved";
+    ViewData["ActivePage"] = "GetInvolved";
+}
+
+<!-- Page Hero -->
+<section class="page-hero">
+    <div class="page-hero-particles"></div>
+    <div class="page-hero-shapes">
+        <div class="ph-shape ph-shape-1"></div>
+        <div class="ph-shape ph-shape-2"></div>
+    </div>
+    <div class="container-xl">
+        <div class="page-hero-content text-center" data-aos="fade-up">
+            <span class="page-hero-label">Take Action</span>
+            <h1 class="page-hero-title">Get Involved</h1>
+            <nav aria-label="breadcrumb" class="page-hero-breadcrumb">
+                <ol class="breadcrumb justify-content-center">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active">Get Involved</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</section>
+
+<!-- Ways to Get Involved -->
+<section class="py-section" id="volunteer">
+    <div class="container-xl">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-label">How You Can Help</span>
+            <h2 class="section-title">Make a Difference Today</h2>
+            <p class="section-subtitle">There are many ways to support Communities United for Justice. Choose the path that works best for you.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="0">
+                <div class="involvement-card involvement-volunteer">
+                    <div class="inv-card-top">
+                        <div class="inv-icon"><i class="fas fa-hands-helping"></i></div>
+                        <h4>Volunteer</h4>
+                    </div>
+                    <p>Give your time and skills to support our events, outreach programs, and advocacy efforts. Every hour counts.</p>
+                    <ul class="inv-list">
+                        <li><i class="fas fa-check"></i> Event coordination</li>
+                        <li><i class="fas fa-check"></i> Voter registration drives</li>
+                        <li><i class="fas fa-check"></i> Community outreach</li>
+                    </ul>
+                    <a href="#contact-form" class="inv-btn">Volunteer Now</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="involvement-card involvement-donate">
+                    <div class="inv-card-top">
+                        <div class="inv-icon"><i class="fas fa-heart"></i></div>
+                        <h4>Donate</h4>
+                    </div>
+                    <p>Your tax-deductible contribution directly funds our advocacy work, events, and community programs.</p>
+                    <ul class="inv-list">
+                        <li><i class="fas fa-check"></i> 501(c)(3) tax-deductible</li>
+                        <li><i class="fas fa-check"></i> Secure online donation</li>
+                        <li><i class="fas fa-check"></i> One-time or recurring</li>
+                    </ul>
+                    <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="inv-btn donate">Donate Now</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="involvement-card involvement-spread">
+                    <div class="inv-card-top">
+                        <div class="inv-icon"><i class="fas fa-share-nodes"></i></div>
+                        <h4>Spread the Word</h4>
+                    </div>
+                    <p>Share our mission with your network. Follow and share our social media content to amplify our message.</p>
+                    <ul class="inv-list">
+                        <li><i class="fas fa-check"></i> Share on social media</li>
+                        <li><i class="fas fa-check"></i> Tell your community</li>
+                        <li><i class="fas fa-check"></i> Write letters to officials</li>
+                    </ul>
+                    <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="inv-btn">Follow Us</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="involvement-card involvement-partner">
+                    <div class="inv-card-top">
+                        <div class="inv-icon"><i class="fas fa-building"></i></div>
+                        <h4>Partner With Us</h4>
+                    </div>
+                    <p>Is your organization aligned with our mission? Let's collaborate to amplify our collective impact.</p>
+                    <ul class="inv-list">
+                        <li><i class="fas fa-check"></i> Joint advocacy campaigns</li>
+                        <li><i class="fas fa-check"></i> Shared resources</li>
+                        <li><i class="fas fa-check"></i> Community partnerships</li>
+                    </ul>
+                    <a href="#contact-form" class="inv-btn">Let's Talk</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Volunteer Photo Banner -->
+<section class="volunteer-banner py-section bg-dark-section">
+    <div class="container-xl">
+        <div class="row align-items-center gy-5">
+            <div class="col-lg-5 text-center" data-aos="fade-right">
+                <div class="vb-image-wrap">
+                    <img src="~/images/volunteer.png" alt="Volunteers" class="vb-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="vb-placeholder" style="display:none">
+                        <i class="fas fa-people-carry-box"></i>
+                        <span>Our Volunteers</span>
+                    </div>
+                    <div class="vb-overlay-stat">
+                        <strong>5,000+</strong>
+                        <span>Community Members</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7" data-aos="fade-left">
+                <span class="section-label light">Volunteers</span>
+                <h2 class="section-title light">The Backbone of Our Movement</h2>
+                <p class="body-text light">
+                    Our volunteers are the heart and soul of Communities United for Justice. From organizing voter
+                    registration drives to attending town halls, every action you take contributes to building a more
+                    just and equitable society.
+                </p>
+                <div class="vb-contact-info">
+                    <div class="vb-contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <strong>Email Us</strong>
+                            <a href="mailto:info@cu4justice.com">info@cu4justice.com</a>
+                        </div>
+                    </div>
+                    <div class="vb-contact-item">
+                        <i class="fab fa-facebook-f"></i>
+                        <div>
+                            <strong>Follow on Facebook</strong>
+                            <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener">Communities United for Justice</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="#contact-form" class="btn btn-hero-primary mt-3">
+                    <span>Send Us a Message</span>
+                    <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Form -->
+<section class="py-section" id="contact-form">
+    <div class="container-xl">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="contact-form-card" data-aos="fade-up">
+                    <div class="cfc-header text-center">
+                        <div class="cfc-icon"><i class="fas fa-paper-plane"></i></div>
+                        <h2>Send Us a Message</h2>
+                        <p>Have questions about volunteering, events, or our mission? We'd love to hear from you.</p>
+                    </div>
+
+                    @if (TempData["ContactSuccess"] != null)
+                    {
+                        <div class="alert alert-success-c4j mb-4">
+                            <i class="fas fa-check-circle me-2"></i>
+                            @TempData["ContactSuccess"]
+                        </div>
+                    }
+
+                    <form asp-action="Contact" asp-controller="GetInvolved" method="post" class="contact-form">
+                        @Html.AntiForgeryToken()
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating-c4j">
+                                    <i class="fas fa-user form-icon"></i>
+                                    <input asp-for="Name" class="form-input-c4j" placeholder="Your Full Name" />
+                                    <label>Full Name *</label>
+                                    <span asp-validation-for="Name" class="form-error"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating-c4j">
+                                    <i class="fas fa-envelope form-icon"></i>
+                                    <input asp-for="Email" class="form-input-c4j" placeholder="Your Email" />
+                                    <label>Email Address *</label>
+                                    <span asp-validation-for="Email" class="form-error"></span>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating-c4j">
+                                    <i class="fas fa-tag form-icon"></i>
+                                    <input asp-for="Subject" class="form-input-c4j" placeholder="Subject" />
+                                    <label>Subject *</label>
+                                    <span asp-validation-for="Subject" class="form-error"></span>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating-c4j textarea-wrap">
+                                    <i class="fas fa-comment form-icon"></i>
+                                    <textarea asp-for="Message" class="form-input-c4j form-textarea-c4j" placeholder="Your message" rows="5"></textarea>
+                                    <label>Your Message *</label>
+                                    <span asp-validation-for="Message" class="form-error"></span>
+                                </div>
+                            </div>
+                            <div class="col-12 text-center mt-2">
+                                <button type="submit" class="btn btn-hero-primary btn-submit-contact">
+                                    <span>Send Message</span>
+                                    <i class="fas fa-paper-plane ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

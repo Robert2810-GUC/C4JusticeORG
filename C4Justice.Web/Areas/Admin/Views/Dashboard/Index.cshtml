@@ -1,0 +1,83 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-card-icon" style="background:rgba(59,130,246,.15);color:#60a5fa;"><i class="fas fa-pen-nib"></i></div>
+            <div><div class="stat-card-num">@ViewBag.ArticleCount</div><div class="stat-card-label">Articles</div></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-card-icon" style="background:rgba(34,197,94,.15);color:#4ade80;"><i class="fas fa-calendar-days"></i></div>
+            <div><div class="stat-card-num">@ViewBag.EventCount</div><div class="stat-card-label">Events</div></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-card-icon" style="background:rgba(217,119,6,.15);color:#fbbf24;"><i class="fas fa-file-lines"></i></div>
+            <div><div class="stat-card-num">@ViewBag.DocumentCount</div><div class="stat-card-label">Documents</div></div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-card-icon" style="background:rgba(185,28,28,.15);color:#fca5a5;"><i class="fas fa-images"></i></div>
+            <div><div class="stat-card-num">@ViewBag.SliderCount</div><div class="stat-card-label">Slider Images</div></div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="admin-card">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h6 class="mb-0" style="font-weight:700;color:#e6edf3;">Recent Articles</h6>
+                <a href="/Admin/Articles/Create" class="btn-sm-admin btn-primary-admin">+ New</a>
+            </div>
+            @if (ViewBag.RecentArticles?.Count > 0)
+            {
+                <table class="admin-table">
+                    <thead><tr><th>Title</th><th>Category</th><th>Status</th></tr></thead>
+                    <tbody>
+                    @foreach (var a in ViewBag.RecentArticles)
+                    {
+                        <tr>
+                            <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">@a.Title</td>
+                            <td><span class="badge-cat">@a.Category</span></td>
+                            <td><span class="@(a.IsPublished ? "badge-active" : "badge-inactive")">@(a.IsPublished ? "Published" : "Draft")</span></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+            else { <p style="color:#8b949e;font-size:.875rem;">No articles yet.</p> }
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="admin-card">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h6 class="mb-0" style="font-weight:700;color:#e6edf3;">Upcoming Events</h6>
+                <a href="/Admin/Events/Create" class="btn-sm-admin btn-primary-admin">+ New</a>
+            </div>
+            @if (ViewBag.RecentEvents?.Count > 0)
+            {
+                <table class="admin-table">
+                    <thead><tr><th>Title</th><th>Date</th><th>Status</th></tr></thead>
+                    <tbody>
+                    @foreach (var e in ViewBag.RecentEvents)
+                    {
+                        <tr>
+                            <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">@e.Title</td>
+                            <td style="font-size:.8rem;">@e.EventDate.ToString("MMM d, yyyy")</td>
+                            <td><span class="@(e.IsActive ? "badge-active" : "badge-inactive")">@(e.IsActive ? "Active" : "Hidden")</span></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+            else { <p style="color:#8b949e;font-size:.875rem;">No events yet.</p> }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(unzip -o \"/c/My Web Sites/C4Justice ORG/cu4justice.org.zip\" -d /c/temp_c4j/website)",
+      "Bash(dotnet new:*)",
+      "Bash(dotnet build:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(pandoc --track-changes=all \"C:/Bharat/C4Justice/cu4justice_technical_requirement.docx\" -o /tmp/c4j_requirements.md)",
+      "Read(//tmp/**)",
+      "Bash(python /c/Users/armyg/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/b4e36b73-1f2f-4510-9f52-60ed8cf886bd/5ab02ef1-0056-469c-a0d9-9804aafd624a/skills/docx/scripts/office/unpack.py \"C:/Bharat/C4Justice/cu4justice_technical_requirement.docx\" /tmp/c4j_req_unpacked/)",
+      "Bash(ls /c/Python*)",
+      "Read(//c//**)",
+      "Bash(unzip -p \"cu4justice_technical_requirement.docx\" word/document.xml)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5050/Issues)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5050/Opinion)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5050/Documents)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5050/Contact)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5050/About)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5050/)",
+      "Bash(tasklist)",
+      "Bash(taskkill //PID 42728 //F)",
+      "Bash(unzip -p cu4justice_technical_requirement.docx word/document.xml)",
+      "Bash(grep -v '^$')",
+      "Bash(taskkill /F /PID 37864)",
+      "Bash(cmd /c \"taskkill /F /PID 37864\")",
+      "Bash(cmd /c \"taskkill /F /PID 37864 2>&1 && echo killed\")",
+      "Bash(cmd /c \"tasklist | findstr C4Justice\")",
+      "Bash(cmd /c \"tasklist | findstr /i \"\"C4Justice dotnet\"\"\")",
+      "Bash(cmd /c \"wmic process where \"\"name=''C4Justice.Web.exe''\"\" get processid,name 2>&1\")",
+      "Bash(cmd /c \"dir C:\\\\Bharat\\\\C4Justice\"\")"
+    ]
+  }
+}

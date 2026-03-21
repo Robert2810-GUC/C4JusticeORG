@@ -1,0 +1,119 @@
+@model C4Justice.Web.Models.ContactViewModel
+@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<!-- Page Hero -->
+<section class="page-hero">
+    <div class="page-hero-overlay"></div>
+    <div class="container text-center">
+        <h1 class="page-hero-title" data-aos="fade-down">Contact Us</h1>
+        <p class="page-hero-subtitle" data-aos="fade-up" data-aos-delay="100">
+            We'd love to hear from you. Reach out and let's work together.
+        </p>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="section-padding">
+    <div class="container">
+
+        @if (TempData["ContactSuccess"] != null)
+        {
+            <div class="alert alert-success text-center mb-4 py-3" style="background: rgba(22,163,74,0.1); border: 1px solid rgba(22,163,74,0.3); color: var(--c4-text); border-radius: 12px;">
+                <i class="fas fa-circle-check me-2" style="color: #16a34a;"></i>@TempData["ContactSuccess"]
+            </div>
+        }
+
+        <div class="row g-5 align-items-start">
+
+            <!-- Contact Info -->
+            <div class="col-lg-4" data-aos="fade-right">
+                <div class="contact-info-card">
+                    <h3 class="contact-info-title">Get In Touch</h3>
+
+                    <div class="d-flex gap-3 mb-4">
+                        <div class="contact-icon-wrap">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <div class="contact-info-label">Email Us</div>
+                            <a href="mailto:info@cu4justice.com" class="contact-info-value">info&#64;cu4justice.com</a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 mb-4">
+                        <div class="contact-icon-wrap">
+                            <i class="fab fa-facebook-f"></i>
+                        </div>
+                        <div>
+                            <div class="contact-info-label">Follow Us</div>
+                            <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" class="contact-info-value">Facebook Page</a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 mb-4">
+                        <div class="contact-icon-wrap" style="background: rgba(217,119,6,0.15); color: var(--c4-gold);">
+                            <i class="fas fa-hand-holding-heart"></i>
+                        </div>
+                        <div>
+                            <div class="contact-info-label">Support Our Work</div>
+                            <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" class="contact-info-value">Donate Now</a>
+                        </div>
+                    </div>
+
+                    <hr style="border-color: var(--c4-border);" />
+
+                    <p style="color: var(--c4-text-muted); font-size: 0.9rem; line-height: 1.7;">
+                        Communities United for Justice Fund is a 501(c)(3) nonprofit organization.
+                        We typically respond within 48 hours.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="col-lg-8" data-aos="fade-left">
+                <div class="form-card-c4j">
+                    <h3 class="form-section-title">Send a Message</h3>
+
+                    <form asp-action="Index" method="post" novalidate>
+                        @Html.AntiForgeryToken()
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="Name" class="form-label-c4j">Full Name *</label>
+                                <input asp-for="Name" class="form-input-c4j" placeholder="Your full name" />
+                                <span asp-validation-for="Name" class="form-error-c4j"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="form-label-c4j">Email Address *</label>
+                                <input asp-for="Email" class="form-input-c4j" placeholder="your@email.com" />
+                                <span asp-validation-for="Email" class="form-error-c4j"></span>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="Subject" class="form-label-c4j">Subject *</label>
+                                <input asp-for="Subject" class="form-input-c4j" placeholder="How can we help?" />
+                                <span asp-validation-for="Subject" class="form-error-c4j"></span>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="Message" class="form-label-c4j">Message *</label>
+                                <textarea asp-for="Message" class="form-input-c4j" rows="6" placeholder="Tell us more..."></textarea>
+                                <span asp-validation-for="Message" class="form-error-c4j"></span>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <button type="submit" class="btn-c4j w-100">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

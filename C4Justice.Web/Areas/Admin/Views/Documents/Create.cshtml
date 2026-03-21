@@ -1,0 +1,42 @@
+@model C4Justice.Web.Models.SiteDocument
+@{
+    ViewData["Title"] = "Upload Document";
+}
+
+<div class="admin-card" style="max-width:600px;">
+    <form method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <label class="admin-form-label">Document File * (PDF, DOC, DOCX, Images)</label>
+            <input type="file" name="docFile" class="admin-form-control" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp" required />
+        </div>
+        <div class="mb-3">
+            <label class="admin-form-label">Title *</label>
+            <input asp-for="Title" class="admin-form-control" placeholder="Document display title" required />
+        </div>
+        <div class="mb-3">
+            <label class="admin-form-label">Description</label>
+            <textarea asp-for="Description" class="admin-form-control" rows="3" placeholder="Brief description of the document"></textarea>
+        </div>
+        <div class="mb-4">
+            <label class="admin-form-label">Category</label>
+            <select asp-for="Category" class="admin-form-control">
+                <option value="General">General</option>
+                <option value="Policy">Policy</option>
+                <option value="Research">Research</option>
+                <option value="Political">Political</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Economic">Economic</option>
+                <option value="Environmental">Environmental</option>
+            </select>
+        </div>
+        <div class="mb-4 d-flex align-items-center gap-2">
+            <input asp-for="IsPublished" type="checkbox" style="width:16px;height:16px;" checked />
+            <label class="admin-form-label mb-0">Publish immediately</label>
+        </div>
+        <div class="d-flex gap-3">
+            <button type="submit" class="btn-sm-admin btn-primary-admin" style="padding:10px 28px;"><i class="fas fa-upload me-1"></i>Upload</button>
+            <a href="/Admin/Documents" class="btn-sm-admin btn-ghost-admin" style="padding:10px 20px;">Cancel</a>
+        </div>
+    </form>
+</div>

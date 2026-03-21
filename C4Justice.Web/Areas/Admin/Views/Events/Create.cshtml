@@ -1,0 +1,55 @@
+@model C4Justice.Web.Models.SiteEvent
+@{
+    ViewData["Title"] = "New Event";
+}
+
+<div class="admin-card" style="max-width:700px;">
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <div class="row g-3">
+            <div class="col-12">
+                <label class="admin-form-label">Event Title *</label>
+                <input asp-for="Title" class="admin-form-control" placeholder="e.g. Community Town Hall" required />
+            </div>
+            <div class="col-md-6">
+                <label class="admin-form-label">Event Date & Time *</label>
+                <input asp-for="EventDate" type="datetime-local" class="admin-form-control" required />
+            </div>
+            <div class="col-md-6">
+                <label class="admin-form-label">Category</label>
+                <select asp-for="Category" class="admin-form-control">
+                    <option value="General">General</option>
+                    <option value="Political">Political</option>
+                    <option value="Racial">Racial</option>
+                    <option value="Economic">Economic</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Environmental">Environmental</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <label class="admin-form-label">Location</label>
+                <input asp-for="Location" class="admin-form-control" placeholder="e.g. Community Center, Main Hall" />
+            </div>
+            <div class="col-12">
+                <label class="admin-form-label">Description *</label>
+                <textarea asp-for="Description" class="admin-form-control" rows="4" required></textarea>
+            </div>
+            <div class="col-md-6">
+                <label class="admin-form-label">Image URL (optional)</label>
+                <input asp-for="ImageUrl" class="admin-form-control" placeholder="/uploads/..." />
+            </div>
+            <div class="col-md-6">
+                <label class="admin-form-label">Registration URL (optional)</label>
+                <input asp-for="RegisterUrl" class="admin-form-control" placeholder="https://..." />
+            </div>
+            <div class="col-12 d-flex align-items-center gap-2">
+                <input asp-for="IsActive" type="checkbox" style="width:16px;height:16px;" checked />
+                <label class="admin-form-label mb-0">Active (show on site)</label>
+            </div>
+            <div class="col-12 d-flex gap-3 mt-2">
+                <button type="submit" class="btn-sm-admin btn-primary-admin" style="padding:10px 28px;"><i class="fas fa-save me-1"></i>Create Event</button>
+                <a href="/Admin/Events" class="btn-sm-admin btn-ghost-admin" style="padding:10px 20px;">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,147 @@
+@{
+    ViewData["Title"] = "Events";
+    var upcoming = ViewBag.UpcomingEvents as List<C4Justice.Web.Models.SiteEvent> ?? new();
+    var past = ViewBag.PastEvents as List<C4Justice.Web.Models.SiteEvent> ?? new();
+}
+
+<!-- Page Hero -->
+<section class="page-hero">
+    <div class="page-hero-particles"></div>
+    <div class="container-xl">
+        <div class="page-hero-content text-center" data-aos="fade-up">
+            <span class="page-hero-label">Join the Movement</span>
+            <h1 class="page-hero-title">Events</h1>
+            <p class="page-hero-sub" style="color:rgba(255,255,255,0.65);font-size:1rem;max-width:520px;margin:12px auto 0;">
+                Town halls, voter drives, rallies &amp; more — be part of the change.
+            </p>
+            <nav aria-label="breadcrumb" class="page-hero-breadcrumb mt-3">
+                <ol class="breadcrumb justify-content-center">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active">Events</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</section>
+
+<!-- ========== UPCOMING EVENTS ========== -->
+<section class="py-section">
+    <div class="container-xl">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-label">Mark Your Calendar</span>
+            <h2 class="section-title">Upcoming Events</h2>
+            <p class="section-subtitle">Join us at our next community events and make your voice heard.</p>
+        </div>
+
+        @if (upcoming.Any())
+        {
+            <div class="row g-4">
+            @foreach (var e in upcoming)
+            {
+                <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                    <div class="ev-card h-100">
+                        <div class="ev-card-top">
+                            <div class="ev-date-block">
+                                <span class="ev-day">@e.EventDate.Day</span>
+                                <span class="ev-month">@e.EventDate.ToString("MMM")</span>
+                                <span class="ev-year">@e.EventDate.Year</span>
+                            </div>
+                            <div class="ev-top-info">
+                                @if (!string.IsNullOrWhiteSpace(e.Category))
+                                { <span class="ev-category">@e.Category</span> }
+                                <p class="ev-title">@e.Title</p>
+                            </div>
+                            <span class="ev-upcoming-badge">Upcoming</span>
+                        </div>
+                        <div class="ev-card-body">
+                            <div class="ev-meta-row">
+                                @if (!string.IsNullOrWhiteSpace(e.Location))
+                                {
+                                    <span class="ev-meta-item">
+                                        <i class="fas fa-map-marker-alt"></i>@e.Location
+                                    </span>
+                                }
+                                <span class="ev-meta-item">
+                                    <i class="fas fa-clock"></i>@e.EventDate.ToString("dddd, MMMM d")
+                                </span>
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(e.Description))
+                            { <p class="ev-desc">@e.Description</p> }
+                            @if (!string.IsNullOrWhiteSpace(e.RegisterUrl))
+                            {
+                                <a href="@e.RegisterUrl" target="_blank" rel="noopener" class="ev-register-btn">
+                                    <i class="fas fa-ticket-alt"></i> Register Now
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5" data-aos="fade-up">
+                <div style="width:80px;height:80px;border-radius:50%;background:rgba(185,28,28,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+                    <i class="fas fa-calendar-days" style="font-size:2rem;color:var(--c4-primary-light);"></i>
+                </div>
+                <h4 style="color:var(--c4-text);margin-bottom:8px;">No Upcoming Events</h4>
+                <p style="color:var(--c4-text-muted);max-width:400px;margin:0 auto 20px;">
+                    Follow us on Facebook for real-time event announcements and community updates.
+                </p>
+                <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" class="ev-register-btn">
+                    <i class="fab fa-facebook"></i> Follow on Facebook
+                </a>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- ========== PAST EVENTS ========== -->
+@if (past.Any())
+{
+<section class="py-section bg-dark-section">
+    <div class="container-xl">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-label light">Archive</span>
+            <h2 class="section-title light">Past Events</h2>
+            <p class="section-subtitle" style="color:var(--c4-text-muted);">A look back at our community impact.</p>
+        </div>
+        <div class="row g-3">
+        @foreach (var e in past)
+        {
+            <div class="col-lg-6" data-aos="fade-up">
+                <div class="past-ev-item">
+                    <div class="past-ev-date-strip">
+                        <span class="ped-day">@e.EventDate.Day</span>
+                        <span class="ped-mon">@e.EventDate.ToString("MMM")</span>
+                        <span class="ped-yr">@e.EventDate.Year</span>
+                    </div>
+                    <div class="past-ev-info">
+                        <div class="past-ev-title">@e.Title</div>
+                        @if (!string.IsNullOrWhiteSpace(e.Location))
+                        { <div class="past-ev-loc"><i class="fas fa-map-marker-alt me-1"></i>@e.Location</div> }
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(e.Category))
+                    { <span class="past-ev-cat">@e.Category</span> }
+                </div>
+            </div>
+        }
+        </div>
+    </div>
+</section>
+}
+
+<!-- ========== FACEBOOK CTA ========== -->
+<section class="py-section">
+    <div class="container-xl">
+        <div class="join-cta-card text-center" data-aos="zoom-in">
+            <div class="jcc-bg"></div>
+            <h2 class="jcc-title">Stay Updated</h2>
+            <p class="jcc-text">Follow us on Facebook for real-time event announcements and community updates.</p>
+            <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" class="btn btn-hero-primary">
+                <i class="fab fa-facebook me-2"></i>Follow on Facebook
+            </a>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "C4Justice",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "C4Justice.Web", "--urls", "http://localhost:5050"],
+      "port": 5050
+    }
+  ]
+}

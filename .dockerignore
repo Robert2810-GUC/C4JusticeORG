@@ -1,0 +1,21 @@
+**/.git
+**/.gitignore
+**/.vs
+**/.vscode
+**/.idea
+**/bin
+**/obj
+**/node_modules
+**/*.user
+**/*.suo
+**/.DS_Store
+
+# Don't include local dev settings
+C4Justice.Web/appsettings.Development.json
+
+# Don't include uploaded files (they live on Render's disk or a CDN in production)
+C4Justice.Web/wwwroot/uploads/
+
+# Build artefacts
+**/Dockerfile*
+**/.dockerignore

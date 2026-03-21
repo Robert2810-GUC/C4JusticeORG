@@ -1,0 +1,36 @@
+@model C4Justice.Web.Models.SliderImage
+@{
+    ViewData["Title"] = "Add Slider Image";
+}
+
+<div class="admin-card" style="max-width:600px;">
+    <form method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label class="admin-form-label">Image File *</label>
+            <input type="file" name="imageFile" accept="image/*" class="admin-form-control" required />
+            <small style="color:#8b949e;">Recommended: 1920×700px, JPG/PNG/WebP</small>
+        </div>
+        <div class="mb-3">
+            <label class="admin-form-label">Title (optional)</label>
+            <input asp-for="Title" class="admin-form-control" placeholder="e.g. Fighting for Political Justice" />
+        </div>
+        <div class="mb-3">
+            <label class="admin-form-label">Subtitle (optional)</label>
+            <input asp-for="Subtitle" class="admin-form-control" placeholder="Short description shown on slide" />
+        </div>
+        <div class="mb-3">
+            <label class="admin-form-label">Sort Order</label>
+            <input asp-for="SortOrder" type="number" class="admin-form-control" value="0" />
+        </div>
+        <div class="mb-4 d-flex align-items-center gap-2">
+            <input asp-for="IsActive" type="checkbox" style="width:16px;height:16px;" checked />
+            <label class="admin-form-label mb-0">Active (show on site)</label>
+        </div>
+        <div class="d-flex gap-3">
+            <button type="submit" class="btn-sm-admin btn-primary-admin" style="padding:10px 24px;"><i class="fas fa-upload me-1"></i>Upload & Save</button>
+            <a href="/Admin/Slider" class="btn-sm-admin btn-ghost-admin" style="padding:10px 24px;">Cancel</a>
+        </div>
+    </form>
+</div>

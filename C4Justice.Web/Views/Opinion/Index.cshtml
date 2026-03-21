@@ -1,0 +1,75 @@
+@{
+    ViewData["Title"] = "Opinion &amp; Essays";
+    var articles = ViewBag.Articles as List<C4Justice.Web.Models.Article> ?? new();
+    var activeCategory = ViewBag.ActiveCategory as string;
+    var categories = new[] { "Political", "Racial", "Economic", "Healthcare", "Environmental" };
+}
+
+<!-- Page Hero -->
+<section class="page-hero">
+    <div class="page-hero-particles"></div>
+    <div class="container-xl">
+        <div class="page-hero-content text-center" data-aos="fade-up">
+            <span class="page-hero-label">Voices &amp; Perspectives</span>
+            <h1 class="page-hero-title">Opinion &amp; Essays</h1>
+            <nav aria-label="breadcrumb" class="page-hero-breadcrumb">
+                <ol class="breadcrumb justify-content-center">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active">Opinion</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</section>
+
+<section class="py-section">
+    <div class="container-xl">
+        <div class="d-flex flex-wrap gap-2 mb-5 justify-content-center" data-aos="fade-up">
+            <a href="/Opinion" class="filter-pill @(activeCategory == null ? "active" : "")">All</a>
+            @foreach (var cat in categories)
+            {
+                <a href="/Opinion?category=@cat" class="filter-pill @(activeCategory == cat ? "active" : "")">@cat</a>
+            }
+        </div>
+
+        @if (articles.Any())
+        {
+            <div class="row g-4">
+            @foreach (var a in articles)
+            {
+                <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                    <a href="/Opinion/@a.Slug" class="article-card-link">
+                        <div class="article-card h-100">
+                            @if (!string.IsNullOrWhiteSpace(a.FeaturedImageUrl))
+                            { <div class="article-card-img"><img src="@a.FeaturedImageUrl" alt="@a.Title" /></div> }
+                            else
+                            {
+                                <div class="article-card-img-placeholder">
+                                    <i class="fas fa-pen-nib"></i>
+                                </div>
+                            }
+                            <div class="article-card-body">
+                                <span class="article-category">@a.Category</span>
+                                <h3 class="article-title">@a.Title</h3>
+                                @if (!string.IsNullOrWhiteSpace(a.Excerpt))
+                                { <p class="article-excerpt">@a.Excerpt</p> }
+                                <div class="article-meta">
+                                    <i class="fas fa-calendar me-1"></i>@(a.PublishedAt?.ToString("MMM d, yyyy") ?? "")
+                                    <span class="ms-auto">Read More <i class="fas fa-arrow-right"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-pen-nib" style="font-size:3rem;color:var(--c4-border);margin-bottom:16px;display:block;"></i>
+                <p style="color:var(--c4-text-muted);">@(activeCategory != null ? $"No articles in {activeCategory} yet." : "No articles published yet.")</p>
+            </div>
+        }
+    </div>
+</section>
