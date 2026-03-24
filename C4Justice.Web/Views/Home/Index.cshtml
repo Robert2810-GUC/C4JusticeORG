@@ -9,291 +9,126 @@
     string S(string key, string fallback) => cfg.TryGetValue(key, out var v) && !string.IsNullOrWhiteSpace(v) ? v : fallback;
 }
 
-<!-- ========== HERO SECTION ========== -->
-<section class="hero-section">
-    <!-- Animated Background Particles -->
-    <div class="hero-particles" id="particles-js"></div>
+<!-- ========== HERO: SLIDER + QUICK ACTIONS ========== -->
+<section class="hero-grid">
 
-    <!-- Floating Shapes -->
-    <div class="hero-shape shape-1"></div>
-    <div class="hero-shape shape-2"></div>
-    <div class="hero-shape shape-3"></div>
-    <div class="hero-shape shape-4"></div>
-
-    <div class="container-xl hero-content">
-        <div class="row align-items-center min-vh-hero">
-            <div class="col-lg-7" data-aos="fade-right" data-aos-duration="1000">
-                <div class="hero-badge">
-                    <span class="badge-dot"></span>
-                    <span>501(c)(3) Nonprofit Organization</span>
-                </div>
-                <h1 class="hero-title">
-                    <span class="hero-title-line">@S("hero_title_1","Communities")</span>
-                    <span class="hero-title-line highlight">@S("hero_title_2","United for")</span>
-                    <span class="hero-title-line">@S("hero_title_3","Justice")</span>
-                </h1>
-                <div class="hero-tagline-wrap">
-                    <div class="tagline-line"></div>
-                    <p class="hero-tagline">@S("hero_tagline","\"United We Stand. Divided We Fall.\"")</p>
-                    <div class="tagline-line"></div>
-                </div>
-                <p class="hero-description">@S("hero_desc","Fighting for Political, Racial, Economic and Environmental Justice. We believe that all individuals deserve to be treated with fairness and equity.")</p>
-                <div class="hero-actions">
-                    <a href="/GetInvolved" class="btn btn-hero-primary">
-                        <span>Get Involved</span>
-                        <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
-                    <a href="/About" class="btn btn-hero-outline">
-                        <i class="fas fa-play-circle me-2"></i>
-                        <span>Our Mission</span>
-                    </a>
-                    <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="btn btn-hero-donate">
-                        <i class="fas fa-heart me-2"></i>
-                        <span>Donate</span>
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-5 d-none d-lg-flex justify-content-center" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
-                <div class="hero-visual">
-                    <div class="hero-circle-1"></div>
-                    <div class="hero-circle-2"></div>
-                    <div class="hero-circle-3"></div>
-                    <div class="hero-icon-grid">
-                        <div class="hig-item hig-political">
-                            <i class="fas fa-landmark"></i>
-                            <span>Political</span>
-                        </div>
-                        <div class="hig-item hig-racial">
-                            <i class="fas fa-people-group"></i>
-                            <span>Racial</span>
-                        </div>
-                        <div class="hig-item hig-economic">
-                            <i class="fas fa-scale-balanced"></i>
-                            <span>Economic</span>
-                        </div>
-                        <div class="hig-item hig-environmental">
-                            <i class="fas fa-leaf"></i>
-                            <span>Environmental</span>
-                        </div>
-                    </div>
-                    <div class="hero-center-badge">
-                        <span>JUSTICE</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Scroll Indicator -->
-        <div class="scroll-indicator">
-            <div class="scroll-arrow">
-                <span></span><span></span><span></span>
-            </div>
-            <span class="scroll-text">Scroll Down</span>
-        </div>
-    </div>
-</section>
-
-<!-- ========== JUSTICE HIGHLIGHT BAR ========== -->
-<div class="justice-highlight-bar">
-    <div class="container-xl">
-        <div class="jhb-inner">
-            <span class="jhb-label">Fighting for Justice:</span>
-            <div class="jhb-separator"></div>
-            <span class="jhb-item"><i class="fas fa-landmark"></i> Political</span>
-            <div class="jhb-separator"></div>
-            <span class="jhb-item"><i class="fas fa-people-group"></i> Racial</span>
-            <div class="jhb-separator"></div>
-            <span class="jhb-item"><i class="fas fa-scale-balanced"></i> Economic</span>
-            <div class="jhb-separator"></div>
-            <span class="jhb-item"><i class="fas fa-heart-pulse"></i> Healthcare</span>
-            <div class="jhb-separator"></div>
-            <span class="jhb-item"><i class="fas fa-leaf"></i> Environmental</span>
-        </div>
-    </div>
-</div>
-
-<!-- ========== IMAGE SHOWCASE ========== -->
-<div class="img-showcase-section">
-    @if (sliderImages.Any())
-    {
-        <div class="img-showcase-track" id="imgShowcase">
-            @foreach (var img in sliderImages)
+    <!-- ── Slider ── -->
+    <div class="slider-area" id="heroSlider">
+        @if (sliderImages.Any())
+        {
+            var i = 0;
+            foreach (var img in sliderImages)
             {
-                <div class="img-showcase-slide">
-                    <img src="@img.ImageUrl" alt="@(img.Title ?? "Community")" loading="lazy" />
-                    @if (!string.IsNullOrWhiteSpace(img.Title) || !string.IsNullOrWhiteSpace(img.Subtitle))
-                    {
-                        <div class="img-showcase-caption">
-                            @if (!string.IsNullOrWhiteSpace(img.Title))
-                            { <span class="img-showcase-caption-title">@img.Title</span> }
-                            @if (!string.IsNullOrWhiteSpace(img.Subtitle))
-                            { <span class="img-showcase-caption-sub">@img.Subtitle</span> }
-                        </div>
-                    }
+                <div class="slide @(i == 0 ? "active" : "")" data-index="@i">
+                    <div class="slide-bg" style="background-image:url('@img.ImageUrl'); background-size:cover; background-position:center;"></div>
+                    <div class="slide-caption">
+                        @if (!string.IsNullOrWhiteSpace(img.Title))
+                        { <h2>@img.Title</h2> }
+                        @if (!string.IsNullOrWhiteSpace(img.Subtitle))
+                        { <p>@img.Subtitle</p> }
+                    </div>
                 </div>
+                i++;
             }
+        }
+        else
+        {
+            <!-- Default slides when no DB images -->
+            <div class="slide active">
+                <div class="slide-bg gradient-1"></div>
+                <div class="slide-caption">
+                    <h2>@S("hero_title","United We Stand. Divided We Fall.")</h2>
+                    <p>@S("hero_tagline","Fighting for Political, Racial, Economic, Healthcare & Environmental Justice")</p>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-bg gradient-2"></div>
+                <div class="slide-caption">
+                    <h2>Join Us For Change</h2>
+                    <p>Organizing communities for year-round advocacy</p>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-bg gradient-3"></div>
+                <div class="slide-caption">
+                    <h2>Volunteer, Support, Donate</h2>
+                    <p>Be part of the movement for justice</p>
+                </div>
+            </div>
+        }
+
+        <!-- Dots -->
+        <div class="slider-dots" id="sliderDots"></div>
+
+        <!-- Prev/Next -->
+        <div class="slider-controls">
+            <button class="slider-btn" id="slidePrev" aria-label="Previous slide">&#8249;</button>
+            <button class="slider-btn" id="slideNext" aria-label="Next slide">&#8250;</button>
         </div>
-    }
-    else
-    {
-        <div class="img-showcase-fallback">
-            <div class="isf-block isf-block-1">
-                <div class="isf-inner"><i class="fas fa-landmark"></i><span>Political</span></div>
-            </div>
-            <div class="isf-block isf-block-2">
-                <div class="isf-inner"><i class="fas fa-people-group"></i><span>Racial</span></div>
-            </div>
-            <div class="isf-block isf-block-3">
-                <div class="isf-inner"><i class="fas fa-scale-balanced"></i><span>Economic</span></div>
-            </div>
-            <div class="isf-block isf-block-4">
-                <div class="isf-inner"><i class="fas fa-leaf"></i><span>Environmental</span></div>
-            </div>
-        </div>
-    }
+    </div>
+
+    <!-- ── Quick Actions ── -->
+    <div class="quick-actions">
+        <h4>Quick Links</h4>
+        <a href="/Contact#mailing-list" class="qa-btn">Join Our Mailing List</a>
+        <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="qa-btn">Donate Today</a>
+        <a href="/Events" class="qa-btn">Upcoming Events</a>
+        <a href="/Contact" class="qa-btn">Contact Us</a>
+        <a href="/GetInvolved" class="qa-btn">Get Involved</a>
+    </div>
+</section>
+
+<!-- ========== TAGLINE BAR ========== -->
+<div class="tagline-bar">
+    <h2>@S("hero_tagline","\"United We Stand. Divided We Fall.\"")</h2>
+    <p>A 501(c)(3) nonprofit organization fighting for political, racial, economic, healthcare &amp; environmental justice.</p>
 </div>
 
-<!-- ========== IMPACT STATS ========== -->
+<!-- ========== STATS ========== -->
 <section class="stats-section">
-    <div class="container-xl">
-        <div class="stats-card" data-aos="fade-up" data-aos-duration="800">
-            <div class="row gy-4">
-                <div class="col-6 col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-icon"><i class="fas fa-users"></i></div>
-                        <div class="stat-number" data-count="@S("stat_members","5000")">0</div>
-                        <div class="stat-label">Community Members</div>
-                    </div>
+    <div class="stats-card">
+        <div class="row gy-0 gx-0">
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-number" data-count="@S("stat_members","5000")">@S("stat_members","5000")</div>
+                    <div class="stat-label">Community Members</div>
                 </div>
-                <div class="col-6 col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
-                        <div class="stat-number" data-count="@S("stat_events","48")">0</div>
-                        <div class="stat-label">Events Hosted</div>
-                    </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item" style="border-left:1px solid rgba(255,255,255,0.15);">
+                    <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                    <div class="stat-number" data-count="@S("stat_events","48")">@S("stat_events","48")</div>
+                    <div class="stat-label">Events Hosted</div>
                 </div>
-                <div class="col-6 col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-icon"><i class="fas fa-vote-yea"></i></div>
-                        <div class="stat-number" data-count="@S("stat_cycles","3")">0</div>
-                        <div class="stat-label">Election Cycles</div>
-                    </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item" style="border-left:1px solid rgba(255,255,255,0.15);">
+                    <div class="stat-icon"><i class="fas fa-vote-yea"></i></div>
+                    <div class="stat-number" data-count="@S("stat_cycles","3")">@S("stat_cycles","3")</div>
+                    <div class="stat-label">Election Cycles</div>
                 </div>
-                <div class="col-6 col-md-3">
-                    <div class="stat-item">
-                        <div class="stat-icon"><i class="fas fa-handshake"></i></div>
-                        <div class="stat-number" data-count="@S("stat_partners","20")">0</div>
-                        <div class="stat-label">Partner Organizations</div>
-                    </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item" style="border-left:1px solid rgba(255,255,255,0.15);">
+                    <div class="stat-icon"><i class="fas fa-handshake"></i></div>
+                    <div class="stat-number" data-count="@S("stat_partners","20")">@S("stat_partners","20")</div>
+                    <div class="stat-label">Partner Organizations</div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ========== 5 PILLARS OF JUSTICE ========== -->
-<section class="pillars-section py-section">
-    <div class="container-xl">
-        <div class="section-header text-center mb-5" data-aos="fade-up">
-            <span class="section-label">What We Fight For</span>
-            <h2 class="section-title">The Five Pillars of Justice</h2>
-            <p class="section-subtitle">Our mission spans across five critical areas where we work to create meaningful change for marginalized communities.</p>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="0">
-                <div class="pillar-card pillar-political">
-                    <div class="pillar-glow"></div>
-                    <div class="pillar-icon-wrap">
-                        <i class="fas fa-landmark"></i>
-                    </div>
-                    <div class="pillar-number">01</div>
-                    <h3 class="pillar-title">Political Justice</h3>
-                    <p class="pillar-text">Fighting against gerrymandering, voter suppression, and authoritarianism that stifle citizen rights and participation.</p>
-                    <a href="/About#political" class="pillar-link">Learn More <i class="fas fa-arrow-right"></i></a>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                <div class="pillar-card pillar-racial">
-                    <div class="pillar-glow"></div>
-                    <div class="pillar-icon-wrap">
-                        <i class="fas fa-people-group"></i>
-                    </div>
-                    <div class="pillar-number">02</div>
-                    <h3 class="pillar-title">Racial Justice</h3>
-                    <p class="pillar-text">Combating white supremacy and racial disparities in the criminal justice system, economy, and healthcare.</p>
-                    <a href="/About#racial" class="pillar-link">Learn More <i class="fas fa-arrow-right"></i></a>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                <div class="pillar-card pillar-economic">
-                    <div class="pillar-glow"></div>
-                    <div class="pillar-icon-wrap">
-                        <i class="fas fa-scale-balanced"></i>
-                    </div>
-                    <div class="pillar-number">03</div>
-                    <h3 class="pillar-title">Economic Justice</h3>
-                    <p class="pillar-text">Fighting against disinvestment, red-lining, and glass ceilings for equitable access to opportunities.</p>
-                    <a href="/About#economic" class="pillar-link">Learn More <i class="fas fa-arrow-right"></i></a>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                <div class="pillar-card pillar-environmental">
-                    <div class="pillar-glow"></div>
-                    <div class="pillar-icon-wrap">
-                        <i class="fas fa-leaf"></i>
-                    </div>
-                    <div class="pillar-number">04</div>
-                    <h3 class="pillar-title">Environmental Justice</h3>
-                    <p class="pillar-text">Eliminating disproportionate environmental hazards and climate impacts on marginalized communities.</p>
-                    <a href="/About#environmental" class="pillar-link">Learn More <i class="fas fa-arrow-right"></i></a>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
-                <div class="pillar-card pillar-healthcare">
-                    <div class="pillar-glow"></div>
-                    <div class="pillar-icon-wrap">
-                        <i class="fas fa-heart-pulse"></i>
-                    </div>
-                    <div class="pillar-number">05</div>
-                    <h3 class="pillar-title">Healthcare Justice</h3>
-                    <p class="pillar-text">Fighting for equitable access to quality healthcare and eliminating systemic disparities in health outcomes for all communities.</p>
-                    <a href="/About#healthcare" class="pillar-link">Learn More <i class="fas fa-arrow-right"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ========== ABOUT TEASER ========== -->
-<section class="about-teaser-section py-section">
+<!-- ========== ABOUT US ========== -->
+<section class="py-section" style="background:var(--white);">
     <div class="container-xl">
         <div class="row align-items-center gy-5">
-            <div class="col-lg-6" data-aos="fade-right">
-                <div class="about-teaser-visual">
-                    <div class="at-photo-grid">
-                        <div class="at-photo at-photo-1">
-                            <img src="~/images/community-1.png" alt="Community Event" onerror="this.parentElement.classList.add('photo-placeholder')">
-                        </div>
-                        <div class="at-photo at-photo-2">
-                            <img src="~/images/community-2.png" alt="Community Action" onerror="this.parentElement.classList.add('photo-placeholder')">
-                        </div>
-                        <div class="at-photo at-photo-3">
-                            <img src="~/images/community-3.png" alt="Community Together" onerror="this.parentElement.classList.add('photo-placeholder')">
-                        </div>
-                    </div>
-                    <div class="at-badge">
-                        <i class="fas fa-award"></i>
-                        <div>
-                            <strong>501(c)(3)</strong>
-                            <span>Certified Nonprofit</span>
-                        </div>
-                    </div>
+            <div class="col-lg-6">
+                <div class="section-header">
+                    <span class="section-label">About Us</span>
+                    <h2 class="section-title">United We Stand.<br>Divided We Fall.</h2>
                 </div>
-            </div>
-            <div class="col-lg-6" data-aos="fade-left">
-                <span class="section-label">About Us</span>
-                <h2 class="section-title">United We Stand.<br>Divided We Fall.</h2>
                 <p class="lead-text">
                     For too long, grassroots organizations have advocated in silos on behalf of marginalized communities
                     when all our social justice issues have a common thread:
@@ -305,43 +140,69 @@
                     common objectives through collaboration.
                 </p>
                 <div class="about-features">
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Direct Action & Voter Engagement</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Local, State and Federal Advocacy</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Organizing Year-Round Community Advocacy</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Educating Voters on Issues and Elections</span>
+                    <div class="feature-item"><i class="fas fa-check-circle"></i><span>Direct Action &amp; Voter Engagement</span></div>
+                    <div class="feature-item"><i class="fas fa-check-circle"></i><span>Local, State and Federal Advocacy</span></div>
+                    <div class="feature-item"><i class="fas fa-check-circle"></i><span>Organizing Year-Round Community Advocacy</span></div>
+                    <div class="feature-item"><i class="fas fa-check-circle"></i><span>Educating Voters on Issues and Elections</span></div>
+                </div>
+                <a href="/About" class="btn-primary-c4j mt-4 d-inline-block">Read Our Full Story <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+            <div class="col-lg-6">
+                <div class="at-photo-grid">
+                    <div class="at-photo at-photo-1 photo-placeholder"></div>
+                    <div class="at-photo at-photo-2 photo-placeholder"></div>
+                    <div class="at-photo at-photo-3 photo-placeholder"></div>
+                </div>
+                <div class="at-badge">
+                    <i class="fas fa-award"></i>
+                    <div>
+                        <strong>501(c)(3)</strong>
+                        <span>Certified Nonprofit Organization</span>
                     </div>
                 </div>
-                <a href="/About" class="btn btn-primary-c4j mt-4">
-                    Read Our Full Story <i class="fas fa-arrow-right ms-2"></i>
-                </a>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ========== MISSION QUOTE ========== -->
-<section class="quote-section py-section">
+<!-- ========== WHAT WE FIGHT FOR ========== -->
+<section class="py-section" style="background:var(--off-white);">
     <div class="container-xl">
-        <div class="quote-card" data-aos="zoom-in">
-            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
-            <blockquote class="quote-text">@S("quote_text","A collaboration of grassroots organizations came together over the last three election cycles to improve the efficiency and effectiveness of their collective voter education and mobilization strategies. The result was increased turnout among progressives and voters of color.")</blockquote>
-            <div class="quote-author">
-                <div class="author-avatar"><i class="fas fa-user-tie"></i></div>
-                <div class="author-info">
-                    <strong>@S("quote_author","Richard Rose")</strong>
-                    <span>@S("quote_role","Founder & Architect, Communities United for Justice")</span>
-                </div>
+        <div class="section-header text-center mb-5">
+            <span class="section-label">What We Fight For</span>
+            <h2 class="section-title">The Five Pillars of Justice</h2>
+            <p class="section-subtitle">Our mission spans five critical areas where we work to create meaningful change for marginalized communities.</p>
+        </div>
+        <div class="issues-grid">
+            <div class="issue-card">
+                <div class="issue-icon"><i class="fas fa-landmark"></i></div>
+                <h4>Political Justice</h4>
+                <p>Fighting against gerrymandering, voter suppression, and authoritarianism that stifle citizen rights.</p>
+                <a href="/About#political" class="issue-link">Learn More →</a>
+            </div>
+            <div class="issue-card">
+                <div class="issue-icon"><i class="fas fa-people-group"></i></div>
+                <h4>Racial Justice</h4>
+                <p>Eliminating persistent racial disparities in the criminal justice system, the economy and healthcare.</p>
+                <a href="/About#racial" class="issue-link">Learn More →</a>
+            </div>
+            <div class="issue-card">
+                <div class="issue-icon"><i class="fas fa-scale-balanced"></i></div>
+                <h4>Economic Justice</h4>
+                <p>Fighting against disinvestment, red-lining, and glass ceilings for equitable access to opportunities.</p>
+                <a href="/About#economic" class="issue-link">Learn More →</a>
+            </div>
+            <div class="issue-card" style="border-top-color:#dc2626;">
+                <div class="issue-icon"><i class="fas fa-heart-pulse"></i></div>
+                <h4>Healthcare Justice</h4>
+                <p>Fighting for equitable access to quality healthcare and eliminating systemic disparities in health outcomes.</p>
+                <a href="/About#healthcare" class="issue-link">Learn More →</a>
+            </div>
+            <div class="issue-card">
+                <div class="issue-icon"><i class="fas fa-leaf"></i></div>
+                <h4>Environmental Justice</h4>
+                <p>Eliminating disproportionate environmental hazards and climate impacts on marginalized communities.</p>
+                <a href="/About#environmental" class="issue-link">Learn More →</a>
             </div>
         </div>
     </div>
@@ -350,9 +211,9 @@
 <!-- ========== LATEST ARTICLES ========== -->
 @if (latestArticles.Any())
 {
-<section class="py-section">
+<section class="py-section" style="background:var(--white);">
     <div class="container-xl">
-        <div class="section-header text-center mb-5" data-aos="fade-up">
+        <div class="section-header text-center mb-5">
             <span class="section-label">Voices &amp; Perspectives</span>
             <h2 class="section-title">Latest from Our Newsroom</h2>
             <p class="section-subtitle">Insights, analysis, and opinion from our community advocates.</p>
@@ -360,17 +221,13 @@
         <div class="row g-4">
             @foreach (var a in latestArticles)
             {
-                <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="col-lg-4 col-md-6">
                     <a href="/Opinion/@a.Slug" class="article-card-link">
                         <div class="article-card h-100">
                             @if (!string.IsNullOrWhiteSpace(a.FeaturedImageUrl))
-                            { <div class="article-card-img"><img src="@a.FeaturedImageUrl" alt="@a.Title" /></div> }
+                            { <div class="article-card-img"><img src="@a.FeaturedImageUrl" alt="@a.Title" loading="lazy" /></div> }
                             else
-                            {
-                                <div class="article-card-img-placeholder">
-                                    <i class="fas fa-pen-nib"></i>
-                                </div>
-                            }
+                            { <div class="article-card-img-placeholder"><i class="fas fa-pen-nib"></i></div> }
                             <div class="article-card-body">
                                 <span class="article-category">@a.Category</span>
                                 <h3 class="article-title">@a.Title</h3>
@@ -386,27 +243,27 @@
                 </div>
             }
         </div>
-        <div class="text-center mt-5" data-aos="fade-up">
-            <a href="/Opinion" class="btn btn-hero-outline">View All Articles <i class="fas fa-arrow-right ms-2"></i></a>
+        <div class="text-center mt-5">
+            <a href="/Opinion" class="view-all">View All Articles <i class="fas fa-arrow-right ms-2"></i></a>
         </div>
     </div>
 </section>
 }
 
-<!-- ========== UPCOMING EVENTS PREVIEW ========== -->
+<!-- ========== UPCOMING EVENTS ========== -->
 @if (upcomingEvents.Any())
 {
-<section class="py-section bg-dark-section">
+<section class="py-section" style="background:var(--off-white);">
     <div class="container-xl">
-        <div class="section-header text-center mb-5" data-aos="fade-up">
-            <span class="section-label light">Mark Your Calendar</span>
-            <h2 class="section-title light">Upcoming Events</h2>
-            <p class="section-subtitle" style="color:var(--c4-text-muted);">Join us at our next community events. Together we make change happen.</p>
+        <div class="section-header text-center mb-5">
+            <span class="section-label">Mark Your Calendar</span>
+            <h2 class="section-title">Upcoming Events</h2>
+            <p class="section-subtitle">Join us at our next community events. Together we make change happen.</p>
         </div>
-        <div class="row g-4">
+        <div class="row g-3">
             @foreach (var e in upcomingEvents)
             {
-                <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="col-lg-4 col-md-6">
                     <div class="home-event-card">
                         <div class="home-event-date-col">
                             <span class="home-event-day">@e.EventDate.Day</span>
@@ -414,51 +271,73 @@
                         </div>
                         <div class="home-event-body">
                             @if (!string.IsNullOrWhiteSpace(e.Category))
-                            { <span class="article-category" style="margin-bottom:6px;display:inline-block;">@e.Category</span> }
+                            { <span class="article-category mb-2 d-inline-block">@e.Category</span> }
                             <div class="home-event-title">@e.Title</div>
                             @if (!string.IsNullOrWhiteSpace(e.Location))
-                            { <div class="home-event-loc"><i class="fas fa-map-marker-alt me-1"></i>@e.Location</div> }
+                            { <div class="home-event-loc mt-1"><i class="fas fa-map-marker-alt me-1"></i>@e.Location</div> }
                             <div class="home-event-loc"><i class="fas fa-clock me-1"></i>@e.EventDate.ToString("dddd, MMMM d")</div>
                             @if (!string.IsNullOrWhiteSpace(e.RegisterUrl))
-                            { <a href="@e.RegisterUrl" target="_blank" class="pillar-link mt-2 d-inline-block">Register <i class="fas fa-arrow-right"></i></a> }
+                            { <a href="@e.RegisterUrl" target="_blank" class="ev-register-btn mt-2 d-inline-block">Register →</a> }
                         </div>
                     </div>
                 </div>
             }
         </div>
-        <div class="text-center mt-5" data-aos="fade-up">
-            <a href="/Events" class="btn btn-hero-primary">View All Events <i class="fas fa-arrow-right ms-2"></i></a>
+        <div class="text-center mt-5">
+            <a href="/Events" class="btn-primary-c4j">View All Events <i class="fas fa-arrow-right ms-2"></i></a>
         </div>
     </div>
 </section>
 }
 
-<!-- ========== GET INVOLVED CTA ========== -->
-<section class="cta-section py-section">
+<!-- ========== GET INVOLVED ========== -->
+<section class="cta-section">
     <div class="container-xl">
+        <div class="section-header text-center mb-5">
+            <span class="section-label light">Take Action</span>
+            <h2 class="section-title light">Get Involved</h2>
+            <p class="section-subtitle" style="color:rgba(255,255,255,0.7);">There are many ways to support our mission for justice and equity.</p>
+        </div>
         <div class="row g-4">
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
-                <div class="cta-card cta-volunteer">
+            <div class="col-md-4">
+                <div class="cta-card">
                     <div class="cta-card-icon"><i class="fas fa-hands-helping"></i></div>
                     <h4>Volunteer</h4>
                     <p>Join our network of dedicated volunteers making a difference in communities across the region.</p>
-                    <a href="/GetInvolved#volunteer" class="cta-card-link">Get Started <i class="fas fa-arrow-right"></i></a>
+                    <a href="/GetInvolved#volunteer" class="cta-card-link">Get Started →</a>
                 </div>
             </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="cta-card cta-events">
+            <div class="col-md-4">
+                <div class="cta-card">
                     <div class="cta-card-icon"><i class="fas fa-calendar-alt"></i></div>
                     <h4>Attend Events</h4>
                     <p>Participate in town halls, rallies, voter drives, and community organizing workshops.</p>
-                    <a href="/Events" class="cta-card-link">View Events <i class="fas fa-arrow-right"></i></a>
+                    <a href="/Events" class="cta-card-link">View Events →</a>
                 </div>
             </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="cta-card cta-donate">
+            <div class="col-md-4">
+                <div class="cta-card">
                     <div class="cta-card-icon"><i class="fas fa-heart"></i></div>
                     <h4>Donate</h4>
                     <p>Your tax-deductible contribution to our 501(c)(3) fund directly supports our advocacy work.</p>
-                    <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="cta-card-link">Donate Now <i class="fas fa-arrow-right"></i></a>
+                    <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="cta-card-link">Donate Now →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== MISSION QUOTE ========== -->
+<section class="py-section" style="background:var(--off-white);">
+    <div class="container-xl">
+        <div class="quote-card">
+            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+            <blockquote class="quote-text">@S("quote_text","A collaboration of grassroots organizations came together over the last three election cycles to improve the efficiency and effectiveness of their collective voter education and mobilization strategies. The result was increased turnout among progressives and voters of color.")</blockquote>
+            <div class="quote-author">
+                <div class="author-avatar"><i class="fas fa-user-tie"></i></div>
+                <div class="author-info">
+                    <strong>@S("quote_author","Richard Rose")</strong>
+                    <span>@S("quote_role","Founder &amp; Architect, Communities United for Justice")</span>
                 </div>
             </div>
         </div>
@@ -466,45 +345,36 @@
 </section>
 
 <!-- ========== MAILING LIST ========== -->
-<section class="newsletter-section py-section">
+<section class="newsletter-section">
     <div class="container-xl">
-        <div class="newsletter-card" data-aos="fade-up">
-            <div class="newsletter-bg-pattern"></div>
+        <div class="newsletter-card">
             <div class="row align-items-center gy-4">
                 <div class="col-lg-6">
-                    <div class="newsletter-icon-wrap">
-                        <i class="fas fa-envelope-open-text"></i>
-                    </div>
+                    <div class="newsletter-icon-wrap"><i class="fas fa-envelope-open-text"></i></div>
                     <h2 class="newsletter-title">Stay Informed!</h2>
                     <p class="newsletter-subtitle">Join the Communities United for Justice Mailing List and be the first to know about upcoming events, advocacy opportunities, and community news.</p>
                 </div>
                 <div class="col-lg-6">
                     @if (TempData["SubscribeSuccess"] != null)
                     {
-                        <div class="alert alert-success-c4j">
-                            <i class="fas fa-check-circle me-2"></i>
-                            @TempData["SubscribeSuccess"]
+                        <div class="alert-success-c4j mb-3">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["SubscribeSuccess"]
                         </div>
                     }
                     <form asp-action="Subscribe" asp-controller="Home" method="post" class="newsletter-form-main">
                         @Html.AntiForgeryToken()
-                        <div class="mb-3">
-                            <div class="form-floating-c4j">
-                                <i class="fas fa-user form-icon"></i>
-                                <input asp-for="Name" class="form-input-c4j" placeholder="Your Full Name" />
-                                <span asp-validation-for="Name" class="form-error"></span>
-                            </div>
+                        <div class="form-floating-c4j">
+                            <i class="fas fa-user form-icon"></i>
+                            <input asp-for="Name" class="form-input-c4j" placeholder="Your Full Name" />
+                            <span asp-validation-for="Name" class="form-error"></span>
                         </div>
-                        <div class="mb-3">
-                            <div class="form-floating-c4j">
-                                <i class="fas fa-envelope form-icon"></i>
-                                <input asp-for="Email" class="form-input-c4j" placeholder="Your Email Address" />
-                                <span asp-validation-for="Email" class="form-error"></span>
-                            </div>
+                        <div class="form-floating-c4j">
+                            <i class="fas fa-envelope form-icon"></i>
+                            <input asp-for="Email" class="form-input-c4j" placeholder="Your Email Address" />
+                            <span asp-validation-for="Email" class="form-error"></span>
                         </div>
-                        <button type="submit" class="btn btn-newsletter-submit">
-                            <span>Subscribe Now</span>
-                            <i class="fas fa-arrow-right ms-2"></i>
+                        <button type="submit" class="btn-newsletter-submit">
+                            Subscribe Now <i class="fas fa-arrow-right ms-2"></i>
                         </button>
                     </form>
                 </div>
@@ -512,3 +382,48 @@
         </div>
     </div>
 </section>
+
+@section Scripts {
+<script>
+(function () {
+    const slider = document.getElementById('heroSlider');
+    if (!slider) return;
+
+    const slides = Array.from(slider.querySelectorAll('.slide'));
+    const dotsContainer = document.getElementById('sliderDots');
+    let current = 0;
+    let timer;
+
+    // Build dots
+    slides.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+        dot.addEventListener('click', () => goTo(i));
+        dotsContainer.appendChild(dot);
+    });
+
+    function updateDots() {
+        dotsContainer.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    }
+
+    function goTo(n) {
+        slides[current].classList.remove('active');
+        current = (n + slides.length) % slides.length;
+        slides[current].classList.add('active');
+        updateDots();
+        resetTimer();
+    }
+
+    function resetTimer() {
+        clearInterval(timer);
+        if (slides.length > 1) timer = setInterval(() => goTo(current + 1), 5000);
+    }
+
+    document.getElementById('slidePrev')?.addEventListener('click', () => goTo(current - 1));
+    document.getElementById('slideNext')?.addEventListener('click', () => goTo(current + 1));
+
+    resetTimer();
+})();
+</script>
+}

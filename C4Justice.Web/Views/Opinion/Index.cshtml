@@ -1,5 +1,6 @@
 @{
     ViewData["Title"] = "Opinion &amp; Essays";
+    ViewData["ActivePage"] = "Opinion";
     var articles = ViewBag.Articles as List<C4Justice.Web.Models.Article> ?? new();
     var activeCategory = ViewBag.ActiveCategory as string;
     var categories = new[] { "Political", "Racial", "Economic", "Healthcare", "Environmental" };
@@ -7,24 +8,24 @@
 
 <!-- Page Hero -->
 <section class="page-hero">
-    <div class="page-hero-particles"></div>
-    <div class="container-xl">
-        <div class="page-hero-content text-center" data-aos="fade-up">
-            <span class="page-hero-label">Voices &amp; Perspectives</span>
-            <h1 class="page-hero-title">Opinion &amp; Essays</h1>
-            <nav aria-label="breadcrumb" class="page-hero-breadcrumb">
-                <ol class="breadcrumb justify-content-center">
-                    <li class="breadcrumb-item"><a href="/">Home</a></li>
-                    <li class="breadcrumb-item active">Opinion</li>
-                </ol>
-            </nav>
-        </div>
+    <div class="page-hero-content">
+        <span class="page-hero-label">Voices &amp; Perspectives</span>
+        <h1 class="page-hero-title">Opinion &amp; Essays</h1>
+        <p class="page-hero-sub">Insights, analysis, and opinion from our community advocates.</p>
+        <nav aria-label="breadcrumb" class="page-hero-breadcrumb mt-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">Opinion</li>
+            </ol>
+        </nav>
     </div>
 </section>
 
-<section class="py-section">
+<section class="py-section" style="background:var(--white);">
     <div class="container-xl">
-        <div class="d-flex flex-wrap gap-2 mb-5 justify-content-center" data-aos="fade-up">
+
+        <!-- Category Filters -->
+        <div class="d-flex flex-wrap gap-2 mb-5 justify-content-center">
             <a href="/Opinion" class="filter-pill @(activeCategory == null ? "active" : "")">All</a>
             @foreach (var cat in categories)
             {
@@ -37,17 +38,13 @@
             <div class="row g-4">
             @foreach (var a in articles)
             {
-                <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="col-lg-4 col-md-6">
                     <a href="/Opinion/@a.Slug" class="article-card-link">
                         <div class="article-card h-100">
                             @if (!string.IsNullOrWhiteSpace(a.FeaturedImageUrl))
-                            { <div class="article-card-img"><img src="@a.FeaturedImageUrl" alt="@a.Title" /></div> }
+                            { <div class="article-card-img"><img src="@a.FeaturedImageUrl" alt="@a.Title" loading="lazy" /></div> }
                             else
-                            {
-                                <div class="article-card-img-placeholder">
-                                    <i class="fas fa-pen-nib"></i>
-                                </div>
-                            }
+                            { <div class="article-card-img-placeholder"><i class="fas fa-pen-nib"></i></div> }
                             <div class="article-card-body">
                                 <span class="article-category">@a.Category</span>
                                 <h3 class="article-title">@a.Title</h3>
@@ -67,8 +64,9 @@
         else
         {
             <div class="text-center py-5">
-                <i class="fas fa-pen-nib" style="font-size:3rem;color:var(--c4-border);margin-bottom:16px;display:block;"></i>
-                <p style="color:var(--c4-text-muted);">@(activeCategory != null ? $"No articles in {activeCategory} yet." : "No articles published yet.")</p>
+                <i class="fas fa-pen-nib" style="font-size:3rem;color:var(--border);margin-bottom:16px;display:block;"></i>
+                <h4 style="color:var(--text);margin-bottom:8px;">No Articles Yet</h4>
+                <p style="color:var(--text-light);">@(activeCategory != null ? $"No articles in {activeCategory} yet." : "No articles published yet. Check back soon.")</p>
             </div>
         }
     </div>

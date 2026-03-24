@@ -5,18 +5,22 @@
 
 <!-- Page Hero -->
 <section class="page-hero">
-    <div class="page-hero-overlay"></div>
-    <div class="container text-center">
-        <h1 class="page-hero-title" data-aos="fade-down">Contact Us</h1>
-        <p class="page-hero-subtitle" data-aos="fade-up" data-aos-delay="100">
-            We'd love to hear from you. Reach out and let's work together.
-        </p>
+    <div class="page-hero-content">
+        <span class="page-hero-label">Reach Out</span>
+        <h1 class="page-hero-title">Contact Us</h1>
+        <p class="page-hero-sub">We'd love to hear from you. Reach out and let's work together.</p>
+        <nav aria-label="breadcrumb" class="page-hero-breadcrumb mt-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">Contact</li>
+            </ol>
+        </nav>
     </div>
 </section>
 
 <!-- Contact Section -->
-<section class="section-padding">
-    <div class="container">
+<section class="py-section" style="background:var(--white);" id="contact-form">
+    <div class="container-xl">
 
         @if (TempData["ContactSuccess"] != null)
         {

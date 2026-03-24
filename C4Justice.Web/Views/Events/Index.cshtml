@@ -1,33 +1,29 @@
 @{
     ViewData["Title"] = "Events";
+    ViewData["ActivePage"] = "Events";
     var upcoming = ViewBag.UpcomingEvents as List<C4Justice.Web.Models.SiteEvent> ?? new();
     var past = ViewBag.PastEvents as List<C4Justice.Web.Models.SiteEvent> ?? new();
 }
 
 <!-- Page Hero -->
 <section class="page-hero">
-    <div class="page-hero-particles"></div>
-    <div class="container-xl">
-        <div class="page-hero-content text-center" data-aos="fade-up">
-            <span class="page-hero-label">Join the Movement</span>
-            <h1 class="page-hero-title">Events</h1>
-            <p class="page-hero-sub" style="color:rgba(255,255,255,0.65);font-size:1rem;max-width:520px;margin:12px auto 0;">
-                Town halls, voter drives, rallies &amp; more — be part of the change.
-            </p>
-            <nav aria-label="breadcrumb" class="page-hero-breadcrumb mt-3">
-                <ol class="breadcrumb justify-content-center">
-                    <li class="breadcrumb-item"><a href="/">Home</a></li>
-                    <li class="breadcrumb-item active">Events</li>
-                </ol>
-            </nav>
-        </div>
+    <div class="page-hero-content">
+        <span class="page-hero-label">Join the Movement</span>
+        <h1 class="page-hero-title">Events</h1>
+        <p class="page-hero-sub">Town halls, voter drives, rallies &amp; more — be part of the change.</p>
+        <nav aria-label="breadcrumb" class="page-hero-breadcrumb mt-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">Events</li>
+            </ol>
+        </nav>
     </div>
 </section>
 
 <!-- ========== UPCOMING EVENTS ========== -->
-<section class="py-section">
+<section class="py-section" style="background:var(--white);">
     <div class="container-xl">
-        <div class="section-header text-center mb-5" data-aos="fade-up">
+        <div class="section-header text-center mb-5">
             <span class="section-label">Mark Your Calendar</span>
             <h2 class="section-title">Upcoming Events</h2>
             <p class="section-subtitle">Join us at our next community events and make your voice heard.</p>
@@ -38,7 +34,7 @@
             <div class="row g-4">
             @foreach (var e in upcoming)
             {
-                <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="col-lg-4 col-md-6">
                     <div class="ev-card h-100">
                         <div class="ev-card-top">
                             <div class="ev-date-block">
@@ -58,11 +54,11 @@
                                 @if (!string.IsNullOrWhiteSpace(e.Location))
                                 {
                                     <span class="ev-meta-item">
-                                        <i class="fas fa-map-marker-alt"></i>@e.Location
+                                        <i class="fas fa-map-marker-alt"></i> @e.Location
                                     </span>
                                 }
                                 <span class="ev-meta-item">
-                                    <i class="fas fa-clock"></i>@e.EventDate.ToString("dddd, MMMM d")
+                                    <i class="fas fa-clock"></i> @e.EventDate.ToString("dddd, MMMM d, yyyy")
                                 </span>
                             </div>
                             @if (!string.IsNullOrWhiteSpace(e.Description))
@@ -70,7 +66,7 @@
                             @if (!string.IsNullOrWhiteSpace(e.RegisterUrl))
                             {
                                 <a href="@e.RegisterUrl" target="_blank" rel="noopener" class="ev-register-btn">
-                                    <i class="fas fa-ticket-alt"></i> Register Now
+                                    <i class="fas fa-ticket-alt me-1"></i> Register Now
                                 </a>
                             }
                         </div>
@@ -81,16 +77,16 @@
         }
         else
         {
-            <div class="text-center py-5" data-aos="fade-up">
-                <div style="width:80px;height:80px;border-radius:50%;background:rgba(185,28,28,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
-                    <i class="fas fa-calendar-days" style="font-size:2rem;color:var(--c4-primary-light);"></i>
+            <div class="text-center py-5">
+                <div style="width:72px;height:72px;border-radius:50%;background:var(--off-white);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+                    <i class="fas fa-calendar-days" style="font-size:1.8rem;color:var(--navy);"></i>
                 </div>
-                <h4 style="color:var(--c4-text);margin-bottom:8px;">No Upcoming Events</h4>
-                <p style="color:var(--c4-text-muted);max-width:400px;margin:0 auto 20px;">
+                <h4 style="color:var(--text);margin-bottom:8px;">No Upcoming Events</h4>
+                <p style="color:var(--text-light);max-width:400px;margin:0 auto 20px;">
                     Follow us on Facebook for real-time event announcements and community updates.
                 </p>
-                <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" class="ev-register-btn">
-                    <i class="fab fa-facebook"></i> Follow on Facebook
+                <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="btn-primary-c4j">
+                    <i class="fab fa-facebook me-2"></i> Follow on Facebook
                 </a>
             </div>
         }
@@ -100,17 +96,17 @@
 <!-- ========== PAST EVENTS ========== -->
 @if (past.Any())
 {
-<section class="py-section bg-dark-section">
+<section class="py-section" style="background:var(--off-white);">
     <div class="container-xl">
-        <div class="section-header text-center mb-5" data-aos="fade-up">
-            <span class="section-label light">Archive</span>
-            <h2 class="section-title light">Past Events</h2>
-            <p class="section-subtitle" style="color:var(--c4-text-muted);">A look back at our community impact.</p>
+        <div class="section-header text-center mb-5">
+            <span class="section-label">Archive</span>
+            <h2 class="section-title">Past Events</h2>
+            <p class="section-subtitle">A look back at our community impact.</p>
         </div>
         <div class="row g-3">
         @foreach (var e in past)
         {
-            <div class="col-lg-6" data-aos="fade-up">
+            <div class="col-lg-6">
                 <div class="past-ev-item">
                     <div class="past-ev-date-strip">
                         <span class="ped-day">@e.EventDate.Day</span>
@@ -133,13 +129,12 @@
 }
 
 <!-- ========== FACEBOOK CTA ========== -->
-<section class="py-section">
+<section class="py-section" style="background:var(--white);">
     <div class="container-xl">
-        <div class="join-cta-card text-center" data-aos="zoom-in">
-            <div class="jcc-bg"></div>
+        <div class="join-cta-card text-center">
             <h2 class="jcc-title">Stay Updated</h2>
             <p class="jcc-text">Follow us on Facebook for real-time event announcements and community updates.</p>
-            <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" class="btn btn-hero-primary">
+            <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="btn-hero-primary">
                 <i class="fab fa-facebook me-2"></i>Follow on Facebook
             </a>
         </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,16 +9,13 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;600;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <!-- AOS Animations -->
-    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/c4justice.css" asp-append-version="true" />
@@ -27,182 +24,168 @@
 </head>
 <body>
 
-    <!-- Preloader -->
-    <div id="preloader">
-        <div class="preloader-inner">
-            <div class="preloader-logo">C4J</div>
-            <div class="preloader-bar"><div class="preloader-progress"></div></div>
-        </div>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-c4j fixed-top" id="mainNav">
-        <div class="container-xl">
-            <a class="navbar-brand" href="/">
-                <div class="brand-logo">
-                    <img src="~/images/c4orglogo.jpg" alt="C4Justice Logo" class="brand-img"
-                         onerror="this.style.display='none'">
+    <!-- ── SITE HEADER ── -->
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="/" class="logo-area">
+                <div class="logo-circle">
+                    <img src="~/images/c4orglogo.jpg" alt="C4J" onerror="this.style.display='none';this.parentElement.querySelector('.logo-initials').style.display='flex'">
+                    <span class="logo-initials">COMMUNITIES<br>UNITED<br>FOR JUSTICE</span>
                 </div>
-                <div class="brand-text">
-                    <span class="brand-name">Communities United</span>
-                    <span class="brand-tagline">for Justice Fund</span>
+                <div class="logo-text">
+                    <h1>Communities United<br>For Justice Fund</h1>
+                    <p>501(c)(3) Nonprofit Organization</p>
                 </div>
             </a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="toggler-icon">
-                    <span></span><span></span><span></span>
-                </span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Home" ? "active" : "")" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewData["ActivePage"]?.ToString() == "About" ? "active" : "")" href="/About">About</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle @(ViewData["ActivePage"]?.ToString() is "Issues" or "Opinion" or "Documents" ? "active" : "")"
-                           href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Issues</a>
-                        <ul class="dropdown-menu dropdown-menu-c4j">
-                            <li><a class="dropdown-item-c4j" href="/Issues"><i class="fas fa-bullhorn"></i> Focus Areas</a></li>
-                            <li><a class="dropdown-item-c4j" href="/Opinion"><i class="fas fa-pen-nib"></i> Opinion / Essays</a></li>
-                            <li><a class="dropdown-item-c4j" href="/Documents"><i class="fas fa-file-lines"></i> Documents</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Events" ? "active" : "")" href="/Events">Events</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Contact" ? "active" : "")" href="/Contact">Contact</a>
-                    </li>
-                    <li class="nav-item ms-lg-3">
-                        <a class="btn btn-donate" href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener">
-                            <i class="fas fa-heart me-2"></i>Donate
-                        </a>
-                    </li>
-                    <!-- Theme Toggle -->
-                    <li class="nav-item ms-2">
-                        <button class="theme-toggle-btn" id="themeToggle" aria-label="Toggle light/dark mode" title="Toggle theme">
-                            <i class="fas fa-sun theme-icon-light"></i>
-                            <i class="fas fa-moon theme-icon-dark"></i>
-                        </button>
-                    </li>
-                    <li class="nav-item ms-1">
-                        <a class="nav-social" href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" title="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                    </li>
-                </ul>
+            <div class="header-right">
+                <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="fb-icon" title="Follow us on Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
             </div>
         </div>
+    </header>
+
+    <!-- ── NAVIGATION ── -->
+    <nav class="site-nav" id="siteNav">
+        <div class="nav-inner">
+            <button class="nav-toggler" id="navToggler" aria-label="Toggle navigation" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/" class="@(ViewData["ActivePage"]?.ToString() == "Home" ? "active" : "")">Home</a></li>
+                <li><a href="/About" class="@(ViewData["ActivePage"]?.ToString() == "About" ? "active" : "")">About Us</a></li>
+                <li class="has-dropdown">
+                    <a href="/Issues" class="@(ViewData["ActivePage"]?.ToString() is "Issues" or "Opinion" or "Documents" ? "active" : "")">
+                        Issues <i class="fas fa-chevron-down ms-1" style="font-size:9px;"></i>
+                    </a>
+                    <ul class="dropdown-nav">
+                        <li><a href="/Issues"><i class="fas fa-bullhorn me-2"></i>Focus Areas</a></li>
+                        <li><a href="/Opinion"><i class="fas fa-pen-nib me-2"></i>Opinion / Essays</a></li>
+                        <li><a href="/Documents"><i class="fas fa-file-lines me-2"></i>Documents</a></li>
+                    </ul>
+                </li>
+                <li><a href="/Events" class="@(ViewData["ActivePage"]?.ToString() == "Events" ? "active" : "")">Events</a></li>
+                <li><a href="/GetInvolved" class="@(ViewData["ActivePage"]?.ToString() == "GetInvolved" ? "active" : "")">Get Involved</a></li>
+                <li><a href="/Contact" class="@(ViewData["ActivePage"]?.ToString() == "Contact" ? "active" : "")">Contact</a></li>
+            </ul>
+            <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="nav-donate">
+                <i class="fas fa-heart me-1"></i> Donate
+            </a>
+        </div>
     </nav>
+
+    <!-- ── DONATE BAR ── -->
+    <div class="donate-bar">
+        Donations to the Communities United For Justice Fund 501(c)(3) are tax deductible.
+        <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener">Donate Now &rarr;</a>
+    </div>
 
     <!-- Main Content -->
     <main>
         @RenderBody()
     </main>
 
-    <!-- Footer -->
+    <!-- ── FOOTER ── -->
     <footer class="site-footer">
-        <div class="footer-wave">
-            <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" class="footer-wave-path"/>
-            </svg>
-        </div>
-
-        <div class="footer-body">
-            <div class="container-xl">
-                <div class="row gy-5">
-                    <div class="col-lg-4">
-                        <div class="footer-brand">
-                            <h3 class="footer-brand-name">Communities United<br><span>for Justice Fund</span></h3>
-                            <p class="footer-tagline">"United We Stand. Divided We Fall."</p>
-                            <p class="footer-desc">A 501(c)(3) social justice advocacy platform fighting for Political, Racial, Economic, and Environmental Justice.</p>
-                            <div class="footer-socials">
-                                <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="social-btn facebook">
-                                    <i class="fab fa-facebook-f"></i>
-                                </a>
-                                <a href="mailto:info@cu4justice.com" class="social-btn email">
-                                    <i class="fas fa-envelope"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-2 col-sm-6">
-                        <h5 class="footer-heading">Quick Links</h5>
-                        <ul class="footer-links">
-                            <li><a href="/"><i class="fas fa-chevron-right"></i> Home</a></li>
-                            <li><a href="/About"><i class="fas fa-chevron-right"></i> About Us</a></li>
-                            <li><a href="/Issues"><i class="fas fa-chevron-right"></i> Focus Areas</a></li>
-                            <li><a href="/Opinion"><i class="fas fa-chevron-right"></i> Opinion</a></li>
-                            <li><a href="/Documents"><i class="fas fa-chevron-right"></i> Documents</a></li>
-                            <li><a href="/Events"><i class="fas fa-chevron-right"></i> Events</a></li>
-                            <li><a href="/Contact"><i class="fas fa-chevron-right"></i> Contact</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="col-lg-3 col-sm-6">
-                        <h5 class="footer-heading">Our Causes</h5>
-                        <ul class="footer-links causes">
-                            <li><a href="/About#political"><i class="fas fa-landmark"></i> Political Justice</a></li>
-                            <li><a href="/About#racial"><i class="fas fa-hands-holding-circle"></i> Racial Justice</a></li>
-                            <li><a href="/About#economic"><i class="fas fa-scale-balanced"></i> Economic Justice</a></li>
-                            <li><a href="/About#environmental"><i class="fas fa-leaf"></i> Environmental Justice</a></li>
-                            <li><a href="/About#healthcare"><i class="fas fa-heart-pulse"></i> Healthcare Justice</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="col-lg-3">
-                        <h5 class="footer-heading">Stay Informed</h5>
-                        <p class="footer-newsletter-desc">Join our mailing list for updates on events and ways to get involved.</p>
-                        <form asp-action="Subscribe" asp-controller="Home" method="post" class="footer-newsletter-form">
-                            @Html.AntiForgeryToken()
-                            <div class="newsletter-input-wrap">
-                                <input type="email" name="Email" placeholder="Your email address" class="newsletter-input" required>
-                                <input type="hidden" name="Name" value="Newsletter Subscriber">
-                                <button type="submit" class="newsletter-btn" title="Subscribe">
-                                    <i class="fas fa-paper-plane"></i>
-                                </button>
-                            </div>
-                        </form>
-                        <div class="footer-donate-cta mt-4">
-                            <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="btn-footer-donate">
-                                <i class="fas fa-heart me-2"></i>Donate to the Fund
-                            </a>
-                            <small class="d-block mt-2 text-muted">Tax-deductible donations to our 501(c)(3)</small>
-                        </div>
-                    </div>
+        <div class="footer-grid-wrap">
+            <div class="footer-col">
+                <div class="footer-brand-circle">CU4J</div>
+                <h5>Communities United<br>For Justice Fund</h5>
+                <p class="footer-tagline">"United We Stand. Divided We Fall."</p>
+                <p>A 501(c)(3) social justice advocacy platform fighting for Political, Racial, Economic, and Environmental Justice.</p>
+                <div class="footer-social">
+                    <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="social-fb" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="mailto:info@cu4justice.com" class="social-em" title="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
                 </div>
+            </div>
+
+            <div class="footer-col">
+                <h5>Quick Links</h5>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/About">About Us</a></li>
+                    <li><a href="/Issues">Focus Areas</a></li>
+                    <li><a href="/Opinion">Opinion</a></li>
+                    <li><a href="/Documents">Documents</a></li>
+                    <li><a href="/Events">Events</a></li>
+                    <li><a href="/GetInvolved">Get Involved</a></li>
+                    <li><a href="/Contact">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h5>Our Causes</h5>
+                <ul>
+                    <li><a href="/About#political"><i class="fas fa-landmark me-1"></i> Political Justice</a></li>
+                    <li><a href="/About#racial"><i class="fas fa-hands-holding-circle me-1"></i> Racial Justice</a></li>
+                    <li><a href="/About#economic"><i class="fas fa-scale-balanced me-1"></i> Economic Justice</a></li>
+                    <li><a href="/About#environmental"><i class="fas fa-leaf me-1"></i> Environmental Justice</a></li>
+                    <li><a href="/About#healthcare"><i class="fas fa-heart-pulse me-1"></i> Healthcare Justice</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h5>Stay Informed</h5>
+                <p>Join our mailing list for updates on events and ways to get involved.</p>
+                <form asp-action="Subscribe" asp-controller="Home" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="nl-footer-input">
+                        <input type="email" name="Email" placeholder="Your email address" required>
+                        <input type="hidden" name="Name" value="Newsletter Subscriber">
+                        <button type="submit">Subscribe</button>
+                    </div>
+                </form>
+                <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="donate-footer-btn">
+                    <i class="fas fa-heart me-2"></i>Donate to the Fund
+                </a>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <div class="container-xl">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <p class="footer-copy mb-0">&copy; @DateTime.Now.Year Communities United for Justice Fund. All rights reserved.</p>
-                    </div>
-                    <div class="col-md-6 text-md-end">
-                        <p class="footer-tax mb-0">A registered 501(c)(3) nonprofit organization.</p>
-                    </div>
-                </div>
-            </div>
+            <p>&copy; @DateTime.Now.Year Communities United for Justice Fund. All rights reserved.</p>
+            <p>A registered 501(c)(3) nonprofit organization.</p>
         </div>
     </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- AOS -->
-    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-    <!-- CountUp.js -->
-    <script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
     <!-- Custom JS -->
     <script src="~/js/c4justice.js" asp-append-version="true"></script>
+
+    <script>
+        // Mobile nav toggle
+        const toggler = document.getElementById('navToggler');
+        const navLinks = document.getElementById('navLinks');
+        if (toggler && navLinks) {
+            toggler.addEventListener('click', () => {
+                const expanded = toggler.getAttribute('aria-expanded') === 'true';
+                toggler.setAttribute('aria-expanded', !expanded);
+                navLinks.classList.toggle('open');
+            });
+        }
+        // Sticky nav
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('siteNav');
+            if (nav) nav.classList.toggle('scrolled', window.scrollY > 10);
+        });
+        // Dropdown on hover (desktop) / click (mobile)
+        document.querySelectorAll('.has-dropdown').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                if (window.innerWidth >= 768) item.classList.add('open');
+            });
+            item.addEventListener('mouseleave', () => {
+                if (window.innerWidth >= 768) item.classList.remove('open');
+            });
+            const link = item.querySelector('a');
+            if (link) link.addEventListener('click', e => {
+                if (window.innerWidth < 768) { e.preventDefault(); item.classList.toggle('open'); }
+            });
+        });
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

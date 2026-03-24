@@ -27,7 +27,8 @@
       "Bash(cmd /c \"tasklist | findstr C4Justice\")",
       "Bash(cmd /c \"tasklist | findstr /i \"\"C4Justice dotnet\"\"\")",
       "Bash(cmd /c \"wmic process where \"\"name=''C4Justice.Web.exe''\"\" get processid,name 2>&1\")",
-      "Bash(cmd /c \"dir C:\\\\Bharat\\\\C4Justice\"\")"
+      "Bash(cmd /c \"dir C:\\\\Bharat\\\\C4Justice\"\")",
+      "Bash(dir C:BharatC4JusticeC4Justice.WebViews /s /b)"
     ]
   }
 }

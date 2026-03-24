@@ -1,85 +1,99 @@
 @{
     ViewData["Title"] = "Focus Areas";
+    ViewData["ActivePage"] = "Issues";
 }
 
 <!-- Page Hero -->
 <section class="page-hero">
-    <div class="page-hero-overlay"></div>
-    <div class="container text-center">
-        <h1 class="page-hero-title" data-aos="fade-down">Our Focus Areas</h1>
-        <p class="page-hero-subtitle" data-aos="fade-up" data-aos-delay="100">
-            Championing justice across every dimension of community life
-        </p>
+    <div class="page-hero-content">
+        <span class="page-hero-label">What We Fight For</span>
+        <h1 class="page-hero-title">Our Focus Areas</h1>
+        <p class="page-hero-sub">Championing justice across every dimension of community life.</p>
+        <nav aria-label="breadcrumb" class="page-hero-breadcrumb mt-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">Focus Areas</li>
+            </ol>
+        </nav>
     </div>
 </section>
 
 <!-- Issues Grid -->
-<section class="section-padding">
-    <div class="container">
-        <div class="row g-4">
+<section class="py-section" style="background:var(--white);">
+    <div class="container-xl">
+        <div class="section-header text-center mb-5">
+            <span class="section-label">Five Pillars</span>
+            <h2 class="section-title">Fighting for Justice</h2>
+            <p class="section-subtitle">Our mission spans five critical areas where we work to create meaningful change for marginalized communities.</p>
+        </div>
+        <div class="issues-grid">
+            <div class="issue-card pillar-political">
+                <div class="issue-icon"><i class="fas fa-landmark"></i></div>
+                <h4>Political Justice</h4>
+                <p>Advocating for fair representation, voting rights, and democratic accountability for all communities.</p>
+                <a href="/About#political" class="issue-link">Learn More →</a>
+            </div>
+            <div class="issue-card pillar-racial">
+                <div class="issue-icon"><i class="fas fa-people-group"></i></div>
+                <h4>Racial Justice</h4>
+                <p>Confronting systemic racism, dismantling structural inequities, and building an equitable society.</p>
+                <a href="/About#racial" class="issue-link">Learn More →</a>
+            </div>
+            <div class="issue-card pillar-economic">
+                <div class="issue-icon"><i class="fas fa-scale-balanced"></i></div>
+                <h4>Economic Justice</h4>
+                <p>Closing wealth gaps, ensuring fair wages, and creating economic opportunity for marginalized communities.</p>
+                <a href="/About#economic" class="issue-link">Learn More →</a>
+            </div>
+            <div class="issue-card pillar-healthcare">
+                <div class="issue-icon"><i class="fas fa-heart-pulse"></i></div>
+                <h4>Healthcare Justice</h4>
+                <p>Fighting for equitable access to quality healthcare and eliminating systemic health disparities.</p>
+                <a href="/About#healthcare" class="issue-link">Learn More →</a>
+            </div>
+            <div class="issue-card pillar-environmental">
+                <div class="issue-icon"><i class="fas fa-leaf"></i></div>
+                <h4>Environmental Justice</h4>
+                <p>Protecting vulnerable communities from environmental hazards and advancing climate equity.</p>
+                <a href="/About#environmental" class="issue-link">Learn More →</a>
+            </div>
+        </div>
+    </div>
+</section>
 
-            <div class="col-lg-4 col-md-6" data-aos="fade-up">
-                <div class="stub-card">
-                    <div class="stub-icon" style="background: rgba(59,130,246,0.15); color: #3b82f6;">
-                        <i class="fas fa-landmark"></i>
-                    </div>
-                    <h3 class="stub-title">Political Justice</h3>
-                    <p class="stub-desc">Advocating for fair representation, voting rights, and democratic accountability for all communities.</p>
-                    <a href="/About#political" class="btn-c4j-outline">Learn More</a>
+<!-- Get Involved CTA -->
+<section class="cta-section">
+    <div class="container-xl">
+        <div class="section-header text-center mb-5">
+            <span class="section-label light">Join Us</span>
+            <h2 class="section-title light">Ready to Make a Difference?</h2>
+            <p class="section-subtitle" style="color:rgba(255,255,255,0.7);">Support our work across all five pillars of justice.</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="cta-card">
+                    <div class="cta-card-icon"><i class="fas fa-hands-helping"></i></div>
+                    <h4>Volunteer</h4>
+                    <p>Give your time and skills to support our advocacy and community efforts.</p>
+                    <a href="/GetInvolved" class="cta-card-link">Get Started →</a>
                 </div>
             </div>
-
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                <div class="stub-card">
-                    <div class="stub-icon" style="background: rgba(185,28,28,0.15); color: #b91c1c;">
-                        <i class="fas fa-people-group"></i>
-                    </div>
-                    <h3 class="stub-title">Racial Justice</h3>
-                    <p class="stub-desc">Confronting systemic racism, dismantling structural inequities, and building an equitable society.</p>
-                    <a href="/About#racial" class="btn-c4j-outline">Learn More</a>
+            <div class="col-md-4">
+                <div class="cta-card">
+                    <div class="cta-card-icon"><i class="fas fa-heart"></i></div>
+                    <h4>Donate</h4>
+                    <p>Your tax-deductible contribution directly supports our mission for justice.</p>
+                    <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="cta-card-link">Donate Now →</a>
                 </div>
             </div>
-
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                <div class="stub-card">
-                    <div class="stub-icon" style="background: rgba(217,119,6,0.15); color: #d97706;">
-                        <i class="fas fa-scale-balanced"></i>
-                    </div>
-                    <h3 class="stub-title">Economic Justice</h3>
-                    <p class="stub-desc">Closing wealth gaps, ensuring fair wages, and creating economic opportunity for marginalized communities.</p>
-                    <a href="/About#economic" class="btn-c4j-outline">Learn More</a>
+            <div class="col-md-4">
+                <div class="cta-card">
+                    <div class="cta-card-icon"><i class="fas fa-pen-nib"></i></div>
+                    <h4>Read Our Articles</h4>
+                    <p>Stay informed with opinion pieces and analysis from our community advocates.</p>
+                    <a href="/Opinion" class="cta-card-link">Read Now →</a>
                 </div>
             </div>
-
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                <div class="stub-card">
-                    <div class="stub-icon" style="background: rgba(14,165,233,0.15); color: #0ea5e9;">
-                        <i class="fas fa-heart-pulse"></i>
-                    </div>
-                    <h3 class="stub-title">Healthcare Justice</h3>
-                    <p class="stub-desc">Fighting for equitable access to quality healthcare and eliminating systemic health disparities.</p>
-                    <a href="/About#healthcare" class="btn-c4j-outline">Learn More</a>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
-                <div class="stub-card">
-                    <div class="stub-icon" style="background: rgba(22,163,74,0.15); color: #16a34a;">
-                        <i class="fas fa-leaf"></i>
-                    </div>
-                    <h3 class="stub-title">Environmental Justice</h3>
-                    <p class="stub-desc">Protecting vulnerable communities from environmental hazards and advancing climate equity.</p>
-                    <a href="/About#environmental" class="btn-c4j-outline">Learn More</a>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6 d-flex align-items-center justify-content-center" data-aos="fade-up" data-aos-delay="500">
-                <div class="text-center p-4">
-                    <p class="mb-3" style="color: var(--c4-text-muted);">More detailed content and articles coming soon.</p>
-                    <a href="/GetInvolved" class="btn-c4j">Get Involved</a>
-                </div>
-            </div>
-
         </div>
     </div>
 </section>

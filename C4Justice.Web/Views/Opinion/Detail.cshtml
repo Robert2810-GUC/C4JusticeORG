@@ -4,44 +4,46 @@
 }
 
 <!-- Page Hero -->
-<section class="page-hero" style="min-height:280px;">
-    <div class="page-hero-overlay"></div>
-    <div class="container-xl">
-        <div class="page-hero-content text-center" data-aos="fade-up">
-            <span class="page-hero-label">@Model.Category</span>
-            <h1 class="page-hero-title" style="font-size:clamp(1.6rem,4vw,2.8rem);max-width:800px;margin:0 auto;">@Model.Title</h1>
-            <div style="color:rgba(255,255,255,.6);font-size:.85rem;margin-top:12px;">
-                <i class="fas fa-calendar me-1"></i>@(Model.PublishedAt?.ToString("MMMM d, yyyy"))
-            </div>
+<section class="page-hero">
+    <div class="page-hero-content">
+        <span class="page-hero-label">@Model.Category</span>
+        <h1 class="page-hero-title" style="font-size:clamp(1.4rem,3.5vw,2.2rem);max-width:800px;margin:0 auto;">@Model.Title</h1>
+        <div style="color:rgba(255,255,255,.65);font-size:.875rem;margin-top:12px;">
+            <i class="fas fa-calendar me-1"></i>@(Model.PublishedAt?.ToString("MMMM d, yyyy"))
         </div>
+        <nav aria-label="breadcrumb" class="page-hero-breadcrumb mt-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/Opinion">Opinion</a></li>
+                <li class="breadcrumb-item active">Article</li>
+            </ol>
+        </nav>
     </div>
 </section>
 
-<section class="py-section">
+<section class="py-section" style="background:var(--white);">
     <div class="container-xl">
         <div class="row justify-content-center">
             <div class="col-lg-8">
 
                 @if (!string.IsNullOrWhiteSpace(Model.FeaturedImageUrl))
                 {
-                    <img src="@Model.FeaturedImageUrl" alt="@Model.Title" class="img-fluid rounded mb-4" style="width:100%;" />
+                    <img src="@Model.FeaturedImageUrl" alt="@Model.Title" class="img-fluid mb-4" style="width:100%;border-radius:3px;" />
                 }
 
                 <div class="article-content-body">
                     @Html.Raw(Model.Content)
                 </div>
 
-                <hr style="border-color:var(--c4-border);margin:40px 0;" />
+                <hr style="border-color:var(--border);margin:40px 0;" />
 
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-                    <a href="/Opinion" style="color:var(--c4-text-muted);text-decoration:none;font-size:.875rem;">
+                    <a href="/Opinion" style="color:var(--text-light);text-decoration:none;font-size:.875rem;font-weight:600;">
                         <i class="fas fa-arrow-left me-1"></i> Back to all articles
                     </a>
-                    <div class="d-flex gap-2">
-                        <a href="https://www.facebook.com/sharer/sharer.php?u=@(Uri.EscapeDataString($"{Context.Request.Scheme}://{Context.Request.Host}/Opinion/{Model.Slug}"))" target="_blank" class="btn-c4j-outline" style="padding:8px 16px;font-size:.8rem;">
-                            <i class="fab fa-facebook me-1"></i>Share
-                        </a>
-                    </div>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=@(Uri.EscapeDataString($"{Context.Request.Scheme}://{Context.Request.Host}/Opinion/{Model.Slug}"))" target="_blank" class="btn-outline-c4j" style="padding:8px 16px;font-size:.85rem;">
+                        <i class="fab fa-facebook me-1"></i>Share on Facebook
+                    </a>
                 </div>
             </div>
         </div>
