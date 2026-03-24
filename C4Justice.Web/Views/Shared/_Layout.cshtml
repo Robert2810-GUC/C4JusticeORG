@@ -55,7 +55,7 @@
                 <li><a href="/" class="@(ViewData["ActivePage"]?.ToString() == "Home" ? "active" : "")">Home</a></li>
                 <li><a href="/About" class="@(ViewData["ActivePage"]?.ToString() == "About" ? "active" : "")">About Us</a></li>
                 <li class="has-dropdown">
-                    <a href="/Issues" class="@(ViewData["ActivePage"]?.ToString() is "Issues" or "Opinion" or "Documents" ? "active" : "")">
+                    <a  class=" cursor-pointer @(ViewData["ActivePage"]?.ToString() is "Issues" or "Opinion" or "Documents" ? "active" : "")">
                         Issues <i class="fas fa-chevron-down ms-1" style="font-size:9px;"></i>
                     </a>
                     <ul class="dropdown-nav">

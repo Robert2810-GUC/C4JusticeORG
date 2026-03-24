@@ -1060,4 +1060,4 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-
 /* About page section backgrounds */
 .about-section { background: var(--white); padding: 64px 0; }
 .about-section-alt { background: var(--off-white); padding: 64px 0; }
-
+.cursor-pointer{cursor:pointer}
