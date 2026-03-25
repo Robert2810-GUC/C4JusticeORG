@@ -6,7 +6,7 @@
 <div class="row g-4">
 <div class="col-lg-8">
 <div class="admin-card">
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         <div class="mb-3">
             <label class="admin-form-label">Title *</label>
@@ -25,12 +25,13 @@
     </form>
 </div>
 </div>
+
 <div class="col-lg-4">
 <div class="admin-card">
     <h6 style="color:#e6edf3;font-weight:700;margin-bottom:16px;">Publish Settings</h6>
     <div class="mb-3">
         <label class="admin-form-label">Category</label>
-        <select asp-for="Category" class="admin-form-control">
+        <select asp-for="Category" class="admin-form-control" form="articleForm">
             <option value="General">General</option>
             <option value="Political">Political</option>
             <option value="Racial">Racial</option>
@@ -39,10 +40,25 @@
             <option value="Environmental">Environmental</option>
         </select>
     </div>
+
+    <!-- Featured Image Upload -->
     <div class="mb-3">
-        <label class="admin-form-label">Featured Image URL (optional)</label>
-        <input asp-for="FeaturedImageUrl" class="admin-form-control" placeholder="/uploads/..." />
+        <label class="admin-form-label">Featured Image</label>
+        <div id="imgDropZone" style="border:2px dashed rgba(255,255,255,0.15);border-radius:6px;padding:16px;text-align:center;cursor:pointer;transition:border-color 0.2s;background:rgba(255,255,255,0.03);">
+            <div id="imgPlaceholder">
+                <i class="fas fa-cloud-upload-alt" style="font-size:1.8rem;color:#8b949e;margin-bottom:8px;display:block;"></i>
+                <span style="font-size:12px;color:#8b949e;">Click or drag &amp; drop an image</span><br>
+                <span style="font-size:11px;color:#6e7681;">JPG, PNG, GIF, WebP — max 5 MB</span>
+            </div>
+            <img id="imgPreview" src="" alt="Preview" style="display:none;max-width:100%;max-height:180px;border-radius:4px;object-fit:cover;" />
+        </div>
+        <input type="file" id="FeaturedImage" name="FeaturedImage" accept="image/*" style="display:none;" />
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center;" id="imgActions" style="display:none!important;">
+            <button type="button" id="btnChangImg" class="btn-sm-admin btn-ghost-admin" style="font-size:11px;padding:5px 12px;display:none;">Change Image</button>
+            <button type="button" id="btnRemoveImg" class="btn-sm-admin" style="font-size:11px;padding:5px 12px;background:rgba(220,38,38,0.15);color:#fca5a5;border:1px solid rgba(220,38,38,0.3);border-radius:4px;display:none;">Remove</button>
+        </div>
     </div>
+
     <div class="d-flex align-items-center gap-2 mt-3">
         <input asp-for="IsPublished" type="checkbox" style="width:16px;height:16px;" />
         <label class="admin-form-label mb-0">Publish immediately</label>
@@ -60,6 +76,67 @@ tinymce.init({
     toolbar: 'undo redo | bold italic | bullist numlist | link | code',
     skin: 'oxide-dark', content_css: 'dark',
     height: 400, menubar: false
+});
+
+// ── Image Upload UI ──────────────────────────────────────
+const dropZone    = document.getElementById('imgDropZone');
+const fileInput   = document.getElementById('FeaturedImage');
+const imgPreview  = document.getElementById('imgPreview');
+const imgPlaceholder = document.getElementById('imgPlaceholder');
+const btnChange   = document.getElementById('btnChangImg');
+const btnRemove   = document.getElementById('btnRemoveImg');
+
+function showPreview(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        imgPreview.src = e.target.result;
+        imgPreview.style.display = 'block';
+        imgPlaceholder.style.display = 'none';
+        btnChange.style.display = 'inline-block';
+        btnRemove.style.display = 'inline-block';
+        dropZone.style.borderColor = 'rgba(200,169,81,0.5)';
+    };
+    reader.readAsDataURL(file);
+}
+
+dropZone.addEventListener('click', () => fileInput.click());
+
+dropZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropZone.style.borderColor = 'rgba(200,169,81,0.7)';
+});
+dropZone.addEventListener('dragleave', () => {
+    dropZone.style.borderColor = 'rgba(255,255,255,0.15)';
+});
+dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        // Assign to file input
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        fileInput.files = dt.files;
+        showPreview(file);
+    }
+    dropZone.style.borderColor = 'rgba(255,255,255,0.15)';
+});
+
+fileInput.addEventListener('change', () => {
+    if (fileInput.files.length) showPreview(fileInput.files[0]);
+});
+
+btnChange.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
+
+btnRemove.addEventListener('click', e => {
+    e.stopPropagation();
+    fileInput.value = '';
+    imgPreview.src = '';
+    imgPreview.style.display = 'none';
+    imgPlaceholder.style.display = 'block';
+    btnChange.style.display = 'none';
+    btnRemove.style.display = 'none';
+    dropZone.style.borderColor = 'rgba(255,255,255,0.15)';
 });
 </script>
 }

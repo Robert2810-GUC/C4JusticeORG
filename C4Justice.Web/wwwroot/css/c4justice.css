@@ -1060,4 +1060,16 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-
 /* About page section backgrounds */
 .about-section { background: var(--white); padding: 64px 0; }
 .about-section-alt { background: var(--off-white); padding: 64px 0; }
-.cursor-pointer{cursor:pointer}
+.cursor-pointer{cursor:pointer;}
+.at-photo-1 { background-image: url('/images/Home_aboutus/left.jpeg');background-size:cover; background-position:center;}
+
+.at-photo-2 {
+    background-image: url('/images/Home_aboutus/right.jpeg');
+    background-size: cover;
+    background-position: center;
+}
+.at-photo-3 {
+    background-image: url('/images/Home_aboutus/bottom.jpeg');
+    background-size: cover;
+    background-position: center;
+}
