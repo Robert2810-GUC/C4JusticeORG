@@ -86,22 +86,34 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label asp-for="Name" class="form-label-c4j">Full Name *</label>
-                                <input asp-for="Name" class="form-input-c4j" placeholder="Your full name" />
+                                <div class="input-icon-wrap">
+                                    <i class="fas fa-user fi"></i>
+                                    <input asp-for="Name" class="form-input-c4j" placeholder="Your full name" />
+                                </div>
                                 <span asp-validation-for="Name" class="form-error-c4j"></span>
                             </div>
                             <div class="col-md-6">
                                 <label asp-for="Email" class="form-label-c4j">Email Address *</label>
-                                <input asp-for="Email" class="form-input-c4j" placeholder="your@email.com" />
+                                <div class="input-icon-wrap">
+                                    <i class="fas fa-envelope fi"></i>
+                                    <input asp-for="Email" class="form-input-c4j" placeholder="your@email.com" />
+                                </div>
                                 <span asp-validation-for="Email" class="form-error-c4j"></span>
                             </div>
                             <div class="col-12">
                                 <label asp-for="Subject" class="form-label-c4j">Subject *</label>
-                                <input asp-for="Subject" class="form-input-c4j" placeholder="How can we help?" />
+                                <div class="input-icon-wrap">
+                                    <i class="fas fa-tag fi"></i>
+                                    <input asp-for="Subject" class="form-input-c4j" placeholder="How can we help?" />
+                                </div>
                                 <span asp-validation-for="Subject" class="form-error-c4j"></span>
                             </div>
                             <div class="col-12">
                                 <label asp-for="Message" class="form-label-c4j">Message *</label>
-                                <textarea asp-for="Message" class="form-input-c4j" rows="6" placeholder="Tell us more..."></textarea>
+                                <div class="input-icon-wrap">
+                                    <i class="fas fa-comment fi fi-top"></i>
+                                    <textarea asp-for="Message" class="form-input-c4j" rows="6" placeholder="Tell us more..."></textarea>
+                                </div>
                                 <span asp-validation-for="Message" class="form-error-c4j"></span>
                             </div>
                             <div class="col-12 mt-2">

@@ -163,45 +163,44 @@
                         </div>
                     }
 
-                    <form asp-action="Contact" asp-controller="GetInvolved" method="post" class="contact-form">
+                    <form asp-action="Contact" asp-controller="GetInvolved" method="post">
                         @Html.AntiForgeryToken()
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="form-floating-c4j">
-                                    <i class="fas fa-user form-icon"></i>
+                                <label asp-for="Name" class="form-label-c4j">Full Name *</label>
+                                <div class="input-icon-wrap">
+                                    <i class="fas fa-user fi"></i>
                                     <input asp-for="Name" class="form-input-c4j" placeholder="Your Full Name" />
-                                    <label>Full Name *</label>
-                                    <span asp-validation-for="Name" class="form-error"></span>
                                 </div>
+                                <span asp-validation-for="Name" class="form-error"></span>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-floating-c4j">
-                                    <i class="fas fa-envelope form-icon"></i>
-                                    <input asp-for="Email" class="form-input-c4j" placeholder="Your Email" />
-                                    <label>Email Address *</label>
-                                    <span asp-validation-for="Email" class="form-error"></span>
+                                <label asp-for="Email" class="form-label-c4j">Email Address *</label>
+                                <div class="input-icon-wrap">
+                                    <i class="fas fa-envelope fi"></i>
+                                    <input asp-for="Email" class="form-input-c4j" placeholder="your@email.com" />
                                 </div>
+                                <span asp-validation-for="Email" class="form-error"></span>
                             </div>
                             <div class="col-12">
-                                <div class="form-floating-c4j">
-                                    <i class="fas fa-tag form-icon"></i>
-                                    <input asp-for="Subject" class="form-input-c4j" placeholder="Subject" />
-                                    <label>Subject *</label>
-                                    <span asp-validation-for="Subject" class="form-error"></span>
+                                <label asp-for="Subject" class="form-label-c4j">Subject *</label>
+                                <div class="input-icon-wrap">
+                                    <i class="fas fa-tag fi"></i>
+                                    <input asp-for="Subject" class="form-input-c4j" placeholder="How can we help?" />
                                 </div>
+                                <span asp-validation-for="Subject" class="form-error"></span>
                             </div>
                             <div class="col-12">
-                                <div class="form-floating-c4j textarea-wrap">
-                                    <i class="fas fa-comment form-icon"></i>
-                                    <textarea asp-for="Message" class="form-input-c4j form-textarea-c4j" placeholder="Your message" rows="5"></textarea>
-                                    <label>Your Message *</label>
-                                    <span asp-validation-for="Message" class="form-error"></span>
+                                <label asp-for="Message" class="form-label-c4j">Your Message *</label>
+                                <div class="input-icon-wrap">
+                                    <i class="fas fa-comment fi fi-top"></i>
+                                    <textarea asp-for="Message" class="form-input-c4j" rows="5" placeholder="Tell us more..."></textarea>
                                 </div>
+                                <span asp-validation-for="Message" class="form-error"></span>
                             </div>
                             <div class="col-12 text-center mt-2">
-                                <button type="submit" class="btn btn-hero-primary btn-submit-contact">
-                                    <span>Send Message</span>
-                                    <i class="fas fa-paper-plane ms-2"></i>
+                                <button type="submit" class="btn-primary-c4j btn-submit-contact">
+                                    <i class="fas fa-paper-plane me-2"></i> Send Message
                                 </button>
                             </div>
                         </div>
