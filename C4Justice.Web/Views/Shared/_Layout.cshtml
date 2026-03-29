@@ -468,7 +468,7 @@
             if (nav) nav.classList.toggle('scrolled', window.scrollY > 10);
         });
 
-        // Mega menu — hover (desktop) / click (mobile)
+        // Mega menu — hover (desktop) + click toggle (both mobile & desktop)
         document.querySelectorAll('.has-mega').forEach(item => {
             const panel = item.querySelector('.mega-panel');
             if (!panel) return;
@@ -484,23 +484,22 @@
                 if (window.innerWidth >= 992) item.classList.remove('open');
             });
 
-            // Mobile: toggle on click of the top link
+            // ALL screen sizes: clicking the top label always shows dropdown, never navigates
             const topLink = item.querySelector(':scope > a');
             if (topLink) {
                 topLink.addEventListener('click', e => {
-                    if (window.innerWidth < 992) {
-                        e.preventDefault();
-                        const isOpen = item.classList.toggle('open');
-                        // close siblings
-                        document.querySelectorAll('.has-mega').forEach(o => {
-                            if (o !== item) o.classList.remove('open');
-                        });
-                    }
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const alreadyOpen = item.classList.contains('open');
+                    // close all others first
+                    document.querySelectorAll('.has-mega.open').forEach(o => o.classList.remove('open'));
+                    // toggle this one
+                    if (!alreadyOpen) item.classList.add('open');
                 });
             }
         });
 
-        // Close mega on outside click
+        // Close all megas when clicking anywhere outside
         document.addEventListener('click', e => {
             if (!e.target.closest('.has-mega')) {
                 document.querySelectorAll('.has-mega.open').forEach(o => o.classList.remove('open'));
