@@ -50,23 +50,315 @@
             <button class="nav-toggler" id="navToggler" aria-label="Toggle navigation" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
+
             <ul class="nav-links" id="navLinks">
-                <li><a href="/" class="@(ViewData["ActivePage"]?.ToString() == "Home" ? "active" : "")">Home</a></li>
-                <li><a href="/About" class="@(ViewData["ActivePage"]?.ToString() == "About" ? "active" : "")">About Us</a></li>
-                <li class="has-dropdown">
-                    <a  class=" cursor-pointer @(ViewData["ActivePage"]?.ToString() is "Issues" or "Opinion" or "Documents" ? "active" : "")">
-                        Issues <i class="fas fa-chevron-down ms-1" style="font-size:9px;"></i>
-                    </a>
-                    <ul class="dropdown-nav">
-                        <li><a href="/Issues"><i class="fas fa-bullhorn me-2"></i>Focus Areas</a></li>
-                        <li><a href="/Opinion"><i class="fas fa-pen-nib me-2"></i>Opinion / Essays</a></li>
-                        <li><a href="/Documents"><i class="fas fa-file-lines me-2"></i>Documents</a></li>
-                    </ul>
+
+                <!-- Home -->
+                <li>
+                    <a href="/" class="@(ViewData["ActivePage"]?.ToString() == "Home" ? "active" : "")">Home</a>
                 </li>
-                <li><a href="/Events" class="@(ViewData["ActivePage"]?.ToString() == "Events" ? "active" : "")">Events</a></li>
-                <li><a href="/GetInvolved" class="@(ViewData["ActivePage"]?.ToString() == "GetInvolved" ? "active" : "")">Get Involved</a></li>
-                <li><a href="/Contact" class="@(ViewData["ActivePage"]?.ToString() == "Contact" ? "active" : "")">Contact</a></li>
+
+                <!-- About Us -->
+                <li class="has-mega">
+                    <a href="/About" class="@(ViewData["ActivePage"]?.ToString() == "About" ? "active" : "")">
+                        About Us <i class="fas fa-chevron-down nav-caret"></i>
+                    </a>
+                    <div class="mega-panel">
+                        <div class="mega-grid">
+                            <!-- Col 1: Overview -->
+                            <div class="mega-overview">
+                                <span class="mega-ov-label">About Us</span>
+                                <h3 class="mega-ov-title">Who We Are</h3>
+                                <p class="mega-ov-text">A social justice platform uniting communities to fight for political, racial, economic, healthcare, and environmental justice.</p>
+                                <a href="/About" class="mega-ov-link">Explore About Us &rarr;</a>
+                            </div>
+                            <!-- Col 2: Main Links -->
+                            <div class="mega-col">
+                                <div class="mega-col-label">Our Organization</div>
+                                <a href="/About#mission" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(27,79,145,0.1);color:var(--navy)"><i class="fas fa-bullseye"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Our Mission</span><span class="mega-item-desc">Learn about our vision and purpose.</span></div>
+                                </a>
+                                <a href="/About" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(200,169,81,0.15);color:#a07a10"><i class="fas fa-people-group"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Our Team</span><span class="mega-item-desc">Meet the people behind our work.</span></div>
+                                </a>
+                                <a href="/About" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(22,163,74,0.1);color:#16a34a"><i class="fas fa-book-open"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Our Story</span><span class="mega-item-desc">Understand our journey and growth.</span></div>
+                                </a>
+                                <a href="/GetInvolved" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(220,38,38,0.1);color:#dc2626"><i class="fas fa-handshake"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Partners</span><span class="mega-item-desc">Organizations we collaborate with.</span></div>
+                                </a>
+                                <a href="/Contact" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(109,40,217,0.1);color:#7c3aed"><i class="fas fa-briefcase"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Careers</span><span class="mega-item-desc">Explore opportunities to work with us.</span></div>
+                                </a>
+                            </div>
+                            <!-- Col 3: Quick Actions -->
+                            <div class="mega-col mega-col-alt">
+                                <div class="mega-col-label">Quick Actions</div>
+                                <a href="/Contact" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-envelope"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Contact Us</span><span class="mega-alt-desc">Send us a message.</span></div>
+                                </a>
+                                <a href="/GetInvolved" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-hands-helping"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Get Involved</span><span class="mega-alt-desc">Join the movement.</span></div>
+                                </a>
+                                <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-heart"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Donate</span><span class="mega-alt-desc">Support our 501(c)(3) fund.</span></div>
+                                </a>
+                                <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fab fa-facebook-f"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Follow Us</span><span class="mega-alt-desc">Stay connected on Facebook.</span></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Issues -->
+                <li class="has-mega">
+                    <a class="cursor-pointer @(ViewData["ActivePage"]?.ToString() is "Issues" or "Opinion" or "Documents" ? "active" : "")">
+                        Issues <i class="fas fa-chevron-down nav-caret"></i>
+                    </a>
+                    <div class="mega-panel">
+                        <div class="mega-grid">
+                            <div class="mega-overview">
+                                <span class="mega-ov-label">Issues</span>
+                                <h3 class="mega-ov-title">Issues Overview</h3>
+                                <p class="mega-ov-text">We focus on the most pressing challenges affecting our communities. Through awareness, advocacy, and action, we create meaningful impact.</p>
+                                <a href="/Issues" class="mega-ov-link">All Focus Areas &rarr;</a>
+                            </div>
+                            <div class="mega-col">
+                                <div class="mega-col-label">Focus Areas</div>
+                                <a href="/Issues#political" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(27,79,145,0.1);color:var(--navy)"><i class="fas fa-landmark"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Political Justice</span><span class="mega-item-desc">Fighting gerrymandering, voter suppression, and authoritarianism.</span></div>
+                                </a>
+                                <a href="/Issues#racial" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(185,28,28,0.1);color:#b91c1c"><i class="fas fa-people-group"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Racial Justice</span><span class="mega-item-desc">Eliminating disparities and fighting white supremacy.</span></div>
+                                </a>
+                                <a href="/Issues#economic" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(217,119,6,0.1);color:#d97706"><i class="fas fa-scale-balanced"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Economic Justice</span><span class="mega-item-desc">Supporting equal opportunity and fair economic growth.</span></div>
+                                </a>
+                                <a href="/Issues#healthcare" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(220,38,38,0.1);color:#dc2626"><i class="fas fa-heart-pulse"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Healthcare Justice</span><span class="mega-item-desc">Advocating for affordable, equitable healthcare access.</span></div>
+                                </a>
+                                <a href="/Issues#environmental" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(22,163,74,0.1);color:#16a34a"><i class="fas fa-leaf"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Environmental Justice</span><span class="mega-item-desc">Protecting communities from environmental hazards.</span></div>
+                                </a>
+                            </div>
+                            <div class="mega-col mega-col-alt">
+                                <div class="mega-col-label">Resources</div>
+                                <a href="/Documents" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-file-lines"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Reports &amp; Publications</span><span class="mega-alt-desc">In-depth insights on key issues.</span></div>
+                                </a>
+                                <a href="/Documents" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-database"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Research &amp; Data</span><span class="mega-alt-desc">Statistics, studies, and analytical reports.</span></div>
+                                </a>
+                                <a href="/Opinion" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-newspaper"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Latest News</span><span class="mega-alt-desc">Current developments and announcements.</span></div>
+                                </a>
+                                <a href="/Events" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-calendar"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Upcoming Events</span><span class="mega-alt-desc">Events related to ongoing initiatives.</span></div>
+                                </a>
+                                <a href="/Opinion" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-folder-open"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Case Studies</span><span class="mega-alt-desc">Real-world examples of impact and success.</span></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Events -->
+                <li class="has-mega">
+                    <a href="/Events" class="@(ViewData["ActivePage"]?.ToString() == "Events" ? "active" : "")">
+                        Events <i class="fas fa-chevron-down nav-caret"></i>
+                    </a>
+                    <div class="mega-panel">
+                        <div class="mega-grid">
+                            <div class="mega-overview">
+                                <span class="mega-ov-label">Events</span>
+                                <h3 class="mega-ov-title">Stay Engaged</h3>
+                                <p class="mega-ov-text">Stay engaged with our latest activities, programs, and community initiatives. Together we create lasting change.</p>
+                                <a href="/Events" class="mega-ov-link">All Events &rarr;</a>
+                            </div>
+                            <div class="mega-col">
+                                <div class="mega-col-label">Event Types</div>
+                                <a href="/Events" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(27,79,145,0.1);color:var(--navy)"><i class="fas fa-calendar-plus"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Upcoming Events</span><span class="mega-item-desc">Discover what's happening next.</span></div>
+                                </a>
+                                <a href="/Events#past" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(107,114,128,0.1);color:#6b7280"><i class="fas fa-clock-rotate-left"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Past Events</span><span class="mega-item-desc">Highlights from previous events.</span></div>
+                                </a>
+                                <a href="/Events" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(217,119,6,0.1);color:#d97706"><i class="fas fa-chalkboard-user"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Workshops</span><span class="mega-item-desc">Interactive sessions for learning and growth.</span></div>
+                                </a>
+                                <a href="/Events" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(109,40,217,0.1);color:#7c3aed"><i class="fas fa-video"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Webinars</span><span class="mega-item-desc">Online discussions and expert talks.</span></div>
+                                </a>
+                                <a href="/GetInvolved" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(220,38,38,0.1);color:#dc2626"><i class="fas fa-bullhorn"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Campaigns</span><span class="mega-item-desc">Awareness and action-driven campaigns.</span></div>
+                                </a>
+                            </div>
+                            <div class="mega-col mega-col-alt">
+                                <div class="mega-col-label">More</div>
+                                <a href="/Events" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-star"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Featured Event</span><span class="mega-alt-desc">Don't miss our most important event.</span></div>
+                                </a>
+                                <a href="/Events" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-calendar-days"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Event Calendar</span><span class="mega-alt-desc">View all events in one place.</span></div>
+                                </a>
+                                <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-images"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Photo Gallery</span><span class="mega-alt-desc">Moments from our events.</span></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Get Involved -->
+                <li class="has-mega">
+                    <a href="/GetInvolved" class="@(ViewData["ActivePage"]?.ToString() == "GetInvolved" ? "active" : "")">
+                        Get Involved <i class="fas fa-chevron-down nav-caret"></i>
+                    </a>
+                    <div class="mega-panel">
+                        <div class="mega-grid">
+                            <div class="mega-overview">
+                                <span class="mega-ov-label">Get Involved</span>
+                                <h3 class="mega-ov-title">Be Part of the Change</h3>
+                                <p class="mega-ov-text">Join our efforts to create a better future through active participation and support. Every action matters.</p>
+                                <a href="/GetInvolved" class="mega-ov-link">All Ways to Help &rarr;</a>
+                            </div>
+                            <div class="mega-col">
+                                <div class="mega-col-label">Take Action</div>
+                                <a href="/GetInvolved#volunteer" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(27,79,145,0.1);color:var(--navy)"><i class="fas fa-hands-helping"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Volunteer</span><span class="mega-item-desc">Contribute your time and skills to our initiatives.</span></div>
+                                </a>
+                                <a href="/Contact#mailing-list" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(22,163,74,0.1);color:#16a34a"><i class="fas fa-user-plus"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Become a Member</span><span class="mega-item-desc">Join and stay connected with our mission.</span></div>
+                                </a>
+                                <a href="/Contact" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(109,40,217,0.1);color:#7c3aed"><i class="fas fa-building"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Partner With Us</span><span class="mega-item-desc">Collaborate to create greater impact together.</span></div>
+                                </a>
+                                <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(200,169,81,0.15);color:#a07a10"><i class="fas fa-heart"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Donate</span><span class="mega-item-desc">Support our work through contributions.</span></div>
+                                </a>
+                                <a href="/Events" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(220,38,38,0.1);color:#dc2626"><i class="fas fa-calendar-check"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Attend Events</span><span class="mega-item-desc">Participate in events, workshops, campaigns.</span></div>
+                                </a>
+                            </div>
+                            <div class="mega-col mega-col-alt">
+                                <div class="mega-col-label">Learn More</div>
+                                <a href="/About" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-star"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Success Stories</span><span class="mega-alt-desc">How individuals are making a difference.</span></div>
+                                </a>
+                                <a href="/GetInvolved" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-list-check"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Volunteer Guidelines</span><span class="mega-alt-desc">What you need to know before starting.</span></div>
+                                </a>
+                                <a href="/Contact" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-circle-question"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">FAQs</span><span class="mega-alt-desc">Answers to common participation questions.</span></div>
+                                </a>
+                                <a href="/About" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-chart-bar"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Community Impact</span><span class="mega-alt-desc">Outcomes of our collective efforts.</span></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Resources -->
+                <li class="has-mega">
+                    <a class="cursor-pointer @(ViewData["ActivePage"]?.ToString() is "Documents" or "Opinion" ? "active" : "")">
+                        Resources <i class="fas fa-chevron-down nav-caret"></i>
+                    </a>
+                    <div class="mega-panel">
+                        <div class="mega-grid">
+                            <div class="mega-overview">
+                                <span class="mega-ov-label">Resources</span>
+                                <h3 class="mega-ov-title">Stay Informed &amp; Empowered</h3>
+                                <p class="mega-ov-text">Access valuable information, tools, and insights to stay informed and empowered in the fight for justice.</p>
+                                <a href="/Documents" class="mega-ov-link">Browse All Resources &rarr;</a>
+                            </div>
+                            <div class="mega-col">
+                                <div class="mega-col-label">Content</div>
+                                <a href="/Opinion" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(27,79,145,0.1);color:var(--navy)"><i class="fas fa-pen-nib"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Blog &amp; Articles</span><span class="mega-item-desc">Expert insights and thought leadership.</span></div>
+                                </a>
+                                <a href="/Documents" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(217,119,6,0.1);color:#d97706"><i class="fas fa-file-lines"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Reports &amp; Publications</span><span class="mega-item-desc">Download detailed reports and documents.</span></div>
+                                </a>
+                                <a href="/Contact" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(22,163,74,0.1);color:#16a34a"><i class="fas fa-microphone"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Media &amp; Press</span><span class="mega-item-desc">Official announcements and media coverage.</span></div>
+                                </a>
+                                <a href="/Documents" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(109,40,217,0.1);color:#7c3aed"><i class="fas fa-toolbox"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Toolkits &amp; Guides</span><span class="mega-item-desc">Practical resources to take action.</span></div>
+                                </a>
+                                <a href="/Contact#mailing-list" class="mega-item">
+                                    <div class="mega-icon" style="background:rgba(220,38,38,0.1);color:#dc2626"><i class="fas fa-envelope-open-text"></i></div>
+                                    <div class="mega-item-body"><span class="mega-item-title">Newsletters</span><span class="mega-item-desc">Stay updated with our latest news.</span></div>
+                                </a>
+                            </div>
+                            <div class="mega-col mega-col-alt">
+                                <div class="mega-col-label">More</div>
+                                <a href="/Documents" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-download"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Download Center</span><span class="mega-alt-desc">Access all downloadable materials.</span></div>
+                                </a>
+                                <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-video"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Video Library</span><span class="mega-alt-desc">Recorded sessions and informational videos.</span></div>
+                                </a>
+                                <a href="/About" class="mega-alt-item">
+                                    <div class="mega-alt-icon"><i class="fas fa-users"></i></div>
+                                    <div class="mega-alt-body"><span class="mega-alt-title">Community Stories</span><span class="mega-alt-desc">Real stories from people we've impacted.</span></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Contact -->
+                <li>
+                    <a href="/Contact" class="@(ViewData["ActivePage"]?.ToString() == "Contact" ? "active" : "")">Contact</a>
+                </li>
+
             </ul>
+
             <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="nav-donate">
                 <i class="fas fa-heart me-1"></i> Donate
             </a>
@@ -164,27 +456,55 @@
         if (toggler && navLinks) {
             toggler.addEventListener('click', () => {
                 const expanded = toggler.getAttribute('aria-expanded') === 'true';
-                toggler.setAttribute('aria-expanded', !expanded);
+                toggler.setAttribute('aria-expanded', String(!expanded));
                 navLinks.classList.toggle('open');
+                toggler.classList.toggle('open');
             });
         }
-        // Sticky nav
+
+        // Sticky nav shadow
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('siteNav');
             if (nav) nav.classList.toggle('scrolled', window.scrollY > 10);
         });
-        // Dropdown on hover (desktop) / click (mobile)
-        document.querySelectorAll('.has-dropdown').forEach(item => {
+
+        // Mega menu — hover (desktop) / click (mobile)
+        document.querySelectorAll('.has-mega').forEach(item => {
+            const panel = item.querySelector('.mega-panel');
+            if (!panel) return;
+
+            // Desktop: open on hover
             item.addEventListener('mouseenter', () => {
-                if (window.innerWidth >= 768) item.classList.add('open');
+                if (window.innerWidth >= 992) {
+                    document.querySelectorAll('.has-mega.open').forEach(o => o !== item && o.classList.remove('open'));
+                    item.classList.add('open');
+                }
             });
             item.addEventListener('mouseleave', () => {
-                if (window.innerWidth >= 768) item.classList.remove('open');
+                if (window.innerWidth >= 992) item.classList.remove('open');
             });
-            const link = item.querySelector('a');
-            if (link) link.addEventListener('click', e => {
-                if (window.innerWidth < 768) { e.preventDefault(); item.classList.toggle('open'); }
-            });
+
+            // Mobile: toggle on click of the top link
+            const topLink = item.querySelector(':scope > a');
+            if (topLink) {
+                topLink.addEventListener('click', e => {
+                    if (window.innerWidth < 992) {
+                        e.preventDefault();
+                        const isOpen = item.classList.toggle('open');
+                        // close siblings
+                        document.querySelectorAll('.has-mega').forEach(o => {
+                            if (o !== item) o.classList.remove('open');
+                        });
+                    }
+                });
+            }
+        });
+
+        // Close mega on outside click
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.has-mega')) {
+                document.querySelectorAll('.has-mega.open').forEach(o => o.classList.remove('open'));
+            }
         });
     </script>
 

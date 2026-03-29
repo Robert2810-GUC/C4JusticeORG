@@ -177,30 +177,128 @@ a:hover { text-decoration: underline; }
     text-decoration: none;
 }
 
-.dropdown-nav {
-    position: absolute;
-    top: 100%; left: 0;
-    background: var(--navy-dark);
-    min-width: 200px;
-    list-style: none;
-    padding: 6px 0;
-    border-top: 2px solid var(--gold);
-    box-shadow: var(--shadow-md);
-    display: none;
-    z-index: 400;
+/* ── Nav caret icon ─────────────────────────────────────────── */
+.nav-caret {
+    font-size: 9px; margin-left: 4px;
+    transition: transform 0.2s;
+    vertical-align: middle;
 }
-.has-dropdown.open .dropdown-nav { display: block; }
-.dropdown-nav li a {
-    display: block;
-    padding: 9px 16px;
-    color: rgba(255,255,255,0.85);
-    font-size: 13px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: var(--transition);
-}
-.dropdown-nav li a:hover { background: rgba(255,255,255,0.1); color: white; padding-left: 20px; text-decoration: none; }
+.has-mega.open > a .nav-caret { transform: rotate(180deg); }
 
+/* ── Mega Menu Panel ─────────────────────────────────────────── */
+.has-mega { position: static !important; }
+
+.mega-panel {
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    background: var(--white);
+    border-top: 3px solid var(--gold);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+    display: none;
+    z-index: 450;
+    animation: megaFadeIn 0.18s ease;
+}
+@keyframes megaFadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.has-mega.open .mega-panel { display: block; }
+
+/* 3-column grid */
+.mega-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr 220px;
+    max-width: 1320px;
+    margin: 0 auto;
+    min-height: 300px;
+}
+
+/* ── Col 1 — Overview (navy) ─────────────────────────────────── */
+.mega-overview {
+    background: var(--navy);
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+.mega-ov-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.6px;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
+}
+.mega-ov-title {
+    font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700;
+    color: #fff; margin-bottom: 12px; line-height: 1.3;
+}
+.mega-ov-text {
+    font-size: .82rem; color: rgba(255,255,255,0.68); line-height: 1.65;
+    flex: 1; margin-bottom: 20px;
+}
+.mega-ov-link {
+    display: inline-block; font-size: .8rem; font-weight: 700;
+    color: var(--gold); text-decoration: none;
+    border-top: 1px solid rgba(255,255,255,0.12); padding-top: 14px;
+    margin-top: auto;
+}
+.mega-ov-link:hover { color: #fff; text-decoration: none; }
+
+/* ── Col 2 — Main items ──────────────────────────────────────── */
+.mega-col {
+    padding: 20px 20px;
+    border-right: 1px solid var(--border);
+}
+.mega-col:last-child { border-right: none; }
+.mega-col-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--text-muted);
+    margin-bottom: 10px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Individual mega item (link) */
+.mega-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 7px 8px; border-radius: 5px;
+    text-decoration: none; transition: background 0.15s;
+    margin-bottom: 2px;
+}
+.mega-item:hover { background: var(--off-white); text-decoration: none; }
+.mega-icon {
+    width: 30px; height: 30px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; flex-shrink: 0; margin-top: 1px;
+}
+.mega-item-body { display: flex; flex-direction: column; }
+.mega-item-title {
+    font-size: .8rem; font-weight: 700; color: var(--text);
+    line-height: 1.2; margin-bottom: 2px;
+}
+.mega-item-desc { font-size: .7rem; color: var(--text-muted); line-height: 1.3; }
+.mega-item:hover .mega-item-title { color: var(--navy); }
+
+/* ── Col 3 — Secondary (off-white) ──────────────────────────── */
+.mega-col-alt { background: var(--off-white); }
+
+.mega-alt-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 7px 8px; border-radius: 5px;
+    text-decoration: none; transition: background 0.15s; margin-bottom: 2px;
+}
+.mega-alt-item:hover { background: rgba(0,0,0,0.05); text-decoration: none; }
+.mega-alt-icon {
+    width: 28px; height: 28px; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .72rem; flex-shrink: 0; margin-top: 1px;
+    background: rgba(27,79,145,0.1); color: var(--navy);
+}
+.mega-alt-body { display: flex; flex-direction: column; }
+.mega-alt-title {
+    font-size: .78rem; font-weight: 700; color: var(--text);
+    line-height: 1.2; margin-bottom: 2px;
+}
+.mega-alt-desc { font-size: .69rem; color: var(--text-muted); line-height: 1.3; }
+.mega-alt-item:hover .mega-alt-title { color: var(--navy); }
+
+/* ── Donate button ───────────────────────────────────────────── */
 .nav-donate {
     background: var(--gold);
     color: var(--navy-dark) !important;
@@ -211,9 +309,11 @@ a:hover { text-decoration: underline; }
     text-decoration: none;
     transition: var(--transition);
     white-space: nowrap;
+    flex-shrink: 0;
 }
 .nav-donate:hover { background: var(--gold-dark); color: var(--navy-dark); text-decoration: none; }
 
+/* ── Hamburger ───────────────────────────────────────────────── */
 .nav-toggler {
     display: none;
     flex-direction: column;
@@ -228,25 +328,62 @@ a:hover { text-decoration: underline; }
     border-radius: 2px;
     transition: var(--transition);
 }
+/* Animate to X when open */
+.nav-toggler.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggler.open span:nth-child(2) { opacity: 0; }
+.nav-toggler.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-@media (max-width: 767px) {
+/* ── Mobile responsive ───────────────────────────────────────── */
+@media (max-width: 991px) {
     .nav-toggler { display: flex; }
+    .nav-donate { display: none; }   /* hidden on mobile — shown in mobile menu */
+
     .nav-links {
         position: absolute;
         top: 100%; left: 0; right: 0;
         background: var(--navy-dark);
         flex-direction: column;
         align-items: stretch;
-        padding: 8px 0;
+        padding: 8px 0 16px;
         display: none;
         z-index: 500;
         box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        max-height: 80vh;
+        overflow-y: auto;
     }
     .nav-links.open { display: flex; }
-    .nav-links > li > a { padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.08) !important; }
-    .dropdown-nav { position: static; box-shadow: none; border-top: none; background: rgba(0,0,0,0.2); display: none; }
-    .has-dropdown.open .dropdown-nav { display: block; }
-    .nav-donate { margin: 10px 16px 14px; display: block; text-align: center; }
+    .nav-links > li > a {
+        padding: 12px 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+        justify-content: space-between; display: flex; align-items: center;
+    }
+
+    /* Mobile mega panel — accordion */
+    .mega-panel {
+        position: static;
+        border-top: none;
+        box-shadow: none;
+        animation: none;
+        background: rgba(0,0,0,0.2);
+    }
+    .mega-grid {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+    .mega-overview { display: none; }  /* hide overview col on mobile */
+    .mega-col, .mega-col-alt {
+        background: transparent;
+        padding: 8px 16px;
+        border-right: none;
+        border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .mega-col-label { color: rgba(255,255,255,0.45); border-color: rgba(255,255,255,0.1); }
+    .mega-item, .mega-alt-item { padding: 6px 8px; }
+    .mega-item-title, .mega-alt-title { color: rgba(255,255,255,0.9); font-size: .8rem; }
+    .mega-item-desc, .mega-alt-desc { color: rgba(255,255,255,0.5); }
+    .mega-item:hover, .mega-alt-item:hover { background: rgba(255,255,255,0.06); }
+    .mega-icon { background: rgba(255,255,255,0.12) !important; color: var(--gold) !important; }
+    .mega-alt-icon { background: rgba(255,255,255,0.12) !important; color: var(--gold) !important; }
 }
 
 /* ============================================================
