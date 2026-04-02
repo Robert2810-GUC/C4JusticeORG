@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using C4Justice.Web.Data;
 using C4Justice.Web.Models;
+using C4Justice.Web.Services;
 using C4Justice.Web.Areas.Admin.Filters;
 
 namespace C4Justice.Web.Areas.Admin.Controllers
@@ -10,12 +11,12 @@ namespace C4Justice.Web.Areas.Admin.Controllers
     public class SliderController : Controller
     {
         private readonly AppDbContext _db;
-        private readonly IWebHostEnvironment _env;
+        private readonly ICloudinaryService _cloudinary;
 
-        public SliderController(AppDbContext db, IWebHostEnvironment env)
+        public SliderController(AppDbContext db, ICloudinaryService cloudinary)
         {
             _db = db;
-            _env = env;
+            _cloudinary = cloudinary;
         }
 
         public IActionResult Index()
@@ -29,12 +30,8 @@ namespace C4Justice.Web.Areas.Admin.Controllers
         {
             if (imageFile != null && imageFile.Length > 0)
             {
-                var ext = Path.GetExtension(imageFile.FileName).ToLower();
-                var fileName = $"slider_{Guid.NewGuid():N}{ext}";
-                var filePath = Path.Combine(_env.WebRootPath, "uploads", "slider", fileName);
-                using var stream = new FileStream(filePath, FileMode.Create);
-                await imageFile.CopyToAsync(stream);
-                model.ImageUrl = $"/uploads/slider/{fileName}";
+                var url = await _cloudinary.UploadImageAsync(imageFile, "c4justice/slider");
+                if (url != null) model.ImageUrl = url;
             }
 
             if (string.IsNullOrWhiteSpace(model.ImageUrl))
@@ -62,7 +59,15 @@ namespace C4Justice.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var item = await _db.SliderImages.FindAsync(id);
-            if (item != null) { _db.SliderImages.Remove(item); await _db.SaveChangesAsync(); }
+            if (item != null)
+            {
+                // Delete from Cloudinary too
+                if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                    await _cloudinary.DeleteAsync(item.ImageUrl);
+
+                _db.SliderImages.Remove(item);
+                await _db.SaveChangesAsync();
+            }
             TempData["Success"] = "Slider image deleted.";
             return RedirectToAction(nameof(Index));
         }

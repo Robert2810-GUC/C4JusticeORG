@@ -25,9 +25,6 @@ WORKDIR /app
 # Copy published output from build stage
 COPY --from=build /app/publish .
 
-# Create upload directories that the app writes to at runtime
-RUN mkdir -p wwwroot/uploads/slider wwwroot/uploads/documents wwwroot/uploads/articles
-
 # Render injects the PORT env variable dynamically.
 # ASP.NET Core reads ASPNETCORE_URLS, so we set it at container start.
 # The connection string is provided via the environment variable

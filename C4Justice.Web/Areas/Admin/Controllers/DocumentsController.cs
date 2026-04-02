@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using C4Justice.Web.Data;
 using C4Justice.Web.Models;
+using C4Justice.Web.Services;
 using C4Justice.Web.Areas.Admin.Filters;
 
 namespace C4Justice.Web.Areas.Admin.Controllers
@@ -10,12 +11,12 @@ namespace C4Justice.Web.Areas.Admin.Controllers
     public class DocumentsController : Controller
     {
         private readonly AppDbContext _db;
-        private readonly IWebHostEnvironment _env;
+        private readonly ICloudinaryService _cloudinary;
 
-        public DocumentsController(AppDbContext db, IWebHostEnvironment env)
+        public DocumentsController(AppDbContext db, ICloudinaryService cloudinary)
         {
             _db = db;
-            _env = env;
+            _cloudinary = cloudinary;
         }
 
         public IActionResult Index()
@@ -34,16 +35,18 @@ namespace C4Justice.Web.Areas.Admin.Controllers
             }
 
             var ext = Path.GetExtension(docFile.FileName).ToLower();
-            var fileName = $"doc_{Guid.NewGuid():N}{ext}";
-            var filePath = Path.Combine(_env.WebRootPath, "uploads", "documents", fileName);
+            var url = await _cloudinary.UploadRawAsync(docFile, "c4justice/documents");
 
-            using var stream = new FileStream(filePath, FileMode.Create);
-            await docFile.CopyToAsync(stream);
+            if (url == null)
+            {
+                ModelState.AddModelError("", "Upload failed. Please try again.");
+                return View(model);
+            }
 
-            model.FileUrl = $"/uploads/documents/{fileName}";
-            model.FileName = docFile.FileName;
-            model.FileType = ext.TrimStart('.');
-            model.FileSize = docFile.Length;
+            model.FileUrl   = url;
+            model.FileName  = docFile.FileName;
+            model.FileType  = ext.TrimStart('.');
+            model.FileSize  = docFile.Length;
             model.CreatedAt = DateTime.UtcNow;
             if (model.IsPublished) model.PublishedAt = DateTime.UtcNow;
 
@@ -76,7 +79,16 @@ namespace C4Justice.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var item = await _db.Documents.FindAsync(id);
-            if (item != null) { _db.Documents.Remove(item); await _db.SaveChangesAsync(); }
+            if (item != null)
+            {
+                if (!string.IsNullOrWhiteSpace(item.FileUrl)
+                    && item.FileUrl.Contains("cloudinary.com"))
+                {
+                    await _cloudinary.DeleteAsync(item.FileUrl, isRaw: true);
+                }
+                _db.Documents.Remove(item);
+                await _db.SaveChangesAsync();
+            }
             TempData["Success"] = "Document deleted.";
             return RedirectToAction(nameof(Index));
         }

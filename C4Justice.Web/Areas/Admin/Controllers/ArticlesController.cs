@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using C4Justice.Web.Data;
 using C4Justice.Web.Models;
 using C4Justice.Web.Helpers;
+using C4Justice.Web.Services;
 using C4Justice.Web.Areas.Admin.Filters;
 
 namespace C4Justice.Web.Areas.Admin.Controllers
@@ -11,12 +12,12 @@ namespace C4Justice.Web.Areas.Admin.Controllers
     public class ArticlesController : Controller
     {
         private readonly AppDbContext _db;
-        private readonly IWebHostEnvironment _env;
+        private readonly ICloudinaryService _cloudinary;
 
-        public ArticlesController(AppDbContext db, IWebHostEnvironment env)
+        public ArticlesController(AppDbContext db, ICloudinaryService cloudinary)
         {
             _db = db;
-            _env = env;
+            _cloudinary = cloudinary;
         }
 
         public IActionResult Index()
@@ -32,11 +33,10 @@ namespace C4Justice.Web.Areas.Admin.Controllers
             ModelState.Remove("FeaturedImageUrl");
             if (!ModelState.IsValid) return View(model);
 
-            // Handle image upload
             if (FeaturedImage != null && FeaturedImage.Length > 0)
             {
-                var uploadUrl = await SaveArticleImageAsync(FeaturedImage);
-                if (uploadUrl != null) model.FeaturedImageUrl = uploadUrl;
+                var url = await _cloudinary.UploadImageAsync(FeaturedImage, "c4justice/articles");
+                if (url != null) model.FeaturedImageUrl = url;
             }
 
             model.Slug = AuthHelper.GenerateSlug(model.Title);
@@ -78,25 +78,20 @@ namespace C4Justice.Web.Areas.Admin.Controllers
             existing.Category  = model.Category;
             existing.UpdatedAt = DateTime.UtcNow;
 
-            // If a new image was uploaded, save it (replacing old one if present)
             if (newImage != null && newImage.Length > 0)
             {
-                // Delete old image file if it lives in our uploads folder
+                // Delete old image from Cloudinary if it lives there
                 if (!string.IsNullOrWhiteSpace(existing.FeaturedImageUrl)
-                    && existing.FeaturedImageUrl.StartsWith("/uploads/articles/"))
+                    && existing.FeaturedImageUrl.Contains("cloudinary.com"))
                 {
-                    var oldPath = Path.Combine(_env.WebRootPath,
-                        existing.FeaturedImageUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
-                    if (System.IO.File.Exists(oldPath))
-                        System.IO.File.Delete(oldPath);
+                    await _cloudinary.DeleteAsync(existing.FeaturedImageUrl);
                 }
 
-                var uploadUrl = await SaveArticleImageAsync(newImage);
-                if (uploadUrl != null) existing.FeaturedImageUrl = uploadUrl;
+                var url = await _cloudinary.UploadImageAsync(newImage, "c4justice/articles");
+                if (url != null) existing.FeaturedImageUrl = url;
             }
             else if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl))
             {
-                // User manually typed/kept a URL in the hidden field
                 existing.FeaturedImageUrl = model.FeaturedImageUrl;
             }
 
@@ -113,7 +108,16 @@ namespace C4Justice.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var item = await _db.Articles.FindAsync(id);
-            if (item != null) { _db.Articles.Remove(item); await _db.SaveChangesAsync(); }
+            if (item != null)
+            {
+                if (!string.IsNullOrWhiteSpace(item.FeaturedImageUrl)
+                    && item.FeaturedImageUrl.Contains("cloudinary.com"))
+                {
+                    await _cloudinary.DeleteAsync(item.FeaturedImageUrl);
+                }
+                _db.Articles.Remove(item);
+                await _db.SaveChangesAsync();
+            }
             TempData["Success"] = "Article deleted.";
             return RedirectToAction(nameof(Index));
         }
@@ -130,26 +134,6 @@ namespace C4Justice.Web.Areas.Admin.Controllers
                 await _db.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
-        }
-
-        // ── Helper ────────────────────────────────────────────────────────────
-        private async Task<string?> SaveArticleImageAsync(IFormFile file)
-        {
-            // Validate extension
-            var allowed = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
-            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
-            if (!allowed.Contains(ext)) return null;
-
-            var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "articles");
-            Directory.CreateDirectory(uploadsDir);
-
-            var fileName = $"{Guid.NewGuid()}{ext}";
-            var filePath = Path.Combine(uploadsDir, fileName);
-
-            using var stream = new FileStream(filePath, FileMode.Create);
-            await file.CopyToAsync(stream);
-
-            return $"/uploads/articles/{fileName}";
         }
     }
 }

@@ -2,10 +2,14 @@ using Microsoft.EntityFrameworkCore;
 using C4Justice.Web.Data;
 using C4Justice.Web.Models;
 using C4Justice.Web.Helpers;
+using C4Justice.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+
+// Cloudinary — persistent cloud storage for all uploaded files
+builder.Services.AddSingleton<ICloudinaryService, CloudinaryService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -80,10 +84,7 @@ using (var scope = app.Services.CreateScope())
         }
         db.SaveChanges();
 
-        // Ensure upload directories exist
-        var uploadsPath = Path.Combine(app.Environment.WebRootPath, "uploads");
-        Directory.CreateDirectory(Path.Combine(uploadsPath, "slider"));
-        Directory.CreateDirectory(Path.Combine(uploadsPath, "documents"));
+        // Upload directories no longer needed — files go to Cloudinary
     }
     catch { /* DB not yet available - will fail gracefully */ }
 }
