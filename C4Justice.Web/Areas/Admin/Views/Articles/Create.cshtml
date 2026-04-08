@@ -3,10 +3,31 @@
     ViewData["Title"] = "New Article";
 }
 
+@section Styles {
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<style>
+/* Dark Quill theme override */
+.ql-toolbar.ql-snow { background:#1c2a3a; border-color:rgba(255,255,255,0.1); border-radius:6px 6px 0 0; }
+.ql-container.ql-snow { background:#0d1b2e; border-color:rgba(255,255,255,0.1); border-radius:0 0 6px 6px; }
+.ql-editor { color:#e6edf3; font-size:14px; min-height:320px; }
+.ql-editor.ql-blank::before { color:rgba(255,255,255,0.3); font-style:normal; }
+.ql-snow .ql-stroke { stroke:#8b949e; }
+.ql-snow .ql-fill { fill:#8b949e; }
+.ql-snow .ql-picker { color:#8b949e; }
+.ql-snow .ql-picker-options { background:#1c2a3a; border-color:rgba(255,255,255,0.1); }
+.ql-snow.ql-toolbar button:hover .ql-stroke,
+.ql-snow .ql-toolbar button:hover .ql-stroke,
+.ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke:#c8a951; }
+.ql-snow.ql-toolbar button:hover .ql-fill,
+.ql-snow .ql-toolbar button:hover .ql-fill,
+.ql-snow.ql-toolbar button.ql-active .ql-fill { fill:#c8a951; }
+</style>
+}
+
 <div class="row g-4">
 <div class="col-lg-8">
 <div class="admin-card">
-    <form method="post" enctype="multipart/form-data">
+    <form id="articleForm" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         <div class="mb-3">
             <label class="admin-form-label">Title *</label>
@@ -18,10 +39,17 @@
         </div>
         <div class="mb-3">
             <label class="admin-form-label">Content *</label>
-            <textarea asp-for="Content" id="richContent" class="admin-form-control" rows="12" placeholder="Write article content here..." required></textarea>
+            <!-- Quill editor -->
+            <div id="quillEditor"></div>
+            <!-- Hidden textarea synced on submit -->
+            <textarea id="richContent" name="Content" style="display:none;" required></textarea>
         </div>
-        <button type="submit" class="btn-sm-admin btn-primary-admin" style="padding:10px 28px;">Save Article</button>
-        <a href="/Admin/Articles" class="btn-sm-admin btn-ghost-admin" style="padding:10px 20px;">Cancel</a>
+        <div style="margin-top:20px;display:flex;gap:10px;">
+            <button type="submit" class="btn-sm-admin btn-primary-admin" style="padding:10px 28px;">
+                <i class="fas fa-save me-1"></i> Save Article
+            </button>
+            <a href="/Admin/Articles" class="btn-sm-admin btn-ghost-admin" style="padding:10px 20px;">Cancel</a>
+        </div>
     </form>
 </div>
 </div>
@@ -52,15 +80,15 @@
             </div>
             <img id="imgPreview" src="" alt="Preview" style="display:none;max-width:100%;max-height:180px;border-radius:4px;object-fit:cover;" />
         </div>
-        <input type="file" id="FeaturedImage" name="FeaturedImage" accept="image/*" style="display:none;" />
-        <div style="margin-top:8px;display:flex;gap:8px;align-items:center;" id="imgActions" style="display:none!important;">
+        <input type="file" id="FeaturedImage" name="FeaturedImage" accept="image/*" style="display:none;" form="articleForm" />
+        <div style="margin-top:8px;display:flex;gap:8px;">
             <button type="button" id="btnChangImg" class="btn-sm-admin btn-ghost-admin" style="font-size:11px;padding:5px 12px;display:none;">Change Image</button>
             <button type="button" id="btnRemoveImg" class="btn-sm-admin" style="font-size:11px;padding:5px 12px;background:rgba(220,38,38,0.15);color:#fca5a5;border:1px solid rgba(220,38,38,0.3);border-radius:4px;display:none;">Remove</button>
         </div>
     </div>
 
     <div class="d-flex align-items-center gap-2 mt-3">
-        <input asp-for="IsPublished" type="checkbox" style="width:16px;height:16px;" />
+        <input asp-for="IsPublished" type="checkbox" form="articleForm" style="width:16px;height:16px;" />
         <label class="admin-form-label mb-0">Publish immediately</label>
     </div>
 </div>
@@ -68,26 +96,44 @@
 </div>
 
 @section Scripts {
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <script>
-tinymce.init({
-    selector: '#richContent',
-    plugins: 'lists link image code',
-    toolbar: 'undo redo | bold italic | bullist numlist | link | code',
-    skin: 'oxide-dark', content_css: 'dark',
-    height: 400, menubar: false
+// ── Quill Editor ─────────────────────────────────────────────
+const quill = new Quill('#quillEditor', {
+    theme: 'snow',
+    placeholder: 'Write article content here...',
+    modules: {
+        toolbar: [
+            [{ header: [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline'],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['blockquote', 'code-block'],
+            ['link'],
+            ['clean']
+        ]
+    }
 });
 
-// ── Image Upload UI ──────────────────────────────────────
-const dropZone    = document.getElementById('imgDropZone');
-const fileInput   = document.getElementById('FeaturedImage');
-const imgPreview  = document.getElementById('imgPreview');
+// Sync Quill → hidden textarea on submit
+document.getElementById('articleForm').addEventListener('submit', function (e) {
+    const content = quill.root.innerHTML;
+    if (!content || content === '<p><br></p>') {
+        e.preventDefault();
+        quill.root.focus();
+        return;
+    }
+    document.getElementById('richContent').value = content;
+});
+
+// ── Image Upload UI ──────────────────────────────────────────
+const dropZone       = document.getElementById('imgDropZone');
+const fileInput      = document.getElementById('FeaturedImage');
+const imgPreview     = document.getElementById('imgPreview');
 const imgPlaceholder = document.getElementById('imgPlaceholder');
-const btnChange   = document.getElementById('btnChangImg');
-const btnRemove   = document.getElementById('btnRemoveImg');
+const btnChange      = document.getElementById('btnChangImg');
+const btnRemove      = document.getElementById('btnRemoveImg');
 
 function showPreview(file) {
-    if (!file) return;
     const reader = new FileReader();
     reader.onload = e => {
         imgPreview.src = e.target.result;
@@ -96,47 +142,34 @@ function showPreview(file) {
         btnChange.style.display = 'inline-block';
         btnRemove.style.display = 'inline-block';
         dropZone.style.borderColor = 'rgba(200,169,81,0.5)';
+        dropZone.style.padding = '0';
     };
     reader.readAsDataURL(file);
 }
 
 dropZone.addEventListener('click', () => fileInput.click());
-
-dropZone.addEventListener('dragover', e => {
-    e.preventDefault();
-    dropZone.style.borderColor = 'rgba(200,169,81,0.7)';
-});
-dropZone.addEventListener('dragleave', () => {
-    dropZone.style.borderColor = 'rgba(255,255,255,0.15)';
-});
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.borderColor = 'rgba(200,169,81,0.7)'; });
+dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = 'rgba(255,255,255,0.15)'; });
 dropZone.addEventListener('drop', e => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
-        // Assign to file input
-        const dt = new DataTransfer();
-        dt.items.add(file);
+        const dt = new DataTransfer(); dt.items.add(file);
         fileInput.files = dt.files;
         showPreview(file);
     }
     dropZone.style.borderColor = 'rgba(255,255,255,0.15)';
 });
-
-fileInput.addEventListener('change', () => {
-    if (fileInput.files.length) showPreview(fileInput.files[0]);
-});
-
+fileInput.addEventListener('change', () => { if (fileInput.files.length) showPreview(fileInput.files[0]); });
 btnChange.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
-
 btnRemove.addEventListener('click', e => {
     e.stopPropagation();
     fileInput.value = '';
-    imgPreview.src = '';
-    imgPreview.style.display = 'none';
+    imgPreview.src = ''; imgPreview.style.display = 'none';
     imgPlaceholder.style.display = 'block';
-    btnChange.style.display = 'none';
-    btnRemove.style.display = 'none';
+    btnChange.style.display = 'none'; btnRemove.style.display = 'none';
     dropZone.style.borderColor = 'rgba(255,255,255,0.15)';
+    dropZone.style.padding = '16px';
 });
 </script>
 }

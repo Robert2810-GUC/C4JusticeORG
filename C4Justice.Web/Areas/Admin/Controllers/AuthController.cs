@@ -42,7 +42,15 @@ namespace C4Justice.Web.Areas.Admin.Controllers
             return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
         }
 
+        [HttpPost, ValidateAntiForgeryToken]
         public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
+        }
+
+        [HttpGet, Route("Admin/Logout")]
+        public IActionResult LogoutGet()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Login");

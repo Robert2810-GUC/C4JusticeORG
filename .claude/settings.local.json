@@ -29,7 +29,8 @@
       "Bash(cmd /c \"wmic process where \"\"name=''C4Justice.Web.exe''\"\" get processid,name 2>&1\")",
       "Bash(cmd /c \"dir C:\\\\Bharat\\\\C4Justice\"\")",
       "Bash(dir C:BharatC4JusticeC4Justice.WebViews /s /b)",
-      "Bash(dotnet add:*)"
+      "Bash(dotnet add:*)",
+      "WebFetch(domain:claude.ai)"
     ]
   }
 }
