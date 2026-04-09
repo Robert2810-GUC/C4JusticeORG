@@ -3,386 +3,190 @@
     ViewData["ActivePage"] = "About";
 }
 
-<!-- ── PAGE HERO ── -->
-<section class="page-hero">
-    <div class="page-hero-content">
-        <span class="page-hero-label">Our Story</span>
-        <h1 class="page-hero-title">About Us</h1>
-        <p class="page-hero-sub">United for political, racial, economic, healthcare &amp; environmental justice.</p>
-        <nav aria-label="breadcrumb" class="page-hero-breadcrumb mt-3">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item active">About Us</li>
-            </ol>
-        </nav>
+@section Styles {
+<style>
+/* PAGE HERO */
+.page-hero-about { background:#1a3060; padding:28px 2rem; border-bottom:3px solid #d4a017; }
+.ph-bc { color:rgba(212,160,23,.7); font-size:11px; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+.ph-h1 { color:#fff; font-size:28px; font-family:Georgia,serif; margin-bottom:4px; }
+.ph-p { color:#a0b8d8; font-size:13px; }
+
+/* MAIN LAYOUT */
+.about-main { display:grid; grid-template-columns:1fr 300px; gap:0; max-width:1200px; margin:0 auto; }
+.about-content { padding:36px 2rem; }
+.sec-lbl { color:#d4a017; font-size:10px; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700; display:block; }
+.about-content h2 { color:#1a3060; font-size:22px; font-family:Georgia,serif; margin-bottom:14px; line-height:1.3; }
+.about-content p { color:#444; font-size:13px; line-height:1.8; margin-bottom:12px; }
+.about-content em { color:#2b4a8c; font-style:italic; }
+.a-divider { width:100%; height:1px; background:#eee; margin:28px 0; }
+.founder-card { display:flex; gap:18px; align-items:flex-start; background:#f0f4ff; border-left:4px solid #2b4a8c; padding:18px; margin-bottom:20px; border-radius:3px; }
+.f-av { width:56px; height:56px; border-radius:50%; background:#1a3060; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; color:#d4a017; flex-shrink:0; font-family:Georgia,serif; }
+.f-name { color:#1a3060; font-size:14px; font-weight:700; margin-bottom:2px; font-family:Georgia,serif; }
+.f-title { color:#d4a017; font-size:11px; margin-bottom:6px; font-weight:700; }
+.f-text { color:#555; font-size:12px; line-height:1.7; margin:0; }
+.justice-row { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 20px; }
+.jp { background:#1a3060; color:#fff; font-size:11px; padding:5px 12px; border-radius:20px; font-weight:600; border-left:3px solid #d4a017; }
+.read-more { color:#d4a017; font-size:12px; font-weight:700; text-decoration:none; border-bottom:1px solid #d4a017; padding-bottom:1px; display:inline-block; margin-top:4px; }
+.wwd { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+.wwd-item { display:flex; gap:12px; align-items:flex-start; }
+.wwd-num { width:26px; height:26px; border-radius:50%; background:#2b4a8c; color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.wwd-item h4 { color:#1a3060; font-size:13px; font-weight:700; margin-bottom:2px; }
+.wwd-item p { color:#666; font-size:12px; line-height:1.6; margin:0; }
+
+/* SIDEBAR */
+.about-sidebar { background:#f8f9fc; border-left:1px solid #dde; padding:28px 18px; display:flex; flex-direction:column; gap:18px; }
+.sb-card { background:#fff; border:1px solid #dde; border-radius:4px; border-top:3px solid #d4a017; padding:18px; }
+.sb-card h4 { color:#1a3060; font-size:13px; font-weight:700; margin-bottom:6px; font-family:Georgia,serif; }
+.sb-card p { color:#666; font-size:11px; line-height:1.6; margin-bottom:10px; }
+.sb-btn { display:block; background:#2b4a8c; color:#fff; text-align:center; padding:9px; font-size:12px; font-weight:700; border-radius:3px; cursor:pointer; border:none; width:100%; text-decoration:none; }
+.sb-btn.gold { background:#d4a017; }
+.sb-btn:hover { background:#1a3060; color:#fff; }
+.sb-btn.gold:hover { background:#e8b820; }
+.sb-form { display:flex; flex-direction:column; gap:6px; }
+.sb-form input { padding:7px 10px; border:1px solid #dde; border-radius:3px; font-size:11px; color:#333; background:#fff; }
+.sb-form button { background:#d4a017; color:#fff; border:none; padding:8px; font-size:11px; font-weight:700; border-radius:3px; cursor:pointer; }
+.sb-501 { background:#1a3060; color:#fff; border-radius:4px; padding:14px; text-align:center; }
+.sb-501 .badge-501 { font-size:16px; font-weight:700; color:#d4a017; font-family:Georgia,serif; display:block; margin-bottom:3px; }
+.sb-501 p { color:#a0b8d8; font-size:11px; margin:0; }
+
+/* PHOTO CAROUSEL */
+.carousel-wrap { background:#1a3060; padding:24px 0; border-top:3px solid #d4a017; overflow:hidden; }
+.carousel-label { color:#d4a017; font-size:10px; letter-spacing:2px; text-transform:uppercase; font-weight:700; text-align:center; margin-bottom:16px; }
+.carousel-track-wrap { overflow:hidden; width:100%; }
+.carousel-track { display:flex; gap:12px; width:max-content; animation:scroll-photos 20s linear infinite; }
+.carousel-track:hover { animation-play-state:paused; }
+@@keyframes scroll-photos { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+.photo-card { width:220px; height:160px; border-radius:4px; flex-shrink:0; display:flex; align-items:flex-end; position:relative; overflow:hidden; border:2px solid rgba(212,160,23,.2); }
+.pc-bg { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+.pc-bg svg { width:40px; height:40px; stroke:rgba(212,160,23,.3); fill:none; stroke-width:1; }
+.pc-label { position:relative; z-index:2; width:100%; background:rgba(26,48,96,.8); color:#fff; font-size:10px; padding:6px 10px; font-weight:600; }
+.pc-hint { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:rgba(255,255,255,.2); font-size:9px; font-style:italic; text-align:center; z-index:1; width:100%; padding:0 10px; }
+.pc1{background:#1a3060}.pc2{background:#281848}.pc3{background:#183828}.pc4{background:#482808}.pc5{background:#0a2848}.pc6{background:#182848}
+
+@@media(max-width:767px){
+    .about-main { grid-template-columns:1fr; }
+    .about-sidebar { border-left:none; border-top:1px solid #dde; }
+}
+</style>
+}
+
+<!-- PAGE HERO -->
+<div class="page-hero-about">
+    <div style="max-width:1200px;margin:0 auto;padding:0 1rem;">
+        <div class="ph-bc">Home &rsaquo; About Us</div>
+        <h1 class="ph-h1">About Us</h1>
+        <p class="ph-p">United We Stand. Divided We Fall. — Communities United For Justice Fund</p>
     </div>
-</section>
+</div>
 
-<!-- ── WHO WE ARE ── -->
-<section class="py-section" style="background:var(--white);">
-    <div class="container-xl">
-        <div class="row align-items-center gy-5">
+<!-- MAIN CONTENT + SIDEBAR -->
+<div class="about-main">
+  <div class="about-content">
+    <span class="sec-lbl">Who We Are</span>
+    <h2>Building a Platform for Justice</h2>
+    <p>Communities United for Justice was formed to create a social justice advocacy platform that recognizes and encourages the oppressed, suppressed and marginalized to join forces to achieve common objectives through collaboration.</p>
+    <p>For too long, grassroots organizations have advocated in silos on behalf of marginalized communities when all our social justice issues have a common thread: <em>that all individuals be treated with fairness and equity.</em></p>
+    <div class="a-divider"></div>
 
-            <!-- Text -->
-            <div class="col-lg-6">
-                <div class="section-header">
-                    <span class="section-label">Who We Are</span>
-                    <h2 class="section-title">United We Stand.<br>Divided We Fall.</h2>
-                </div>
-                <p class="lead-text">
-                    For too long, grassroots organizations have advocated in silos on behalf of marginalized communities
-                    when all our social justice issues have a common thread:
-                    <em>that all individuals be treated with fairness and equity.</em>
-                </p>
-                <p class="body-text">
-                    <strong>Communities United for Justice</strong> was formed to create a social justice advocacy platform
-                    that recognizes and encourages the oppressed, suppressed and marginalized to join forces to achieve
-                    common objectives through collaboration.
-                </p>
-                <p class="body-text">
-                    A collaboration of grassroots organizations came together over the last three election cycles to improve
-                    the efficiency and effectiveness of their collective voter education and mobilization strategies.
-                    The result was increased turnout among progressives and voters of color.
-                </p>
-                <p class="body-text">
-                    <strong>Mr. Richard Rose</strong>, the architect of this successful collaborative strategy, formed
-                    <strong>Communities United for Justice</strong> to formalize the collaboration and combine it with a
-                    state-of-the-art technology platform for civic engagement to transform community outreach.
-                </p>
-            </div>
-
-            <!-- Visual -->
-            <div class="col-lg-6">
-                <!-- Photo grid -->
-                <div class="at-photo-grid">
-                    <div class="at-photo at-photo-1"></div>
-                    <div class="at-photo at-photo-2"></div>
-                    <div class="at-photo at-photo-3"></div>
-                </div>
-                <!-- 501c3 badge -->
-                <div class="at-badge">
-                    <i class="fas fa-award"></i>
-                    <div>
-                        <strong>501(c)(3) Certified Nonprofit</strong>
-                        <span>Tax-deductible donations accepted</span>
-                    </div>
-                </div>
-            </div>
+    <span class="sec-lbl">Our Founder</span>
+    <h2>The Architect of Collaboration</h2>
+    <div class="founder-card">
+        <div class="f-av">RR</div>
+        <div>
+            <div class="f-name">Mr. Richard Rose</div>
+            <div class="f-title">Founder &amp; Executive Director</div>
+            <p class="f-text">The architect of a successful collaborative strategy across three election cycles, Mr. Rose formed Communities United for Justice to combine grassroots power with a state-of-the-art technology platform for civic engagement to transform community outreach.</p>
         </div>
     </div>
-</section>
+    <div class="a-divider"></div>
 
-<!-- ── OUR MISSION ── -->
-<section class="py-section" style="background:var(--off-white);">
-    <div class="container-xl">
-        <div class="row gy-4 align-items-start">
+    <span class="sec-lbl">What We Fight For</span>
+    <h2>Fighting for Political, Racial, Economic, Healthcare &amp; Environmental Justice</h2>
+    <div class="justice-row">
+        <span class="jp">Political Justice</span>
+        <span class="jp">Racial Justice</span>
+        <span class="jp">Economic Justice</span>
+        <span class="jp">Healthcare Justice</span>
+        <span class="jp">Environmental Justice</span>
+    </div>
+    <a class="read-more" href="/Issues">Read Our Full Mission &rarr;</a>
+    <div class="a-divider"></div>
 
-            <div class="col-lg-5">
-                <div class="section-header">
-                    <span class="section-label">Our Mission</span>
-                    <h2 class="section-title">Direct Action.<br>Lasting Change.</h2>
-                </div>
-                <p class="body-text">
-                    Communities United for Justice pursues direct action, voter and legislative engagement on
-                    local, state, and federal levels — building the civic infrastructure needed to achieve
-                    equitable outcomes for all communities.
-                </p>
-
-                <!-- Mission pillars mini grid -->
-                <div class="about-pillars-mini">
-                    <div class="apm-item" style="border-top-color:#1B4F91;">
-                        <i class="fas fa-landmark"></i><span>Political</span>
-                    </div>
-                    <div class="apm-item" style="border-top-color:#b91c1c;">
-                        <i class="fas fa-people-group"></i><span>Racial</span>
-                    </div>
-                    <div class="apm-item" style="border-top-color:#d97706;">
-                        <i class="fas fa-scale-balanced"></i><span>Economic</span>
-                    </div>
-                    <div class="apm-item" style="border-top-color:#dc2626;">
-                        <i class="fas fa-heart-pulse"></i><span>Healthcare</span>
-                    </div>
-                    <div class="apm-item" style="border-top-color:#16a34a;">
-                        <i class="fas fa-leaf"></i><span>Environmental</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6 offset-lg-1">
-                <div class="about-mission-box">
-                    <h4><i class="fas fa-bullseye me-2" style="color:var(--gold);"></i>What We Do</h4>
-                    <div class="about-features mt-3">
-                        <div class="feature-item">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Direct Action &amp; Voter Engagement at every level of government</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Local, State and Federal Legislative Advocacy</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Organizing Year-Round Community Advocacy campaigns</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Educating Voters on Issues, Candidates and Elections</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Building coalitions across marginalized communities</span>
-                        </div>
-                        <div class="feature-item">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Technology-driven civic engagement platform</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quote -->
-                <blockquote class="about-quote mt-4">
-                    <i class="fas fa-quote-left" style="color:var(--gold);margin-bottom:8px;display:block;font-size:1.3rem;"></i>
-                    "A collaboration of grassroots organizations came together over the last three election cycles to
-                    improve the efficiency and effectiveness of their collective voter education and mobilization strategies.
-                    The result was increased turnout among progressives and voters of color."
-                    <footer>— <strong>Richard Rose</strong>, Founder &amp; Architect</footer>
-                </blockquote>
-            </div>
-
+    <span class="sec-lbl">What We Do</span>
+    <h2>Our Actions &amp; Programs</h2>
+    <div class="wwd">
+        <div class="wwd-item">
+            <div class="wwd-num">1</div>
+            <div><h4>Direct Action &amp; Voter Engagement</h4><p>Mobilizing communities through direct action campaigns on local, state and federal levels.</p></div>
+        </div>
+        <div class="wwd-item">
+            <div class="wwd-num">2</div>
+            <div><h4>Legislative Engagement</h4><p>Advocating for policy change through targeted legislative engagement on all levels of government.</p></div>
+        </div>
+        <div class="wwd-item">
+            <div class="wwd-num">3</div>
+            <div><h4>Year-Round Community Organizing</h4><p>Organizing local communities for sustained, year-round advocacy beyond election cycles.</p></div>
+        </div>
+        <div class="wwd-item">
+            <div class="wwd-num">4</div>
+            <div><h4>Voter Education on Issues &amp; Elections</h4><p>Educating voters on key issues, candidates and elections to empower informed decision-making.</p></div>
         </div>
     </div>
-</section>
+  </div>
 
-<!-- ── MEET THE FOUNDER ── -->
-<section class="py-section" style="background:var(--white);">
-    <div class="container-xl">
-        <div class="row align-items-center gy-4">
-            <div class="col-lg-3 text-center">
-                <div class="founder-avatar">
-                    <i class="fas fa-user-tie"></i>
-                </div>
-                <div class="founder-badge">Founder &amp; Architect</div>
-            </div>
-            <div class="col-lg-9">
-                <div class="section-header">
-                    <span class="section-label">Our Founder</span>
-                    <h2 class="section-title">Richard Rose</h2>
-                </div>
-                <p class="lead-text">
-                    Mr. Richard Rose is the architect of a successful collaborative strategy that has mobilized
-                    progressive voters and communities of color across multiple election cycles.
-                </p>
-                <p class="body-text">
-                    His vision for Communities United for Justice combines the power of grassroots organizing with
-                    cutting-edge civic technology — creating a platform where all marginalized communities can
-                    come together, amplify each other's voices, and achieve lasting systemic change.
-                </p>
-                <div class="d-flex gap-3 flex-wrap mt-3">
-                    <a href="/Contact" class="btn-primary-c4j">Get In Touch</a>
-                    <a href="/GetInvolved" class="btn-outline-c4j">Join the Movement</a>
-                </div>
-            </div>
+  <!-- SIDEBAR -->
+  <div class="about-sidebar">
+    <div class="sb-card">
+        <h4>&#10084; Donate Today</h4>
+        <p>Support our 501(c)(3) fund. Your donation is tax deductible.</p>
+        <a href="/GetInvolved#donate" class="sb-btn gold">Donate Now</a>
+    </div>
+    <div class="sb-card">
+        <h4>Volunteer</h4>
+        <p>Join our volunteer network and contribute your time and skills to the movement.</p>
+        <a href="/GetInvolved" class="sb-btn">Sign Up to Volunteer</a>
+    </div>
+    <div class="sb-card">
+        <h4>Speaker Request</h4>
+        <p>Invite us to speak at your next event, town hall, or community meeting.</p>
+        <a href="/GetInvolved#speaker" class="sb-btn">Request a Speaker</a>
+    </div>
+    <div class="sb-card">
+        <h4>Join Our Newsletter</h4>
+        <p>Stay informed on events and ways to get involved.</p>
+        <div class="sb-form">
+            <input type="text" placeholder="Full Name"/>
+            <input type="email" placeholder="Email Address"/>
+            <input type="tel" placeholder="Mobile Phone"/>
+            <input type="text" placeholder="Zip Code"/>
+            <button>Subscribe</button>
         </div>
     </div>
-</section>
-
-<!-- ── FIVE PILLARS OF JUSTICE ── -->
-<section class="py-section" style="background:var(--navy);">
-    <div class="container-xl">
-        <div class="section-header text-center mb-5">
-            <span class="section-label light">Our Causes</span>
-            <h2 class="section-title light">Fighting for Justice on All Fronts</h2>
-            <p class="section-subtitle" style="color:rgba(255,255,255,0.7);">
-                Five pillars of advocacy that guide our work toward a more equitable society.
-            </p>
-        </div>
-
-        <div class="pillars-timeline">
-
-            <!-- ① Political Justice -->
-            <div id="political" class="pillar-row">
-                <div class="pillar-row-number" style="background:#1B4F91;border-color:rgba(255,255,255,0.25);">
-                    <i class="fas fa-landmark"></i>
-                    <span>01</span>
-                </div>
-                <div class="pillar-row-content">
-                    <h3>Political Justice</h3>
-                    <p>
-                        We believe that the rights proclaimed in the Constitution must be applied fairly and equitably
-                        to all citizens. We fight against the injustice of <strong>gerrymandering</strong>,
-                        <strong>voter suppression</strong>, and <strong>authoritarianism</strong> that stifle citizen
-                        rights and participation.
-                    </p>
-                    <div class="pillar-tags">
-                        <span class="pillar-tag">Voter Rights</span>
-                        <span class="pillar-tag">Anti-Gerrymandering</span>
-                        <span class="pillar-tag">Constitutional Rights</span>
-                        <span class="pillar-tag">Civic Participation</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ② Racial Justice -->
-            <div id="racial" class="pillar-row">
-                <div class="pillar-row-number" style="background:#b91c1c;border-color:rgba(255,255,255,0.25);">
-                    <i class="fas fa-people-group"></i>
-                    <span>02</span>
-                </div>
-                <div class="pillar-row-content">
-                    <h3>Racial Justice</h3>
-                    <p>
-                        We fight against the resurgence of white supremacy and the violent assault on communities of color.
-                        We seek to eliminate persistent racial disparities in the <strong>criminal justice system</strong>,
-                        the <strong>economy and jobs</strong>, and <strong>healthcare</strong>.
-                    </p>
-                    <div class="pillar-tags">
-                        <span class="pillar-tag">Anti-Discrimination</span>
-                        <span class="pillar-tag">Criminal Justice Reform</span>
-                        <span class="pillar-tag">Healthcare Equity</span>
-                        <span class="pillar-tag">Economic Opportunity</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ③ Economic Justice -->
-            <div id="economic" class="pillar-row">
-                <div class="pillar-row-number" style="background:#d97706;border-color:rgba(255,255,255,0.25);">
-                    <i class="fas fa-scale-balanced"></i>
-                    <span>03</span>
-                </div>
-                <div class="pillar-row-content">
-                    <h3>Economic Justice</h3>
-                    <p>
-                        The economy will be more successful when all citizens have opportunities to thrive and reach their
-                        full potential. We fight against <strong>disinvestment</strong>, <strong>red-lining</strong>,
-                        and <strong>glass ceilings</strong> — advocating for equitable access to opportunities and resources.
-                    </p>
-                    <div class="pillar-tags">
-                        <span class="pillar-tag">Fair Wages</span>
-                        <span class="pillar-tag">Anti-Redlining</span>
-                        <span class="pillar-tag">Equal Opportunity</span>
-                        <span class="pillar-tag">Community Investment</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ④ Healthcare Justice -->
-            <div id="healthcare" class="pillar-row">
-                <div class="pillar-row-number" style="background:#dc2626;border-color:rgba(255,255,255,0.25);">
-                    <i class="fas fa-heart-pulse"></i>
-                    <span>04</span>
-                </div>
-                <div class="pillar-row-content">
-                    <h3>Healthcare Justice</h3>
-                    <p>
-                        We fight for equitable access to quality healthcare for all communities, regardless of race,
-                        income, or zip code. We work to eliminate <strong>systemic disparities</strong> in health
-                        outcomes, expand <strong>coverage and affordability</strong>, and address the social
-                        determinants of health.
-                    </p>
-                    <div class="pillar-tags">
-                        <span class="pillar-tag">Healthcare Access</span>
-                        <span class="pillar-tag">Health Equity</span>
-                        <span class="pillar-tag">Affordable Coverage</span>
-                        <span class="pillar-tag">Mental Health</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ⑤ Environmental Justice -->
-            <div id="environmental" class="pillar-row">
-                <div class="pillar-row-number" style="background:#16a34a;border-color:rgba(255,255,255,0.25);">
-                    <i class="fas fa-leaf"></i>
-                    <span>05</span>
-                </div>
-                <div class="pillar-row-content">
-                    <h3>Environmental Justice</h3>
-                    <p>
-                        We fight to eliminate the disproportionate economic and health impacts of
-                        <strong>environmental hazards</strong> and <strong>climate change</strong> on marginalized
-                        communities. Every community deserves clean air, clean water, and a healthy environment.
-                    </p>
-                    <div class="pillar-tags">
-                        <span class="pillar-tag">Clean Environment</span>
-                        <span class="pillar-tag">Climate Action</span>
-                        <span class="pillar-tag">Health Protection</span>
-                        <span class="pillar-tag">Community Health</span>
-                    </div>
-                </div>
-            </div>
-
-        </div><!-- /.pillars-timeline -->
+    <div class="sb-501">
+        <span class="badge-501">501(c)(3)</span>
+        <p>Certified Nonprofit Organization<br>Donations are tax deductible</p>
     </div>
-</section>
+  </div>
+</div>
 
-<!-- ── STATS BAR ── -->
-<section class="about-stats-bar">
-    <div class="container-xl">
-        <div class="row gy-4 text-center">
-            <div class="col-6 col-md-3">
-                <div class="about-stat">
-                    <div class="about-stat-num">3+</div>
-                    <div class="about-stat-label">Election Cycles</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="about-stat" style="border-left:1px solid var(--border);">
-                    <div class="about-stat-num">5K+</div>
-                    <div class="about-stat-label">Community Members</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="about-stat" style="border-left:1px solid var(--border);">
-                    <div class="about-stat-num">5</div>
-                    <div class="about-stat-label">Justice Pillars</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="about-stat" style="border-left:1px solid var(--border);">
-                    <div class="about-stat-num">501(c)(3)</div>
-                    <div class="about-stat-label">Certified Nonprofit</div>
-                </div>
-            </div>
-        </div>
+<!-- AUTO-SCROLLING PHOTO CAROUSEL -->
+<div class="carousel-wrap">
+  <div class="carousel-label">Our Community in Action — Photos Coming Soon</div>
+  <div class="carousel-track-wrap">
+    <div class="carousel-track">
+      <div class="photo-card pc1"><div class="pc-bg"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="pc-hint">Community photo</div><div class="pc-label">Community Events</div></div>
+      <div class="photo-card pc2"><div class="pc-bg"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div><div class="pc-hint">Community photo</div><div class="pc-label">Voter Registration</div></div>
+      <div class="photo-card pc3"><div class="pc-bg"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="pc-hint">Community photo</div><div class="pc-label">Town Halls</div></div>
+      <div class="photo-card pc4"><div class="pc-bg"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="pc-hint">Community photo</div><div class="pc-label">Advocacy &amp; Action</div></div>
+      <div class="photo-card pc5"><div class="pc-bg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg></div><div class="pc-hint">Community photo</div><div class="pc-label">Environmental Action</div></div>
+      <div class="photo-card pc6"><div class="pc-bg"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="pc-hint">Community photo</div><div class="pc-label">Economic Justice</div></div>
+      <!-- Duplicate for seamless loop -->
+      <div class="photo-card pc1"><div class="pc-bg"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="pc-hint">Community photo</div><div class="pc-label">Community Events</div></div>
+      <div class="photo-card pc2"><div class="pc-bg"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg></div><div class="pc-hint">Community photo</div><div class="pc-label">Voter Registration</div></div>
+      <div class="photo-card pc3"><div class="pc-bg"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="pc-hint">Community photo</div><div class="pc-label">Town Halls</div></div>
+      <div class="photo-card pc4"><div class="pc-bg"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="pc-hint">Community photo</div><div class="pc-label">Advocacy &amp; Action</div></div>
+      <div class="photo-card pc5"><div class="pc-bg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg></div><div class="pc-hint">Community photo</div><div class="pc-label">Environmental Action</div></div>
+      <div class="photo-card pc6"><div class="pc-bg"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/></svg></div><div class="pc-hint">Community photo</div><div class="pc-label">Economic Justice</div></div>
     </div>
-</section>
-
-<!-- ── CALL TO ACTION ── -->
-<section class="cta-section">
-    <div class="container-xl">
-        <div class="section-header text-center mb-5">
-            <span class="section-label light">Join Us</span>
-            <h2 class="section-title light">Ready to Join the Movement?</h2>
-            <p class="section-subtitle" style="color:rgba(255,255,255,0.7);">
-                There are many ways to get involved — volunteer, attend events, donate, or simply spread the word.
-                Together, we are stronger.
-            </p>
-        </div>
-        <div class="row g-4 justify-content-center">
-            <div class="col-md-4">
-                <div class="cta-card">
-                    <div class="cta-card-icon"><i class="fas fa-hands-helping"></i></div>
-                    <h4>Volunteer</h4>
-                    <p>Give your time and skills to support our events, outreach programs, and advocacy efforts.</p>
-                    <a href="/GetInvolved#volunteer" class="cta-card-link">Get Started →</a>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="cta-card">
-                    <div class="cta-card-icon"><i class="fas fa-calendar-alt"></i></div>
-                    <h4>Attend Events</h4>
-                    <p>Join our town halls, voter drives, rallies, and community organizing workshops.</p>
-                    <a href="/Events" class="cta-card-link">View Events →</a>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="cta-card">
-                    <div class="cta-card-icon"><i class="fas fa-heart"></i></div>
-                    <h4>Donate</h4>
-                    <p>Your tax-deductible contribution to our 501(c)(3) directly supports our advocacy work.</p>
-                    <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="cta-card-link">Donate Now →</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+  </div>
+</div>

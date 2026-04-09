@@ -482,6 +482,18 @@
         item.addEventListener('mouseenter', () => { setTimeout(fixMegaOverflow, 10); });
         item.addEventListener('click', () => { setTimeout(fixMegaOverflow, 10); });
     });
+
+    // Close mobile nav when a link inside a mega panel is tapped
+    document.querySelectorAll('.mega-panel a').forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth < 992) {
+                navLinks.classList.remove('open');
+                toggler.classList.remove('open');
+                toggler.setAttribute('aria-expanded', 'false');
+                document.querySelectorAll('.has-mega.open').forEach(o => o.classList.remove('open'));
+            }
+        });
+    });
 </script>
 
 @await RenderSectionAsync("Scripts", required: false)

@@ -1,216 +1,246 @@
-@model C4Justice.Web.Models.ContactViewModel
 @{
     ViewData["Title"] = "Get Involved";
     ViewData["ActivePage"] = "GetInvolved";
 }
 
-<!-- Page Hero -->
-<section class="page-hero">
-    <div class="page-hero-content">
-        <span class="page-hero-label">Take Action</span>
-        <h1 class="page-hero-title">Get Involved</h1>
-        <p class="page-hero-sub">Volunteer, donate, or join our mailing list to support our mission for justice.</p>
-        <nav aria-label="breadcrumb" class="page-hero-breadcrumb mt-3">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item active">Get Involved</li>
-            </ol>
-        </nav>
+@section Styles {
+<style>
+.page-hero-gi{background:#1a3060;padding:28px 2rem;border-bottom:3px solid #d4a017;}
+.ph-bc{color:rgba(212,160,23,.7);font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.ph-h1{color:#fff;font-size:28px;font-family:Georgia,serif;margin-bottom:4px;}
+.ph-p{color:#a0b8d8;font-size:13px;}
+.action-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid #dde;}
+.ac{padding:20px;text-align:center;border-right:1px solid #dde;cursor:pointer;transition:background .2s;}
+.ac:last-child{border-right:none;}
+.ac:hover,.ac.act{background:#f0f4ff;}
+.ac.act{border-bottom:3px solid #d4a017;margin-bottom:-1px;}
+.ac-icon{width:44px;height:44px;border-radius:50%;background:#e8f0ff;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
+.ac-icon svg{width:22px;height:22px;stroke:#2b4a8c;fill:none;stroke-width:1.5;}
+.ac h4{color:#1a3060;font-size:13px;font-weight:700;margin-bottom:4px;}
+.ac p{color:#888;font-size:11px;}
+.gi-main{display:grid;grid-template-columns:1fr 300px;gap:0;align-items:start;max-width:1200px;margin:0 auto;}
+.gi-content{padding:36px 2rem;}
+.gi-panel{display:none;}
+.gi-panel.act{display:block;}
+.sec-lbl{color:#d4a017;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:700;display:block;}
+.gi-content h2{color:#1a3060;font-size:22px;font-family:Georgia,serif;margin-bottom:8px;}
+.gi-content .intro{color:#555;font-size:13px;line-height:1.8;margin-bottom:24px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:span 2;}
+.form-group label{color:#1a3060;font-size:12px;font-weight:700;}
+.form-group input,.form-group select,.form-group textarea{padding:10px 12px;border:1px solid #dde;border-radius:3px;font-size:13px;color:#333;font-family:inherit;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#2b4a8c;}
+.form-group textarea{min-height:100px;resize:vertical;}
+.form-note{color:#888;font-size:11px;margin-top:3px;}
+.submit-btn{background:#2b4a8c;color:#fff;border:none;padding:12px 32px;font-size:13px;font-weight:700;border-radius:3px;cursor:pointer;margin-top:8px;}
+.submit-btn:hover{background:#1a3060;}
+.submit-btn.gold{background:#d4a017;}
+.submit-btn.gold:hover{background:#e8b820;}
+.vol-areas{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.va{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #dde;border-radius:3px;cursor:pointer;}
+.va:hover{background:#f0f4ff;border-color:#2b4a8c;}
+.va input[type=checkbox]{width:16px;height:16px;accent-color:#2b4a8c;cursor:pointer;}
+.va label{color:#1a3060;font-size:12px;font-weight:600;cursor:pointer;}
+.donate-tabs{display:flex;gap:0;margin-bottom:20px;border:1px solid #dde;border-radius:3px;overflow:hidden;}
+.dt{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#666;background:#f8f9fc;}
+.dt.act{background:#2b4a8c;color:#fff;}
+.amount-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.amount-btn{padding:12px;border:2px solid #dde;border-radius:3px;text-align:center;font-size:14px;font-weight:700;color:#1a3060;cursor:pointer;background:#fff;}
+.amount-btn:hover,.amount-btn.act{border-color:#2b4a8c;background:#e8f0ff;color:#2b4a8c;}
+.custom-amount{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+.custom-amount span{color:#1a3060;font-size:18px;font-weight:700;}
+.custom-amount input{flex:1;padding:10px 12px;border:1px solid #dde;border-radius:3px;font-size:16px;color:#333;}
+.donate-note{background:#e8f5e8;border-left:4px solid #1a7a1a;padding:10px 14px;margin-bottom:16px;border-radius:0 3px 3px 0;}
+.donate-note p{color:#0a5a0a;font-size:12px;line-height:1.6;margin:0;}
+.success-box{background:#e8f5e8;border:1px solid #1a7a1a;border-radius:4px;padding:20px;text-align:center;display:none;margin-top:16px;}
+.success-box h3{color:#0a5a0a;font-size:16px;margin-bottom:6px;font-family:Georgia,serif;}
+.success-box p{color:#1a5a1a;font-size:13px;}
+.gi-sidebar{background:#f8f9fc;border-left:1px solid #dde;padding:28px 18px;display:flex;flex-direction:column;gap:18px;align-self:start;position:sticky;top:70px;}
+.sb-card{background:#fff;border:1px solid #dde;border-radius:4px;border-top:3px solid #d4a017;padding:18px;}
+.sb-card h4{color:#1a3060;font-size:13px;font-weight:700;margin-bottom:8px;font-family:Georgia,serif;}
+.sb-card p{color:#666;font-size:11px;line-height:1.6;margin-bottom:10px;}
+.sb-btn{display:block;background:#2b4a8c;color:#fff;text-align:center;padding:9px;font-size:12px;font-weight:700;border-radius:3px;cursor:pointer;border:none;width:100%;margin-bottom:8px;text-decoration:none;}
+.sb-btn:hover{background:#1a3060;color:#fff;}
+.sb-btn.gold{background:#d4a017;}
+.sb-btn.gold:hover{background:#e8b820;}
+.sb-501{background:#1a3060;color:#fff;border-radius:4px;padding:14px;text-align:center;}
+.sb-501 .badge-501{font-size:16px;font-weight:700;color:#d4a017;font-family:Georgia,serif;display:block;margin-bottom:3px;}
+.sb-501 p{color:#a0b8d8;font-size:11px;margin:0;}
+@@media(max-width:767px){.gi-main{grid-template-columns:1fr;}.gi-sidebar{border-left:none;border-top:1px solid #dde;position:static;}.action-row{grid-template-columns:1fr 1fr;}.form-grid{grid-template-columns:1fr;}.form-group.full{grid-column:span 1;}.vol-areas{grid-template-columns:1fr;}.amount-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+}
+
+<!-- PAGE HERO -->
+<div class="page-hero-gi">
+    <div style="max-width:1200px;margin:0 auto;padding:0 1rem;">
+        <div class="ph-bc">Home &rsaquo; Get Involved</div>
+        <h1 class="ph-h1">Get Involved</h1>
+        <p class="ph-p">Every action counts. Join the movement for political, racial, economic, healthcare and environmental justice.</p>
     </div>
-</section>
+</div>
 
-<!-- Ways to Get Involved -->
-<section class="py-section" id="volunteer">
-    <div class="container-xl">
-        <div class="section-header text-center mb-5" data-aos="fade-up">
-            <span class="section-label">How You Can Help</span>
-            <h2 class="section-title">Make a Difference Today</h2>
-            <p class="section-subtitle">There are many ways to support Communities United for Justice. Choose the path that works best for you.</p>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="0">
-                <div class="involvement-card involvement-volunteer">
-                    <div class="inv-card-top">
-                        <div class="inv-icon"><i class="fas fa-hands-helping"></i></div>
-                        <h4>Volunteer</h4>
-                    </div>
-                    <p>Give your time and skills to support our events, outreach programs, and advocacy efforts. Every hour counts.</p>
-                    <ul class="inv-list">
-                        <li><i class="fas fa-check"></i> Event coordination</li>
-                        <li><i class="fas fa-check"></i> Voter registration drives</li>
-                        <li><i class="fas fa-check"></i> Community outreach</li>
-                    </ul>
-                    <a href="#contact-form" class="inv-btn">Volunteer Now</a>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
-                <div class="involvement-card involvement-donate">
-                    <div class="inv-card-top">
-                        <div class="inv-icon"><i class="fas fa-heart"></i></div>
-                        <h4>Donate</h4>
-                    </div>
-                    <p>Your tax-deductible contribution directly funds our advocacy work, events, and community programs.</p>
-                    <ul class="inv-list">
-                        <li><i class="fas fa-check"></i> 501(c)(3) tax-deductible</li>
-                        <li><i class="fas fa-check"></i> Secure online donation</li>
-                        <li><i class="fas fa-check"></i> One-time or recurring</li>
-                    </ul>
-                    <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="inv-btn donate">Donate Now</a>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
-                <div class="involvement-card involvement-spread">
-                    <div class="inv-card-top">
-                        <div class="inv-icon"><i class="fas fa-share-nodes"></i></div>
-                        <h4>Spread the Word</h4>
-                    </div>
-                    <p>Share our mission with your network. Follow and share our social media content to amplify our message.</p>
-                    <ul class="inv-list">
-                        <li><i class="fas fa-check"></i> Share on social media</li>
-                        <li><i class="fas fa-check"></i> Tell your community</li>
-                        <li><i class="fas fa-check"></i> Write letters to officials</li>
-                    </ul>
-                    <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="inv-btn">Follow Us</a>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
-                <div class="involvement-card involvement-partner">
-                    <div class="inv-card-top">
-                        <div class="inv-icon"><i class="fas fa-building"></i></div>
-                        <h4>Partner With Us</h4>
-                    </div>
-                    <p>Is your organization aligned with our mission? Let's collaborate to amplify our collective impact.</p>
-                    <ul class="inv-list">
-                        <li><i class="fas fa-check"></i> Joint advocacy campaigns</li>
-                        <li><i class="fas fa-check"></i> Shared resources</li>
-                        <li><i class="fas fa-check"></i> Community partnerships</li>
-                    </ul>
-                    <a href="#contact-form" class="inv-btn">Let's Talk</a>
-                </div>
-            </div>
-        </div>
+<!-- ACTION TABS -->
+<div class="action-row" id="actionRow">
+    <div class="ac act" onclick="showPanel('volunteer',this)">
+        <div class="ac-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <h4>Volunteer</h4><p>Join our network</p>
     </div>
-</section>
-
-<!-- Volunteer Photo Banner -->
-<section class="volunteer-banner py-section bg-dark-section">
-    <div class="container-xl">
-        <div class="row align-items-center gy-5">
-            <div class="col-lg-5 text-center" data-aos="fade-right">
-                <div class="vb-image-wrap">
-                    <img src="~/images/volunteer.png" alt="Volunteers" class="vb-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                    <div class="vb-placeholder" style="display:none">
-                        <i class="fas fa-people-carry-box"></i>
-                        <span>Our Volunteers</span>
-                    </div>
-                    <div class="vb-overlay-stat">
-                        <strong>5,000+</strong>
-                        <span>Community Members</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-7" data-aos="fade-left">
-                <span class="section-label light">Volunteers</span>
-                <h2 class="section-title light">The Backbone of Our Movement</h2>
-                <p class="body-text light">
-                    Our volunteers are the heart and soul of Communities United for Justice. From organizing voter
-                    registration drives to attending town halls, every action you take contributes to building a more
-                    just and equitable society.
-                </p>
-                <div class="vb-contact-info">
-                    <div class="vb-contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <div>
-                            <strong>Email Us</strong>
-                            <a href="mailto:info@cu4justice.com">info@cu4justice.com</a>
-                        </div>
-                    </div>
-                    <div class="vb-contact-item">
-                        <i class="fab fa-facebook-f"></i>
-                        <div>
-                            <strong>Follow on Facebook</strong>
-                            <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener">Communities United for Justice</a>
-                        </div>
-                    </div>
-                </div>
-                <a href="#contact-form" class="btn btn-hero-primary mt-3">
-                    <span>Send Us a Message</span>
-                    <i class="fas fa-arrow-right ms-2"></i>
-                </a>
-            </div>
-        </div>
+    <div class="ac" onclick="showPanel('newsletter',this)">
+        <div class="ac-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <h4>Join Newsletter</h4><p>Stay informed</p>
     </div>
-</section>
-
-<!-- Contact Form -->
-<section class="py-section" id="contact-form">
-    <div class="container-xl">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="contact-form-card" data-aos="fade-up">
-                    <div class="cfc-header text-center">
-                        <div class="cfc-icon"><i class="fas fa-paper-plane"></i></div>
-                        <h2>Send Us a Message</h2>
-                        <p>Have questions about volunteering, events, or our mission? We'd love to hear from you.</p>
-                    </div>
-
-                    @if (TempData["ContactSuccess"] != null)
-                    {
-                        <div class="alert alert-success-c4j mb-4">
-                            <i class="fas fa-check-circle me-2"></i>
-                            @TempData["ContactSuccess"]
-                        </div>
-                    }
-
-                    <form asp-action="Contact" asp-controller="GetInvolved" method="post">
-                        @Html.AntiForgeryToken()
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label asp-for="Name" class="form-label-c4j">Full Name *</label>
-                                <div class="input-icon-wrap">
-                                    <i class="fas fa-user fi"></i>
-                                    <input asp-for="Name" class="form-input-c4j" placeholder="Your Full Name" />
-                                </div>
-                                <span asp-validation-for="Name" class="form-error"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Email" class="form-label-c4j">Email Address *</label>
-                                <div class="input-icon-wrap">
-                                    <i class="fas fa-envelope fi"></i>
-                                    <input asp-for="Email" class="form-input-c4j" placeholder="your@email.com" />
-                                </div>
-                                <span asp-validation-for="Email" class="form-error"></span>
-                            </div>
-                            <div class="col-12">
-                                <label asp-for="Subject" class="form-label-c4j">Subject *</label>
-                                <div class="input-icon-wrap">
-                                    <i class="fas fa-tag fi"></i>
-                                    <input asp-for="Subject" class="form-input-c4j" placeholder="How can we help?" />
-                                </div>
-                                <span asp-validation-for="Subject" class="form-error"></span>
-                            </div>
-                            <div class="col-12">
-                                <label asp-for="Message" class="form-label-c4j">Your Message *</label>
-                                <div class="input-icon-wrap">
-                                    <i class="fas fa-comment fi fi-top"></i>
-                                    <textarea asp-for="Message" class="form-input-c4j" rows="5" placeholder="Tell us more..."></textarea>
-                                </div>
-                                <span asp-validation-for="Message" class="form-error"></span>
-                            </div>
-                            <div class="col-12 text-center mt-2">
-                                <button type="submit" class="btn-primary-c4j btn-submit-contact">
-                                    <i class="fas fa-paper-plane me-2"></i> Send Message
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+    <div class="ac" onclick="showPanel('speaker',this)">
+        <div class="ac-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <h4>Speaker Request</h4><p>Invite us to speak</p>
     </div>
-</section>
+    <div class="ac" onclick="showPanel('donate',this)">
+        <div class="ac-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+        <h4>Donate</h4><p>Support our mission</p>
+    </div>
+</div>
+
+<div class="gi-main">
+  <div class="gi-content">
+
+    <!-- VOLUNTEER -->
+    <div class="gi-panel act" id="panel-volunteer">
+        <span class="sec-lbl">Volunteer</span>
+        <h2>Sign Up to Volunteer</h2>
+        <p class="intro">Join our volunteer network and contribute your time and skills to the movement for justice. We have volunteer opportunities for everyone.</p>
+        <div class="vol-areas">
+            <div class="va"><input type="checkbox" id="v1"><label for="v1">Voter Registration Drives</label></div>
+            <div class="va"><input type="checkbox" id="v2"><label for="v2">Community Town Halls</label></div>
+            <div class="va"><input type="checkbox" id="v3"><label for="v3">Event Organization</label></div>
+            <div class="va"><input type="checkbox" id="v4"><label for="v4">Social Media &amp; Communications</label></div>
+            <div class="va"><input type="checkbox" id="v5"><label for="v5">Canvassing &amp; Outreach</label></div>
+            <div class="va"><input type="checkbox" id="v6"><label for="v6">Administrative Support</label></div>
+        </div>
+        <div class="form-grid">
+            <div class="form-group"><label>First Name *</label><input type="text" placeholder="First Name"/></div>
+            <div class="form-group"><label>Last Name *</label><input type="text" placeholder="Last Name"/></div>
+            <div class="form-group"><label>Email Address *</label><input type="email" placeholder="your@email.com"/></div>
+            <div class="form-group"><label>Mobile Phone *</label><input type="tel" placeholder="(404) 555-0100"/></div>
+            <div class="form-group"><label>Zip Code *</label><input type="text" placeholder="30344"/></div>
+            <div class="form-group"><label>Availability</label><select><option>Weekdays</option><option>Weekends</option><option>Both</option><option>Flexible</option></select></div>
+            <div class="form-group full"><label>Tell us about yourself</label><textarea placeholder="Any skills, experience or interests you'd like to share..."></textarea></div>
+        </div>
+        <button class="submit-btn" onclick="showSuccess('vol-success')">Sign Up to Volunteer</button>
+        <div class="success-box" id="vol-success"><h3>Thank you for signing up!</h3><p>We'll be in touch shortly with volunteer opportunities in your area.</p></div>
+    </div>
+
+    <!-- NEWSLETTER -->
+    <div class="gi-panel" id="panel-newsletter">
+        <span class="sec-lbl">Join Our Newsletter</span>
+        <h2>Stay Informed &amp; Engaged</h2>
+        <p class="intro">Sign up for our mailing list to receive updates on events, issues, and ways to get involved in the fight for justice.</p>
+        <div class="form-grid">
+            <div class="form-group full"><label>Full Name *</label><input type="text" placeholder="Your Full Name"/></div>
+            <div class="form-group"><label>Email Address *</label><input type="email" placeholder="your@email.com"/></div>
+            <div class="form-group"><label>Mobile Phone *</label><input type="tel" placeholder="(404) 555-0100"/><span class="form-note">We may send event reminders via SMS</span></div>
+            <div class="form-group"><label>Zip Code *</label><input type="text" placeholder="30344"/><span class="form-note">Helps us send local event info</span></div>
+            <div class="form-group full"><label>Topics of Interest</label><select><option>All Justice Areas</option><option>Political Justice</option><option>Racial Justice</option><option>Economic Justice</option><option>Healthcare Justice</option><option>Environmental Justice</option></select></div>
+        </div>
+        <button class="submit-btn" onclick="showSuccess('nl-success')">Subscribe to Newsletter</button>
+        <div class="success-box" id="nl-success"><h3>Thank you for subscribing!</h3><p>You'll start receiving updates on events, issues and ways to get involved.</p></div>
+    </div>
+
+    <!-- SPEAKER REQUEST -->
+    <div class="gi-panel" id="panel-speaker">
+        <span class="sec-lbl">Speaker Request</span>
+        <h2>Request a Speaker</h2>
+        <p class="intro">Invite Communities United for Justice to speak at your next event, town hall, community meeting or conference. We will respond within 5 business days.</p>
+        <div class="form-grid">
+            <div class="form-group"><label>Your Name *</label><input type="text" placeholder="Full Name"/></div>
+            <div class="form-group"><label>Organization *</label><input type="text" placeholder="Organization Name"/></div>
+            <div class="form-group"><label>Email Address *</label><input type="email" placeholder="your@email.com"/></div>
+            <div class="form-group"><label>Phone Number *</label><input type="tel" placeholder="(404) 555-0100"/></div>
+            <div class="form-group"><label>Event Date *</label><input type="date"/></div>
+            <div class="form-group"><label>Event Type *</label><select><option>Select Event Type</option><option>Town Hall</option><option>Community Meeting</option><option>Conference</option><option>Church/Faith Event</option><option>School/University</option><option>Other</option></select></div>
+            <div class="form-group"><label>Expected Attendance</label><select><option>Select Range</option><option>Under 50</option><option>50 - 100</option><option>100 - 250</option><option>250 - 500</option><option>Over 500</option></select></div>
+            <div class="form-group"><label>Topic of Interest</label><select><option>All Justice Areas</option><option>Political Justice</option><option>Racial Justice</option><option>Economic Justice</option><option>Healthcare Justice</option><option>Environmental Justice</option></select></div>
+            <div class="form-group full"><label>Event Location &amp; Address *</label><input type="text" placeholder="Full address of event venue"/></div>
+            <div class="form-group full"><label>Additional Information</label><textarea placeholder="Please describe your event, audience and any specific topics..."></textarea></div>
+        </div>
+        <button class="submit-btn" onclick="showSuccess('sp-success')">Submit Speaker Request</button>
+        <div class="success-box" id="sp-success"><h3>Request Submitted!</h3><p>Thank you for your speaker request. We will respond within 5 business days.</p></div>
+    </div>
+
+    <!-- DONATE -->
+    <div class="gi-panel" id="panel-donate">
+        <span class="sec-lbl">Donate</span>
+        <h2>Support Our Mission</h2>
+        <p class="intro">Your donation supports our fight for justice. Communities United for Justice Fund is a registered 501(c)(3) nonprofit — your donation is fully tax deductible.</p>
+        <div class="donate-tabs">
+            <div class="dt act" onclick="setFreq(this)">One-Time</div>
+            <div class="dt" onclick="setFreq(this)">Monthly</div>
+            <div class="dt" onclick="setFreq(this)">Quarterly</div>
+            <div class="dt" onclick="setFreq(this)">Yearly</div>
+        </div>
+        <div class="amount-grid">
+            <div class="amount-btn" onclick="setAmount(this,'30')">$30</div>
+            <div class="amount-btn act" onclick="setAmount(this,'60')">$60</div>
+            <div class="amount-btn" onclick="setAmount(this,'125')">$125</div>
+            <div class="amount-btn" onclick="setAmount(this,'300')">$300</div>
+        </div>
+        <div class="custom-amount"><span>$</span><input type="number" placeholder="Custom amount" id="custom-amt"/></div>
+        <div class="donate-note"><p>Communities United for Justice Fund is a registered 501(c)(3) nonprofit. We fundraise with Zeffy to ensure 100% of your donation goes to our mission.</p></div>
+        <div class="form-grid">
+            <div class="form-group"><label>First Name *</label><input type="text" placeholder="First Name"/></div>
+            <div class="form-group"><label>Last Name *</label><input type="text" placeholder="Last Name"/></div>
+            <div class="form-group full"><label>Email Address *</label><input type="email" placeholder="your@email.com"/></div>
+        </div>
+        <button class="submit-btn gold" onclick="window.open('https://www.zeffy.com/en-US/donation-form/end-the-confederacy-one-america','_blank')">&#10084; Donate Now via Zeffy</button>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="gi-sidebar">
+    <div class="sb-card">
+        <h4>Ways to Get Involved</h4>
+        <p>Choose how you want to make a difference:</p>
+        <button class="sb-btn" onclick="showPanel('volunteer',null)">Volunteer</button>
+        <button class="sb-btn" onclick="showPanel('newsletter',null)">Join Newsletter</button>
+        <button class="sb-btn" onclick="showPanel('speaker',null)">Speaker Request</button>
+        <button class="sb-btn gold" onclick="showPanel('donate',null)">&#10084; Donate</button>
+    </div>
+    <div class="sb-card">
+        <h4>Contact Us</h4>
+        <p>Have questions about getting involved? We'd love to hear from you.</p>
+        <a href="/Contact" class="sb-btn">Contact Us</a>
+    </div>
+    <div class="sb-501">
+        <span class="badge-501">501(c)(3)</span>
+        <p>Certified Nonprofit Organization<br>Donations are tax deductible</p>
+    </div>
+  </div>
+</div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+<script>
+function showPanel(id, el) {
+    document.querySelectorAll('.gi-panel').forEach(p => p.classList.remove('act'));
+    document.querySelectorAll('.ac').forEach(a => a.classList.remove('act'));
+    document.getElementById('panel-' + id).classList.add('act');
+    if (el) el.classList.add('act');
+    else {
+        const map = {volunteer:0,newsletter:1,speaker:2,donate:3};
+        document.querySelectorAll('.ac')[map[id]].classList.add('act');
+    }
+}
+function showSuccess(id) { document.getElementById(id).style.display = 'block'; }
+function setFreq(el) { document.querySelectorAll('.dt').forEach(d => d.classList.remove('act')); el.classList.add('act'); }
+function setAmount(el, amt) { document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('act')); el.classList.add('act'); document.getElementById('custom-amt').value = amt; }
+
+// Handle #hash navigation to open specific panel
+window.addEventListener('load', function() {
+    const hash = window.location.hash.replace('#','');
+    if (['volunteer','newsletter','speaker','donate'].includes(hash)) {
+        const tabs = document.querySelectorAll('.ac');
+        const map = {volunteer:0,newsletter:1,speaker:2,donate:3};
+        showPanel(hash, tabs[map[hash]]);
+    }
+});
+</script>
 }

@@ -5,138 +5,214 @@
     var past = ViewBag.PastEvents as List<C4Justice.Web.Models.SiteEvent> ?? new();
 }
 
-<!-- Page Hero -->
-<section class="page-hero">
-    <div class="page-hero-content">
-        <span class="page-hero-label">Join the Movement</span>
-        <h1 class="page-hero-title">Events</h1>
-        <p class="page-hero-sub">Town halls, voter drives, rallies &amp; more — be part of the change.</p>
-        <nav aria-label="breadcrumb" class="page-hero-breadcrumb mt-3">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item active">Events</li>
-            </ol>
-        </nav>
+@section Styles {
+<style>
+.page-hero-ev { background:#1a3060; padding:28px 2rem; border-bottom:3px solid #d4a017; }
+.ph-bc{color:rgba(212,160,23,.7);font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.ph-h1{color:#fff;font-size:28px;font-family:Georgia,serif;margin-bottom:4px;}
+.ph-p{color:#a0b8d8;font-size:13px;}
+.ev-main{display:grid;grid-template-columns:1fr 300px;gap:0;align-items:start;max-width:1200px;margin:0 auto;}
+.ev-content{padding:36px 2rem;}
+.sec-lbl{color:#d4a017;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:700;display:block;}
+.ev-content h2{color:#1a3060;font-size:22px;font-family:Georgia,serif;margin-bottom:20px;line-height:1.3;}
+.auto-notice{background:#e8f0ff;border-left:4px solid #2b4a8c;padding:12px 16px;margin-bottom:24px;}
+.auto-notice p{color:#1a3060;font-size:12px;line-height:1.6;margin:0;}
+.events-list{display:flex;flex-direction:column;gap:20px;}
+.event-card{border:1px solid #dde;border-radius:4px;overflow:hidden;border-left:4px solid #d4a017;}
+.event-card.soon{border-left-color:#e85a1a;}
+.event-img{height:150px;background:#1a3060;display:flex;align-items:center;justify-content:center;position:relative;}
+.event-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.event-date-badge{position:absolute;top:12px;left:12px;background:#d4a017;color:#fff;padding:5px 10px;border-radius:3px;font-size:10px;font-weight:700;text-align:center;line-height:1.4;}
+.event-date-badge span{display:block;font-size:15px;font-weight:700;}
+.event-status{position:absolute;top:12px;right:12px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;}
+.status-upcoming{background:rgba(26,160,26,.9);color:#fff;}
+.status-soon{background:rgba(232,90,26,.9);color:#fff;}
+.event-body{padding:16px;}
+.event-body h3{color:#1a3060;font-size:15px;font-weight:700;margin-bottom:8px;font-family:Georgia,serif;}
+.event-meta{display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap;}
+.event-meta-item{display:flex;align-items:center;gap:4px;color:#888;font-size:11px;}
+.event-meta-item svg{width:11px;height:11px;stroke:#888;fill:none;stroke-width:2;}
+.event-body p{color:#555;font-size:13px;line-height:1.7;margin-bottom:14px;}
+.event-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.event-btn{background:#2b4a8c;color:#fff;border:none;padding:8px 14px;font-size:12px;font-weight:700;border-radius:3px;cursor:pointer;}
+.event-btn:hover{background:#1a3060;}
+.no-events{text-align:center;padding:32px;background:#f8f9fc;border-radius:4px;border:1px dashed #dde;}
+.no-events p{color:#888;font-size:13px;}
+.election-sec{margin-top:32px;padding-top:28px;border-top:1px solid #eee;}
+.election-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+.election-card{background:#f0f4ff;border:1px solid #dde;border-radius:4px;padding:18px;border-top:3px solid #2b4a8c;}
+.election-card h4{color:#1a3060;font-size:14px;font-weight:700;margin-bottom:6px;font-family:Georgia,serif;}
+.election-card p{color:#666;font-size:12px;line-height:1.6;margin-bottom:8px;}
+.election-date{color:#d4a017;font-size:11px;font-weight:700;}
+.ev-sidebar{background:#f8f9fc;border-left:1px solid #dde;padding:28px 18px;display:flex;flex-direction:column;gap:18px;align-self:start;position:sticky;top:70px;}
+.sb-card{background:#fff;border:1px solid #dde;border-radius:4px;border-top:3px solid #d4a017;padding:18px;}
+.sb-card h4{color:#1a3060;font-size:13px;font-weight:700;margin-bottom:8px;font-family:Georgia,serif;}
+.sb-card p{color:#666;font-size:11px;line-height:1.6;margin-bottom:10px;}
+.sb-btn{display:block;background:#2b4a8c;color:#fff;text-align:center;padding:9px;font-size:12px;font-weight:700;border-radius:3px;cursor:pointer;border:none;width:100%;margin-bottom:8px;text-decoration:none;}
+.sb-btn:hover{background:#1a3060;color:#fff;}
+.sb-btn.gold{background:#d4a017;}
+.sb-btn.gold:hover{background:#e8b820;}
+.upcoming-list{display:flex;flex-direction:column;gap:10px;}
+.ul-item{display:flex;gap:10px;align-items:flex-start;padding-bottom:10px;border-bottom:.5px solid #eee;}
+.ul-item:last-child{border-bottom:none;padding-bottom:0;}
+.ul-date{background:#1a3060;color:#d4a017;font-size:9px;font-weight:700;padding:4px 6px;border-radius:3px;text-align:center;flex-shrink:0;line-height:1.4;min-width:36px;}
+.ul-info h5{color:#1a3060;font-size:11px;font-weight:700;margin-bottom:2px;}
+.ul-info p{color:#888;font-size:10px;margin:0;}
+.sb-501{background:#1a3060;color:#fff;border-radius:4px;padding:14px;text-align:center;}
+.sb-501 .badge-501{font-size:16px;font-weight:700;color:#d4a017;font-family:Georgia,serif;display:block;margin-bottom:3px;}
+.sb-501 p{color:#a0b8d8;font-size:11px;margin:0;}
+@@media(max-width:767px){.ev-main{grid-template-columns:1fr;}.ev-sidebar{border-left:none;border-top:1px solid #dde;position:static;}.election-grid{grid-template-columns:1fr;}}
+</style>
+}
+
+<!-- PAGE HERO -->
+<div class="page-hero-ev">
+    <div style="max-width:1200px;margin:0 auto;padding:0 1rem;">
+        <div class="ph-bc">Home &rsaquo; Events</div>
+        <h1 class="ph-h1">Events</h1>
+        <p class="ph-p">Join us at upcoming community events, rallies and voter education sessions.</p>
     </div>
-</section>
+</div>
 
-<!-- ========== UPCOMING EVENTS ========== -->
-<section class="py-section" style="background:var(--white);">
-    <div class="container-xl">
-        <div class="section-header text-center mb-5">
-            <span class="section-label">Mark Your Calendar</span>
-            <h2 class="section-title">Upcoming Events</h2>
-            <p class="section-subtitle">Join us at our next community events and make your voice heard.</p>
+<div class="ev-main">
+  <div class="ev-content">
+    <span class="sec-lbl">Upcoming Events</span>
+    <h2>Events &amp; Community Actions</h2>
+    <div class="auto-notice">
+        <p><strong>Auto-Expiry:</strong> Events are automatically removed once their date has passed. Only upcoming events are shown here.</p>
+    </div>
+
+    @if (!upcoming.Any())
+    {
+        <div class="no-events">
+            <p>No upcoming events at this time. Join our newsletter to be notified of new events.</p>
         </div>
-
-        @if (upcoming.Any())
+    }
+    else
+    {
+        <div class="events-list">
+        @foreach (var ev in upcoming)
         {
-            <div class="row g-4">
-            @foreach (var e in upcoming)
+            var daysAway = (int)Math.Ceiling((ev.EventDate - DateTime.UtcNow).TotalDays);
+            var isSoon = daysAway <= 7;
+            <div class="event-card @(isSoon ? "soon" : "")">
+                <div class="event-img">
+                    @if (!string.IsNullOrWhiteSpace(ev.ImageUrl))
+                    {
+                        <img src="@ev.ImageUrl" alt="@ev.Title" />
+                    }
+                    else
+                    {
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(212,160,23,0.4)" stroke-width="1"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    }
+                    <div class="event-date-badge">
+                        <span>@ev.EventDate.Day</span>@ev.EventDate.ToString("MMM yyyy")
+                    </div>
+                    <div class="event-status @(isSoon ? "status-soon" : "status-upcoming")">
+                        @(isSoon ? "This Week!" : "Upcoming")
+                    </div>
+                </div>
+                <div class="event-body">
+                    <h3>@ev.Title</h3>
+                    <div class="event-meta">
+                        <div class="event-meta-item">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            @ev.EventDate.ToString("dddd, MMMM d, yyyy")
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(ev.Location))
+                        {
+                            <div class="event-meta-item">
+                                <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                @ev.Location
+                            </div>
+                        }
+                        <div class="event-meta-item">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            @daysAway days away
+                        </div>
+                    </div>
+                    <p>@ev.Description</p>
+                    <div class="event-actions">
+                        <button class="event-btn">Learn More</button>
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+    }
+
+    <!-- ELECTION CYCLES -->
+    <div class="election-sec">
+        <span class="sec-lbl">Election Cycles</span>
+        <h2>Key Election Dates &amp; Information</h2>
+        <p style="color:#555;font-size:13px;line-height:1.8;margin-bottom:16px">Stay informed on upcoming election cycles, registration deadlines and voting information for local, state and federal elections.</p>
+        <div class="election-grid">
+            <div class="election-card">
+                <h4>Georgia Primary Elections</h4>
+                <p>Primary election for state and local offices across Georgia.</p>
+                <div class="election-date">May 21, 2026</div>
+            </div>
+            <div class="election-card">
+                <h4>Voter Registration Deadline</h4>
+                <p>Last day to register to vote for the upcoming primary elections.</p>
+                <div class="election-date">April 21, 2026</div>
+            </div>
+            <div class="election-card">
+                <h4>Federal Midterm Elections</h4>
+                <p>Midterm elections for U.S. House and Senate seats.</p>
+                <div class="election-date">November 3, 2026</div>
+            </div>
+            <div class="election-card">
+                <h4>Early Voting Period</h4>
+                <p>Early voting period for Georgia primary elections.</p>
+                <div class="election-date">May 11–19, 2026</div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="ev-sidebar">
+    <div class="sb-card">
+        <h4>Upcoming Events</h4>
+        @if (!upcoming.Any())
+        {
+            <p style="color:#888;font-size:11px;">No upcoming events.</p>
+        }
+        else
+        {
+            <div class="upcoming-list">
+            @foreach (var ev in upcoming.Take(4))
             {
-                <div class="col-lg-4 col-md-6">
-                    <div class="ev-card h-100">
-                        <div class="ev-card-top">
-                            <div class="ev-date-block">
-                                <span class="ev-day">@e.EventDate.Day</span>
-                                <span class="ev-month">@e.EventDate.ToString("MMM")</span>
-                                <span class="ev-year">@e.EventDate.Year</span>
-                            </div>
-                            <div class="ev-top-info">
-                                @if (!string.IsNullOrWhiteSpace(e.Category))
-                                { <span class="ev-category">@e.Category</span> }
-                                <p class="ev-title">@e.Title</p>
-                            </div>
-                            <span class="ev-upcoming-badge">Upcoming</span>
-                        </div>
-                        <div class="ev-card-body">
-                            <div class="ev-meta-row">
-                                @if (!string.IsNullOrWhiteSpace(e.Location))
-                                {
-                                    <span class="ev-meta-item">
-                                        <i class="fas fa-map-marker-alt"></i> @e.Location
-                                    </span>
-                                }
-                                <span class="ev-meta-item">
-                                    <i class="fas fa-clock"></i> @e.EventDate.ToString("dddd, MMMM d, yyyy")
-                                </span>
-                            </div>
-                            @if (!string.IsNullOrWhiteSpace(e.Description))
-                            { <p class="ev-desc">@e.Description</p> }
-                            @if (!string.IsNullOrWhiteSpace(e.RegisterUrl))
-                            {
-                                <a href="@e.RegisterUrl" target="_blank" rel="noopener" class="ev-register-btn">
-                                    <i class="fas fa-ticket-alt me-1"></i> Register Now
-                                </a>
-                            }
-                        </div>
+                <div class="ul-item">
+                    <div class="ul-date">@ev.EventDate.Day<br/>@ev.EventDate.ToString("MMM")</div>
+                    <div class="ul-info">
+                        <h5>@ev.Title</h5>
+                        <p>@(ev.Category ?? "Event") &bull; @((int)Math.Ceiling((ev.EventDate - DateTime.UtcNow).TotalDays)) days away</p>
                     </div>
                 </div>
             }
             </div>
         }
-        else
-        {
-            <div class="text-center py-5">
-                <div style="width:72px;height:72px;border-radius:50%;background:var(--off-white);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
-                    <i class="fas fa-calendar-days" style="font-size:1.8rem;color:var(--navy);"></i>
-                </div>
-                <h4 style="color:var(--text);margin-bottom:8px;">No Upcoming Events</h4>
-                <p style="color:var(--text-light);max-width:400px;margin:0 auto 20px;">
-                    Follow us on Facebook for real-time event announcements and community updates.
-                </p>
-                <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="btn-primary-c4j">
-                    <i class="fab fa-facebook me-2"></i> Follow on Facebook
-                </a>
-            </div>
-        }
     </div>
-</section>
-
-<!-- ========== PAST EVENTS ========== -->
-@if (past.Any())
-{
-<section class="py-section" style="background:var(--off-white);">
-    <div class="container-xl">
-        <div class="section-header text-center mb-5">
-            <span class="section-label">Archive</span>
-            <h2 class="section-title">Past Events</h2>
-            <p class="section-subtitle">A look back at our community impact.</p>
-        </div>
-        <div class="row g-3">
-        @foreach (var e in past)
-        {
-            <div class="col-lg-6">
-                <div class="past-ev-item">
-                    <div class="past-ev-date-strip">
-                        <span class="ped-day">@e.EventDate.Day</span>
-                        <span class="ped-mon">@e.EventDate.ToString("MMM")</span>
-                        <span class="ped-yr">@e.EventDate.Year</span>
-                    </div>
-                    <div class="past-ev-info">
-                        <div class="past-ev-title">@e.Title</div>
-                        @if (!string.IsNullOrWhiteSpace(e.Location))
-                        { <div class="past-ev-loc"><i class="fas fa-map-marker-alt me-1"></i>@e.Location</div> }
-                    </div>
-                    @if (!string.IsNullOrWhiteSpace(e.Category))
-                    { <span class="past-ev-cat">@e.Category</span> }
-                </div>
-            </div>
-        }
-        </div>
+    <div class="sb-card">
+        <h4>&#10084; Donate Today</h4>
+        <p>Support our mission and help fund community events.</p>
+        <a href="/GetInvolved#donate" class="sb-btn gold">Donate Now</a>
     </div>
-</section>
-}
-
-<!-- ========== FACEBOOK CTA ========== -->
-<section class="py-section" style="background:var(--white);">
-    <div class="container-xl">
-        <div class="join-cta-card text-center">
-            <h2 class="jcc-title">Stay Updated</h2>
-            <p class="jcc-text">Follow us on Facebook for real-time event announcements and community updates.</p>
-            <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="btn-hero-primary">
-                <i class="fab fa-facebook me-2"></i>Follow on Facebook
-            </a>
-        </div>
+    <div class="sb-card">
+        <h4>Volunteer</h4>
+        <p>Help organize and run our community events.</p>
+        <a href="/GetInvolved" class="sb-btn">Sign Up to Volunteer</a>
     </div>
-</section>
+    <div class="sb-card">
+        <h4>Join Our Newsletter</h4>
+        <p>Get notified about upcoming events and community actions.</p>
+        <a href="/GetInvolved#newsletter" class="sb-btn">Subscribe Now</a>
+    </div>
+    <div class="sb-501">
+        <span class="badge-501">501(c)(3)</span>
+        <p>Certified Nonprofit Organization<br>Donations are tax deductible</p>
+    </div>
+  </div>
+</div>
