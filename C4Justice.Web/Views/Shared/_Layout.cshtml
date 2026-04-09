@@ -414,9 +414,13 @@
             toggler.setAttribute('aria-expanded', !expanded);
             toggler.classList.toggle('open');
             navLinks.classList.toggle('open');
+            const isOpen = navLinks.classList.contains('open');
+            // Lock body scroll so page doesn't scroll behind overlay
+            document.body.classList.toggle('nav-open', isOpen);
             // Close all open mega menus when closing mobile nav
-            if (!navLinks.classList.contains('open')) {
+            if (!isOpen) {
                 document.querySelectorAll('.has-mega.open').forEach(o => o.classList.remove('open'));
+                navLinks.scrollTop = 0;
             }
         });
     }
@@ -446,9 +450,14 @@
         // ALL sizes: clicking the top label toggles dropdown, never navigates
         const topLink = item.querySelector(':scope > a');
         if (topLink) {
+            // Prevent browser focus (and focus-scroll) on mobile before click fires
+            topLink.addEventListener('pointerdown', e => {
+                if (window.innerWidth < 992) e.preventDefault();
+            });
             topLink.addEventListener('click', e => {
                 e.preventDefault();
                 e.stopPropagation();
+                topLink.blur();
                 const alreadyOpen = item.classList.contains('open');
                 document.querySelectorAll('.has-mega.open').forEach(o => o.classList.remove('open'));
                 if (!alreadyOpen) item.classList.add('open');
@@ -490,6 +499,7 @@
                 navLinks.classList.remove('open');
                 toggler.classList.remove('open');
                 toggler.setAttribute('aria-expanded', 'false');
+                document.body.classList.remove('nav-open');
                 document.querySelectorAll('.has-mega.open').forEach(o => o.classList.remove('open'));
             }
         });

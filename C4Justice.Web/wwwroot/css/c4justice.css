@@ -326,16 +326,18 @@ a:hover { text-decoration: underline; }
         top: 64px; left: 0; right: 0; bottom: 0;
         background: var(--bg-dark);
         border-top: 2px solid var(--gold);
-        flex-direction: column;
-        align-items: stretch;
-        padding: 0 0 32px;
+        padding: 0 0 48px;
         display: none;
         z-index: 500;
         box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-        overflow-y: auto;
+        overflow-y: scroll;
         -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        overflow-anchor: none;
     }
-    .nav-links.open { display: flex; }
+    .nav-links.open { display: block; }
+    /* Lock body when nav is open (set via JS) */
+    body.nav-open { overflow: hidden; }
 
     /* Top-level nav items */
     .nav-links > li > a {
