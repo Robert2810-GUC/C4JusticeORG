@@ -128,9 +128,10 @@ a:hover { text-decoration: underline; }
     display: flex;
     align-items: center;
     gap: 0;
+    line-height:2.5;
     margin: 0; padding: 0;
     flex: 1;
-    justify-content: flex-start;
+    justify-content: flex-end;
 }
 .nav-links > li { position: relative; }
 .nav-links > li > a {
