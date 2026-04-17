@@ -11,4 +11,10 @@ public class MailingListViewModel
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Invalid email address")]
     public string Email { get; set; } = string.Empty;
+
+    [StringLength(20)]
+    public string Phone { get; set; } = string.Empty;
+
+    [StringLength(10)]
+    public string ZipCode { get; set; } = string.Empty;
 }

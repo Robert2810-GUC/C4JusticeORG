@@ -100,60 +100,8 @@
                 </div>
             </li>
 
-            <!-- Issues ▼ -->
-            <li class="has-mega">
-                <a class="cursor-pointer @(ViewData["ActivePage"]?.ToString() is "Issues" or "Opinion" or "Documents" ? "active" : "")">
-                    Issues <i class="fas fa-caret-down nav-caret"></i>
-                </a>
-                <div class="mega-panel">
-                    <div class="mega-grid">
-                        <div class="mega-overview">
-                            <span class="mega-ov-label">Issues</span>
-                            <h3 class="mega-ov-title">Fighting for Justice</h3>
-                            <p class="mega-ov-text">Fighting for justice across all areas that affect our communities — from the ballot box to the hospital room.</p>
-                            <a href="/Issues" class="mega-ov-link">All Focus Areas &rarr;</a>
-                        </div>
-                        <div class="mega-col">
-                            <div class="mega-col-label">Focus Areas</div>
-                            <a href="/Issues#political" class="mega-item">
-                                <div class="mega-icon" style="background:rgba(27,79,145,.12);color:#1B4F91"><i class="fas fa-landmark"></i></div>
-                                <div class="mega-item-body"><span class="mega-item-title">Political Justice</span><span class="mega-item-desc">Fighting gerrymandering &amp; voter suppression.</span></div>
-                            </a>
-                            <a href="/Issues#racial" class="mega-item">
-                                <div class="mega-icon" style="background:rgba(185,28,28,.1);color:#b91c1c"><i class="fas fa-people-group"></i></div>
-                                <div class="mega-item-body"><span class="mega-item-title">Racial Justice</span><span class="mega-item-desc">Fighting white supremacy &amp; racial disparities.</span></div>
-                            </a>
-                            <a href="/Issues#economic" class="mega-item">
-                                <div class="mega-icon" style="background:rgba(217,119,6,.1);color:#d97706"><i class="fas fa-scale-balanced"></i></div>
-                                <div class="mega-item-body"><span class="mega-item-title">Economic Justice</span><span class="mega-item-desc">Fighting divestment &amp; glass ceilings.</span></div>
-                            </a>
-                            <a href="/Issues#healthcare" class="mega-item">
-                                <div class="mega-icon" style="background:rgba(220,38,38,.1);color:#dc2626"><i class="fas fa-heart-pulse"></i></div>
-                                <div class="mega-item-body"><span class="mega-item-title">Healthcare Justice</span><span class="mega-item-desc">Fighting healthcare inequality.</span></div>
-                            </a>
-                            <a href="/Issues#environmental" class="mega-item">
-                                <div class="mega-icon" style="background:rgba(22,163,74,.1);color:#16a34a"><i class="fas fa-leaf"></i></div>
-                                <div class="mega-item-body"><span class="mega-item-title">Environmental Justice</span><span class="mega-item-desc">Fighting disproportionate environmental impacts.</span></div>
-                            </a>
-                        </div>
-                        <div class="mega-col mega-col-alt">
-                            <div class="mega-col-label">Resources</div>
-                            <a href="/Opinion" class="mega-alt-item">
-                                <div class="mega-alt-icon"><i class="fas fa-pen-nib"></i></div>
-                                <div class="mega-alt-body"><span class="mega-alt-title">Opinion &amp; Essays</span><span class="mega-alt-desc">Expert insights &amp; thought leadership.</span></div>
-                            </a>
-                            <a href="/Documents" class="mega-alt-item">
-                                <div class="mega-alt-icon"><i class="fas fa-bullhorn"></i></div>
-                                <div class="mega-alt-body"><span class="mega-alt-title">Press Releases</span><span class="mega-alt-desc">Official statements &amp; announcements.</span></div>
-                            </a>
-                            <a href="/Documents" class="mega-alt-item">
-                                <div class="mega-alt-icon"><i class="fas fa-chart-bar"></i></div>
-                                <div class="mega-alt-body"><span class="mega-alt-title">Research &amp; Reports</span><span class="mega-alt-desc">Data, studies &amp; analytical reports.</span></div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </li>
+            <!-- Mission -->
+            <li><a href="/About" class="@(ViewData["ActivePage"]?.ToString() == "Mission" ? "active" : "")">Mission</a></li>
 
             <!-- Events ▼ -->
             <li class="has-mega">
@@ -356,12 +304,14 @@
             <ul>
                 <li><a href="/">Home</a></li>
                 <li><a href="/About">About Us</a></li>
+                <li><a href="/About">Mission</a></li>
                 <li><a href="/Issues">Focus Areas</a></li>
                 <li><a href="/Opinion">Opinion</a></li>
                 <li><a href="/Documents">Documents</a></li>
                 <li><a href="/Events">Events</a></li>
                 <li><a href="/GetInvolved">Get Involved</a></li>
                 <li><a href="/Contact">Contact</a></li>
+                <li><a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="footer-donate-link">Donate</a></li>
             </ul>
         </div>
 
@@ -379,13 +329,13 @@
         <div class="footer-col">
             <h5>Stay Informed</h5>
             <p>Join our mailing list for updates on events and ways to get involved.</p>
-            <form asp-action="Subscribe" asp-controller="Home" method="post">
+            <form asp-action="Subscribe" asp-controller="Home" method="post" class="nl-footer-stack">
                 @Html.AntiForgeryToken()
-                <div class="nl-footer-input">
-                    <input type="email" name="Email" placeholder="Your email address" required>
-                    <input type="hidden" name="Name" value="Newsletter Subscriber">
-                    <button type="submit">Subscribe</button>
-                </div>
+                <input type="text"  name="Name"    placeholder="Full Name"      required>
+                <input type="email" name="Email"   placeholder="Email Address"  required>
+                <input type="tel"   name="Phone"   placeholder="Mobile Phone">
+                <input type="text"  name="ZipCode" placeholder="Zip Code">
+                <button type="submit">Subscribe</button>
             </form>
             <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="donate-footer-btn">
                 <i class="fas fa-heart me-2"></i>Donate to the Fund

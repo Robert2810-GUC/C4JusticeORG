@@ -47,6 +47,37 @@ namespace C4Justice.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var item = await _db.SliderImages.FindAsync(id);
+            if (item == null) return NotFound();
+            return View(item);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, SliderImage model, IFormFile? imageFile)
+        {
+            var item = await _db.SliderImages.FindAsync(id);
+            if (item == null) return NotFound();
+
+            // Replace image only if a new file was uploaded
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var url = await _cloudinary.UploadImageAsync(imageFile, "c4justice/slider");
+                if (url != null) item.ImageUrl = url;
+            }
+
+            item.Title     = model.Title;
+            item.Subtitle  = model.Subtitle;
+            item.SortOrder = model.SortOrder;
+            item.IsActive  = model.IsActive;
+
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "Slider image updated.";
+            return RedirectToAction(nameof(Index));
+        }
+
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleActive(int id)
         {

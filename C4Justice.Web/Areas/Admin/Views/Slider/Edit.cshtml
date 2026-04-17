@@ -1,0 +1,68 @@
+@model C4Justice.Web.Models.SliderImage
+@{
+    ViewData["Title"] = "Edit Slider Image";
+}
+
+<div class="admin-card" style="max-width:640px;">
+
+    <!-- Current image preview -->
+    <div style="margin-bottom:20px;">
+        <label class="admin-form-label" style="margin-bottom:8px;">Current Image</label>
+        <div style="border-radius:8px;overflow:hidden;border:1px solid rgba(200,169,81,0.2);max-height:200px;">
+            <img src="@Model.ImageUrl" style="width:100%;height:200px;object-fit:cover;"
+                 onerror="this.src='/images/community-1.png'" id="imgPreview" />
+        </div>
+    </div>
+
+    <form method="post" asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label class="admin-form-label">Replace Image <span style="color:#8b949e;font-weight:400;">(optional — leave blank to keep current)</span></label>
+            <input type="file" name="imageFile" accept="image/*" class="admin-form-control"
+                   onchange="previewImg(this)" />
+            <small style="color:#8b949e;">Recommended: 1920×700px, JPG/PNG/WebP</small>
+        </div>
+
+        <div class="mb-3">
+            <label class="admin-form-label">Title</label>
+            <input asp-for="Title" class="admin-form-control"
+                   placeholder="e.g. United for Political Justice" />
+        </div>
+
+        <div class="mb-3">
+            <label class="admin-form-label">Subtitle</label>
+            <input asp-for="Subtitle" class="admin-form-control"
+                   placeholder="Short description shown below the title" />
+        </div>
+
+        <div class="mb-3">
+            <label class="admin-form-label">Sort Order <span style="color:#8b949e;font-weight:400;">(lower = first)</span></label>
+            <input asp-for="SortOrder" type="number" min="0" class="admin-form-control" style="max-width:140px;" />
+        </div>
+
+        <div class="mb-4 d-flex align-items-center gap-2">
+            <input asp-for="IsActive" type="checkbox" style="width:16px;height:16px;accent-color:var(--gold);" />
+            <label class="admin-form-label mb-0">Active (visible on site)</label>
+        </div>
+
+        <div class="d-flex gap-3 flex-wrap">
+            <button type="submit" class="btn-sm-admin btn-primary-admin" style="padding:10px 28px;">
+                <i class="fas fa-save me-1"></i>Save Changes
+            </button>
+            <a href="/Admin/Slider" class="btn-sm-admin btn-ghost-admin" style="padding:10px 24px;">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+function previewImg(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => document.getElementById('imgPreview').src = e.target.result;
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+}
