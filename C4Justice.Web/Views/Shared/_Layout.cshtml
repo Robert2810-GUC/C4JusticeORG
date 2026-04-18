@@ -24,17 +24,17 @@
 </head>
 <body>
 
-<!-- ── INTEGRATED NAV (logo + links + donate) ── -->
-<nav class="site-nav" id="siteNav">
-    <div class="nav-inner">
+<!-- ── SITE HEADER (sticky white — logo + nav + donate) ── -->
+<div class="site-header" id="siteHeader">
+    <div class="site-header-inner">
 
         <!-- Logo -->
         <a href="/" class="nav-logo-area">
-            <div class="nav-logo-circle">
+            <div class="nav-logo-circle nav-logo-circle-lg">
                 <img src="~/images/c4comlogo.jpg" alt="C4J Logo">
             </div>
             <div class="nav-logo-text">
-                <span class="nav-logo-name">Communities United For Justice Fund</span>
+                <span class="nav-logo-name nav-logo-name-lg">Communities United For Justice Fund</span>
                 <span class="nav-logo-sub">501(C)(3) Nonprofit Organization</span>
             </div>
         </a>
@@ -44,7 +44,7 @@
             <span></span><span></span><span></span>
         </button>
 
-        <!-- Nav links -->
+        <!-- Nav links (desktop: right-aligned inline; mobile: full-screen overlay) -->
         <ul class="nav-links" id="navLinks">
 
             <!-- Home -->
@@ -255,7 +255,7 @@
             </li>
         </ul>
 
-        <!-- Right: Facebook + Donate (desktop) -->
+        <!-- Right: Facebook icon (beside nav links on desktop) -->
         <div class="nav-right">
             <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="nav-fb-icon" title="Follow us on Facebook">
                 <i class="fab fa-facebook-f"></i>
@@ -280,75 +280,79 @@
 </main>
 
 <!-- ── FOOTER ── -->
-<footer class="site-footer">
-    <div class="footer-grid-wrap">
-        <div class="footer-col">
-            <div class="logo-circle" style="width:52px;height:52px;">
-                <img src="~/images/c4comlogo.jpg" alt="C4J">
+        <footer class="site-footer">
+            <div class="footer-grid-wrap">
+                <div class="footer-col">
+                    <div class="logo-circle" style="width:54px; height:54px; margin-bottom: 8px;">
+                        <img src="~/images/c4comlogo.jpg" alt="C4J">
+                    </div>
+                    <div class="ft-name">Communities United For Justice Fund</div>
+                    <span class="ft-tag">"United We Stand. Divided We Fall."</span>
+                    <p class="ft-desc">A 501(c)(3) social justice advocacy platform fighting for Political, Racial, Economic, Healthcare, and Environmental Justice.</p>
+
+                    <div class="ft-soc">
+                        <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" class="ft-sb fb" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="mailto:info@cu4justice.com" class="ft-sb em" title="Email">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h5>Quick Links</h5>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/About">About Us</a></li>
+                        <li><a href="/About">Mission</a></li>
+                        <li><a href="/Issues">Focus Areas</a></li>
+                        <li><a href="/Opinion">Opinion</a></li>
+                        <li><a href="/Documents">Documents</a></li>
+                        <li><a href="/Events">Events</a></li>
+                        <li><a href="/GetInvolved">Get Involved</a></li>
+                        <li><a href="/Contact">Contact</a></li>
+                        <li><a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" class="gd"><i class="fas fa-heart" style="font-size:10px; margin-right:4px;"></i> Donate</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h5>Our Causes</h5>
+                    <ul>
+                        <li><a href="/About#political">Political Justice</a></li>
+                        <li><a href="/About#racial">Racial Justice</a></li>
+                        <li><a href="/About#economic">Economic Justice</a></li>
+                        <li><a href="/About#environmental">Environmental Justice</a></li>
+                        <li><a href="/About#healthcare">Healthcare Justice</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h5>Stay Informed</h5>
+                    <form asp-action="Subscribe" asp-controller="Home" method="post" class="nl-footer-stack">
+                        @Html.AntiForgeryToken()
+                        <p>Join our mailing list for updates on events and ways to get involved.</p>
+                        <input type="text" name="Name" placeholder="Full Name" required>
+                        <input type="email" name="Email" placeholder="Email Address" required>
+                        <input type="tel" name="Phone" placeholder="Mobile Phone">
+                        <input type="text" name="ZipCode" placeholder="Zip Code">
+                        <button type="submit" class="sub">Subscribe</button>
+                    </form>
+                    <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" class="donate-footer-btn">
+                        &#10084; Donate to the Fund
+                    </a>
+                </div>
             </div>
-            <h5>Communities United<br>For Justice Fund</h5>
-            <p class="footer-tagline">"United We Stand. Divided We Fall."</p>
-            <p>A 501(c)(3) social justice advocacy platform fighting for Political, Racial, Economic, and Environmental Justice.</p>
-            <div class="footer-social">
-                <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="social-fb" title="Facebook">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="mailto:info@cu4justice.com" class="social-em" title="Email">
-                    <i class="fas fa-envelope"></i>
-                </a>
+
+            <div class="footer-bottom">
+                <p>&copy; @DateTime.Now.Year Communities United for Justice Fund. All rights reserved.</p>
+                <div class="fnav">
+                    <a href="#">A registered 501(c)(3) nonprofit organization.</a>
+                    <a href="/Contact">Contact Us</a>
+                    <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" class="gd">Donate</a>
+                </div>
             </div>
-        </div>
-
-        <div class="footer-col">
-            <h5>Quick Links</h5>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/About">About Us</a></li>
-                <li><a href="/About">Mission</a></li>
-                <li><a href="/Issues">Focus Areas</a></li>
-                <li><a href="/Opinion">Opinion</a></li>
-                <li><a href="/Documents">Documents</a></li>
-                <li><a href="/Events">Events</a></li>
-                <li><a href="/GetInvolved">Get Involved</a></li>
-                <li><a href="/Contact">Contact</a></li>
-                <li><a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="footer-donate-link">Donate</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-col">
-            <h5>Our Causes</h5>
-            <ul>
-                <li><a href="/About#political"><i class="fas fa-landmark me-1"></i> Political Justice</a></li>
-                <li><a href="/About#racial"><i class="fas fa-hands-holding-circle me-1"></i> Racial Justice</a></li>
-                <li><a href="/About#economic"><i class="fas fa-scale-balanced me-1"></i> Economic Justice</a></li>
-                <li><a href="/About#environmental"><i class="fas fa-leaf me-1"></i> Environmental Justice</a></li>
-                <li><a href="/About#healthcare"><i class="fas fa-heart-pulse me-1"></i> Healthcare Justice</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-col">
-            <h5>Stay Informed</h5>
-            <p>Join our mailing list for updates on events and ways to get involved.</p>
-            <form asp-action="Subscribe" asp-controller="Home" method="post" class="nl-footer-stack">
-                @Html.AntiForgeryToken()
-                <input type="text"  name="Name"    placeholder="Full Name"      required>
-                <input type="email" name="Email"   placeholder="Email Address"  required>
-                <input type="tel"   name="Phone"   placeholder="Mobile Phone">
-                <input type="text"  name="ZipCode" placeholder="Zip Code">
-                <button type="submit">Subscribe</button>
-            </form>
-            <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="donate-footer-btn">
-                <i class="fas fa-heart me-2"></i>Donate to the Fund
-            </a>
-        </div>
-    </div>
-
-    <div class="footer-bottom">
-        <p>&copy; @DateTime.Now.Year Communities United for Justice Fund. All rights reserved.</p>
-        <p>A registered 501(c)(3) nonprofit organization. &nbsp;|&nbsp; <a href="/Contact">Contact Us</a> &nbsp;|&nbsp; <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank">Donate</a></p>
-    </div>
-</footer>
-
+        </footer>
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Custom JS -->
