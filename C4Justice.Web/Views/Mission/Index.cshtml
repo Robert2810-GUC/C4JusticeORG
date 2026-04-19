@@ -1,0 +1,222 @@
+@{
+    ViewData["Title"] = "Our Mission";
+    ViewData["ActivePage"] = "Mission";
+}
+
+@section Styles {
+<style>
+.page-hero-mission { background:var(--navy); padding:36px 0; border-bottom:3px solid var(--gold); }
+.ph-bc  { color:rgba(232,200,74,.7); font-size:11px; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+.ph-h1  { color:#fff; font-size:28px; font-family:var(--font-head); margin-bottom:4px; }
+.ph-p   { color:#a0b8d8; font-size:14px; }
+
+.mission-main { display:grid; grid-template-columns:1fr 300px; gap:0; align-items:start; max-width:1400px; margin:0 auto; }
+.mission-content { padding:36px 24px; }
+
+/* Intro banner */
+.mission-intro { background:var(--navy); border-left:4px solid var(--gold); border-radius:0 4px 4px 0; padding:20px 24px; margin-bottom:36px; }
+.mission-intro p { color:#a0b8d8; font-size:15px; font-style:italic; line-height:1.7; margin:0; font-family:var(--font-head); }
+.mission-intro strong { color:var(--gold); }
+
+/* Justice cards */
+.justice-list { display:flex; flex-direction:column; gap:24px; margin-bottom:40px; }
+.justice-card { display:flex; gap:0; border:1px solid #dde; border-radius:4px; overflow:hidden; }
+.justice-accent { width:6px; flex-shrink:0; }
+.jc-political  .justice-accent { background:#1a3a6b; }
+.jc-racial     .justice-accent { background:#6b1a1a; }
+.jc-economic   .justice-accent { background:#1a4a28; }
+.jc-healthcare .justice-accent { background:#1a3a50; }
+.jc-environmental .justice-accent { background:#2a4a1a; }
+
+.justice-body { padding:20px 24px; flex:1; }
+.justice-num  { color:var(--gold); font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; display:block; }
+.justice-body h3 { color:var(--navy); font-size:17px; font-family:var(--font-head); font-weight:700; margin-bottom:10px; display:flex; align-items:center; gap:10px; }
+.justice-icon { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px; }
+.jc-political  .justice-icon { background:rgba(26,58,107,.12); color:#1a3a6b; }
+.jc-racial     .justice-accent + .justice-body .justice-icon { background:rgba(107,26,26,.12); color:#6b1a1a; }
+.jc-economic   .justice-body .justice-icon { background:rgba(26,74,40,.12); color:#1a4a28; }
+.jc-healthcare .justice-body .justice-icon { background:rgba(26,58,80,.12); color:#1a3a50; }
+.jc-environmental .justice-body .justice-icon { background:rgba(42,74,26,.12); color:#2a4a1a; }
+.justice-body p { color:#444; font-size:14px; line-height:1.85; margin:0; }
+
+/* What We Do section */
+.what-we-do { background:var(--navy); border-radius:4px; padding:28px 28px 24px; margin-bottom:8px; }
+.wwd-label { color:var(--gold); font-size:10px; letter-spacing:2px; text-transform:uppercase; font-weight:700; display:block; margin-bottom:10px; }
+.what-we-do h2 { color:#fff; font-size:20px; font-family:var(--font-head); margin-bottom:18px; }
+.wwd-list { display:flex; flex-direction:column; gap:12px; }
+.wwd-item { display:flex; align-items:flex-start; gap:14px; }
+.wwd-dot  { width:8px; height:8px; border-radius:50%; background:var(--gold); flex-shrink:0; margin-top:6px; }
+.wwd-item p { color:#a0b8d8; font-size:14px; line-height:1.7; margin:0; }
+
+/* Sidebar */
+.mission-sidebar { background:#f8f9fc; border-left:1px solid #dde; padding:28px 18px; display:flex; flex-direction:column; gap:18px; align-self:start; position:sticky; top:70px; }
+.sb-card { background:#fff; border:1px solid #dde; border-radius:4px; border-top:3px solid var(--gold); padding:18px; }
+.sb-card h4 { color:var(--navy); font-size:13px; font-weight:700; margin-bottom:8px; font-family:var(--font-head); }
+.sb-card p  { color:#666; font-size:12px; line-height:1.65; margin-bottom:10px; }
+.sb-btn { display:block; background:var(--navy-light); color:#fff; text-align:center; padding:9px; font-size:12px; font-weight:700; border-radius:3px; cursor:pointer; border:none; width:100%; margin-bottom:8px; text-decoration:none; }
+.sb-btn:hover { background:var(--navy); color:#fff; text-decoration:none; }
+.sb-btn.gold { background:var(--gold); color:var(--navy); }
+.sb-btn.gold:hover { background:#e8b820; }
+.sb-links { display:flex; flex-direction:column; gap:6px; }
+.sb-link { display:flex; align-items:center; gap:8px; color:#0d1f3c; font-size:12px; text-decoration:none; padding:6px 0; border-bottom:.5px solid #eee; }
+.sb-link:hover { color:var(--gold); }
+.sb-link:last-child { border-bottom:none; }
+.sb-link svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; flex-shrink:0; }
+.sb-501 { background:var(--navy); color:#fff; border-radius:4px; padding:14px; text-align:center; }
+.sb-501 .badge-501 { font-size:16px; font-weight:700; color:var(--gold); font-family:var(--font-head); display:block; margin-bottom:3px; }
+.sb-501 p { color:#a0b8d8; font-size:11px; margin:0; }
+
+@@media(max-width:767px){
+    .mission-main { grid-template-columns:1fr; }
+    .mission-sidebar { border-left:none; border-top:1px solid #dde; position:static; }
+    .justice-body h3 { font-size:15px; }
+}
+</style>
+}
+
+<!-- PAGE HERO -->
+<div class="page-hero-mission">
+    <div style="max-width:1400px;margin:0 auto;padding:0 24px;">
+        <div class="ph-bc">Home &rsaquo; Our Mission</div>
+        <h1 class="ph-h1">Our Mission</h1>
+        <p class="ph-p">Fighting for Political, Racial, Economic, Healthcare and Environmental Justice.</p>
+    </div>
+</div>
+
+<div class="mission-main">
+  <div class="mission-content">
+
+    <!-- Intro -->
+    <div class="mission-intro reveal">
+        <p><strong>Communities United for Justice:</strong> Fighting for Political, Racial, Economic, Healthcare and Environmental Justice.</p>
+    </div>
+
+    <!-- Justice Areas -->
+    <div class="justice-list">
+
+      <div class="justice-card jc-political reveal">
+        <div class="justice-accent"></div>
+        <div class="justice-body">
+            <span class="justice-num">01 &mdash; Political Justice</span>
+            <h3>
+                <div class="justice-icon"><i class="fas fa-landmark"></i></div>
+                Political Justice
+            </h3>
+            <p>We believe that the rights proclaimed in the Constitution must be applied fairly and equitably to all citizens, to enjoy the freedom to pursue their best lives. We therefore fight against the injustice of gerrymandering, voter suppression and authoritarianism that stifle citizen rights and participation.</p>
+        </div>
+      </div>
+
+      <div class="justice-card jc-racial reveal reveal-d1">
+        <div class="justice-accent"></div>
+        <div class="justice-body">
+            <span class="justice-num">02 &mdash; Racial Justice</span>
+            <h3>
+                <div class="justice-icon"><i class="fas fa-people-group"></i></div>
+                Racial Justice
+            </h3>
+            <p>We fight against the resurgence of overt white supremacy that has infiltrated mainstream society and accelerated the violent assault on communities of color. We seek to eliminate persistent racial disparities in the criminal justice system, the economy and jobs, and healthcare.</p>
+        </div>
+      </div>
+
+      <div class="justice-card jc-economic reveal reveal-d1">
+        <div class="justice-accent"></div>
+        <div class="justice-body">
+            <span class="justice-num">03 &mdash; Economic Justice</span>
+            <h3>
+                <div class="justice-icon"><i class="fas fa-scale-balanced"></i></div>
+                Economic Justice
+            </h3>
+            <p>The economy will be more successful when all citizens have opportunities to thrive and reach their full potential. We fight against the injustice of disinvestment, red-lining, and glass ceilings. We fight for equitable access to opportunities and resources.</p>
+        </div>
+      </div>
+
+      <div class="justice-card jc-healthcare reveal reveal-d2">
+        <div class="justice-accent"></div>
+        <div class="justice-body">
+            <span class="justice-num">04 &mdash; Healthcare Justice</span>
+            <h3>
+                <div class="justice-icon"><i class="fas fa-heart-pulse"></i></div>
+                Healthcare Justice
+            </h3>
+            <p>We fight to eliminate disparities in healthcare access and quality that disproportionately affect marginalized communities.</p>
+        </div>
+      </div>
+
+      <div class="justice-card jc-environmental reveal reveal-d2">
+        <div class="justice-accent"></div>
+        <div class="justice-body">
+            <span class="justice-num">05 &mdash; Environmental Justice</span>
+            <h3>
+                <div class="justice-icon"><i class="fas fa-leaf"></i></div>
+                Environmental Justice
+            </h3>
+            <p>We fight to eliminate the disproportionate economic and health impacts of environmental hazards and climate change on marginalized communities.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- What We Do -->
+    <div class="what-we-do reveal">
+        <span class="wwd-label">What We Do</span>
+        <h2>Our Actions on the Ground</h2>
+        <div class="wwd-list">
+            <div class="wwd-item">
+                <div class="wwd-dot"></div>
+                <p>Direct Action, Voter and Legislative Engagement on Local, State and Federal Levels</p>
+            </div>
+            <div class="wwd-item">
+                <div class="wwd-dot"></div>
+                <p>Organizing local communities for year-round advocacy</p>
+            </div>
+            <div class="wwd-item">
+                <div class="wwd-dot"></div>
+                <p>Educating voters on issues and elections</p>
+            </div>
+        </div>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="mission-sidebar">
+    <div class="sb-card">
+        <h4>Our Mission Areas</h4>
+        <div class="sb-links">
+            <a class="sb-link" href="#"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Political Justice</a>
+            <a class="sb-link" href="#"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Racial Justice</a>
+            <a class="sb-link" href="#"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Economic Justice</a>
+            <a class="sb-link" href="#"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>Healthcare Justice</a>
+            <a class="sb-link" href="#"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Environmental Justice</a>
+        </div>
+    </div>
+    <div class="sb-card">
+        <h4>&#10084; Donate Today</h4>
+        <p>Support our fight for justice. Your 501(c)(3) donation is fully tax deductible.</p>
+        <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="sb-btn gold">Donate Now</a>
+    </div>
+    <div class="sb-card">
+        <h4>Get Involved</h4>
+        <p>Join the movement. Volunteer, sign up for events, or request a speaker.</p>
+        <a href="/GetInvolved" class="sb-btn">Join the Movement</a>
+        <a href="/About" class="sb-btn">Learn About Us</a>
+    </div>
+    <div class="sb-501">
+        <span class="badge-501">501(c)(3)</span>
+        <p>Certified Nonprofit Organization<br>Donations are tax deductible</p>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    const els = document.querySelectorAll('.reveal');
+    if (!els.length) return;
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    els.forEach(el => io.observe(el));
+})();
+</script>
+}

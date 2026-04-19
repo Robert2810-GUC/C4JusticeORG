@@ -67,17 +67,21 @@
                         <!-- Col 2: Our Organization -->
                         <div class="mega-col">
                             <div class="mega-col-label">Our Organization</div>
-                            <a href="/About" class="mega-item">
-                                <div class="mega-icon" style="background:rgba(27,79,145,.12);color:var(--navy)"><i class="fas fa-bullseye"></i></div>
-                                <div class="mega-item-body"><span class="mega-item-title">Our Mission</span><span class="mega-item-desc">What we stand for &amp; fight for.</span></div>
+                            <a href="/About#who-we-are" class="mega-item">
+                                <div class="mega-icon" style="background:rgba(27,79,145,.12);color:var(--navy)"><i class="fas fa-users"></i></div>
+                                <div class="mega-item-body"><span class="mega-item-title">Who We Are</span><span class="mega-item-desc">Our story &amp; community.</span></div>
                             </a>
                             <a href="/About#founder" class="mega-item">
                                 <div class="mega-icon" style="background:rgba(27,79,145,.12);color:var(--navy)"><i class="fas fa-user-tie"></i></div>
-                                <div class="mega-item-body"><span class="mega-item-title">Leadership</span><span class="mega-item-desc">Meet Richard Rose &amp; the team.</span></div>
+                                <div class="mega-item-body"><span class="mega-item-title">Our Founder</span><span class="mega-item-desc">Meet Richard Rose &amp; the team.</span></div>
                             </a>
-                            <a href="/About" class="mega-item">
+                            <a href="/Mission" class="mega-item">
+                                <div class="mega-icon" style="background:rgba(27,79,145,.12);color:var(--navy)"><i class="fas fa-bullseye"></i></div>
+                                <div class="mega-item-body"><span class="mega-item-title">Our Mission</span><span class="mega-item-desc">What we stand for &amp; fight for.</span></div>
+                            </a>
+                            <a href="/About#what-we-do" class="mega-item">
                                 <div class="mega-icon" style="background:rgba(27,79,145,.12);color:var(--navy)"><i class="fas fa-handshake"></i></div>
-                                <div class="mega-item-body"><span class="mega-item-title">Partners</span><span class="mega-item-desc">Organizations we collaborate with.</span></div>
+                                <div class="mega-item-body"><span class="mega-item-title">What We Do</span><span class="mega-item-desc">Our programs &amp; actions.</span></div>
                             </a>
                         </div>
                         <!-- Col 3: Quick Actions -->
@@ -87,7 +91,7 @@
                                 <div class="mega-alt-icon"><i class="fas fa-envelope"></i></div>
                                 <div class="mega-alt-body"><span class="mega-alt-title">Contact Us</span><span class="mega-alt-desc">Send us a message.</span></div>
                             </a>
-                            <a href="/Contact#mailing-list" class="mega-alt-item">
+                            <a href="/GetInvolved#newsletter" class="mega-alt-item">
                                 <div class="mega-alt-icon"><i class="fas fa-newspaper"></i></div>
                                 <div class="mega-alt-body"><span class="mega-alt-title">Join Our Newsletter</span><span class="mega-alt-desc">Stay connected with updates.</span></div>
                             </a>
@@ -101,7 +105,7 @@
             </li>
 
             <!-- Mission -->
-            <li><a href="/About" class="@(ViewData["ActivePage"]?.ToString() == "Mission" ? "active" : "")">Mission</a></li>
+            <li><a href="/Mission" class="@(ViewData["ActivePage"]?.ToString() == "Mission" ? "active" : "")">Mission</a></li>
 
             <!-- Events ▼ -->
             <li class="has-mega">
@@ -122,11 +126,11 @@
                                 <div class="mega-icon" style="background:rgba(27,79,145,.12);color:var(--navy)"><i class="fas fa-calendar-days"></i></div>
                                 <div class="mega-item-body"><span class="mega-item-title">All Events</span><span class="mega-item-desc">Full events calendar.</span></div>
                             </a>
-                            <a href="/Events#town-halls" class="mega-item">
+                            <a href="/Events" class="mega-item">
                                 <div class="mega-icon" style="background:rgba(27,79,145,.12);color:var(--navy)"><i class="fas fa-people-roof"></i></div>
                                 <div class="mega-item-body"><span class="mega-item-title">Town Halls</span><span class="mega-item-desc">Monthly advocacy meetings.</span></div>
                             </a>
-                            <a href="/Events#voter-registration" class="mega-item">
+                            <a href="/Events" class="mega-item">
                                 <div class="mega-icon" style="background:rgba(27,79,145,.12);color:var(--navy)"><i class="fas fa-check-to-slot"></i></div>
                                 <div class="mega-item-body"><span class="mega-item-title">Voter Registration Drives</span><span class="mega-item-desc">Register &amp; mobilize your community.</span></div>
                             </a>
@@ -137,11 +141,11 @@
                         </div>
                         <div class="mega-col mega-col-alt">
                             <div class="mega-col-label">Archive</div>
-                            <a href="/Events#past" class="mega-alt-item">
+                            <a href="/Events" class="mega-alt-item">
                                 <div class="mega-alt-icon"><i class="fas fa-clock-rotate-left"></i></div>
                                 <div class="mega-alt-body"><span class="mega-alt-title">Past Events</span><span class="mega-alt-desc">Explore highlights from previous events.</span></div>
                             </a>
-                            <a href="/Events#gallery" class="mega-alt-item">
+                            <a href="/Events" class="mega-alt-item">
                                 <div class="mega-alt-icon"><i class="fas fa-images"></i></div>
                                 <div class="mega-alt-body"><span class="mega-alt-title">Photo Gallery</span><span class="mega-alt-desc">Moments captured from our events.</span></div>
                             </a>
@@ -305,7 +309,7 @@
                     <ul>
                         <li><a href="/">Home</a></li>
                         <li><a href="/About">About Us</a></li>
-                        <li><a href="/About">Mission</a></li>
+                        <li><a href="/Mission">Mission</a></li>
                         <li><a href="/Issues">Focus Areas</a></li>
                         <li><a href="/Opinion">Opinion</a></li>
                         <li><a href="/Documents">Documents</a></li>
@@ -319,11 +323,11 @@
                 <div class="footer-col">
                     <h5>Our Causes</h5>
                     <ul>
-                        <li><a href="/About#political">Political Justice</a></li>
-                        <li><a href="/About#racial">Racial Justice</a></li>
-                        <li><a href="/About#economic">Economic Justice</a></li>
-                        <li><a href="/About#environmental">Environmental Justice</a></li>
-                        <li><a href="/About#healthcare">Healthcare Justice</a></li>
+                        <li><a href="/Mission">Political Justice</a></li>
+                        <li><a href="/Mission">Racial Justice</a></li>
+                        <li><a href="/Mission">Economic Justice</a></li>
+                        <li><a href="/Mission">Environmental Justice</a></li>
+                        <li><a href="/Mission">Healthcare Justice</a></li>
                     </ul>
                 </div>
 
@@ -446,17 +450,50 @@
         item.addEventListener('click', () => { setTimeout(fixMegaOverflow, 10); });
     });
 
-    // Close mobile nav when a link inside a mega panel is tapped
+    // Close mega panel and mobile nav when any link inside a mega panel is clicked
     document.querySelectorAll('.mega-panel a').forEach(link => {
         link.addEventListener('click', () => {
-            if (window.innerWidth < 992) {
-                navLinks.classList.remove('open');
-                toggler.classList.remove('open');
-                toggler.setAttribute('aria-expanded', 'false');
-                document.body.classList.remove('nav-open');
-                document.querySelectorAll('.has-mega.open').forEach(o => o.classList.remove('open'));
-            }
+            document.querySelectorAll('.has-mega.open').forEach(o => o.classList.remove('open'));
+            navLinks.classList.remove('open');
+            toggler.classList.remove('open');
+            toggler.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('nav-open');
         });
+    });
+
+    // Reliable anchor scroll: fires on page load AND on same-page hash clicks
+    function scrollToHash(hash, delay) {
+        if (!hash) return;
+        const target = document.getElementById(hash.replace('#', ''));
+        if (!target) return;
+        const stickyNav = document.querySelector('.site-nav') || document.querySelector('nav');
+        const offset = (stickyNav ? stickyNav.offsetHeight : 80) + 10;
+        setTimeout(() => {
+            const y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+            window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+        }, delay || 0);
+    }
+
+    // Handle hash present on initial page load
+    if (location.hash) {
+        scrollToHash(location.hash, 120);
+    }
+
+    // Handle clicks on anchor links that point to the current page
+    document.addEventListener('click', function(e) {
+        const a = e.target.closest('a[href*="#"]');
+        if (!a) return;
+        const href = a.getAttribute('href') || '';
+        const hashIdx = href.indexOf('#');
+        if (hashIdx === -1) return;
+        const path = href.slice(0, hashIdx) || location.pathname;
+        const hash = href.slice(hashIdx);
+        if (path && path !== location.pathname && path !== window.location.pathname) return;
+        const target = document.getElementById(hash.slice(1));
+        if (!target) return;
+        e.preventDefault();
+        history.pushState(null, '', href);
+        scrollToHash(hash, 0);
     });
 </script>
 

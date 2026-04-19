@@ -261,11 +261,15 @@ a:hover { text-decoration: underline; }
 }
 .mega-ov-link {
     display: inline-block; font-size: .8rem; font-weight: 700;
-    color: var(--gold); text-decoration: none;
+    color: var(--navy); text-decoration: none;
+    background: var(--gold);
+    padding: 9px 18px;
+    border-radius: 3px;
+    letter-spacing: .03em;
     border-top: 1px solid rgba(255,255,255,0.12); padding-top: 14px;
     margin-top: auto;
 }
-.mega-ov-link:hover { color: #fff; text-decoration: none; }
+.mega-ov-link:hover { background: #f5d55a; color: var(--navy); text-decoration: none; }
 
 /* ── Col 2 — Main items ──────────────────────────────────────── */
 .mega-col {
@@ -326,18 +330,20 @@ a:hover { text-decoration: underline; }
 
 /* ── Donate button ───────────────────────────────────────────── */
 .nav-donate {
-    background: var(--gold);
+    background: linear-gradient(135deg, #f5d55a 0%, var(--gold) 60%, #d4a82a 100%);
     color: var(--navy-dark) !important;
-    padding: 8px 20px;
+    padding: 9px 22px;
     border-radius: 4px;
     font-size: 13.5px;
     font-weight: 700;
     text-decoration: none;
+    box-shadow: 0 2px 10px rgba(232,200,74,0.4);
+    animation: donate-pulse 2.8s ease-in-out infinite;
     transition: var(--transition);
     white-space: nowrap;
     flex-shrink: 0;
 }
-.nav-donate:hover { background: var(--gold-dark); color: var(--navy-dark); text-decoration: none; }
+.nav-donate:hover { background: linear-gradient(135deg, #ffe070 0%, #f5d55a 100%); color: var(--navy-dark); text-decoration: none; box-shadow: 0 4px 16px rgba(232,200,74,0.55); }
 
 /* ── Hamburger ───────────────────────────────────────────────── */
 .nav-toggler {
@@ -482,15 +488,29 @@ a:hover { text-decoration: underline; }
    DONATE BAR
    ============================================================ */
 .donate-bar {
-    background: var(--navy-light);
+    background: linear-gradient(90deg, var(--navy-dark) 0%, var(--navy-light) 50%, var(--navy-dark) 100%);
+    border-bottom: 2px solid var(--gold);
     text-align: center;
-    padding: 10px 32px;
-    color: rgba(255,255,255,0.9);
+    padding: 11px 32px;
+    color: rgba(255,255,255,0.92);
     font-size: 13px;
+    font-weight: 500;
     letter-spacing: 0.3px;
 }
-.donate-bar a { color: var(--gold); font-weight: 700; text-decoration: none; margin-left: 8px; }
-.donate-bar a:hover { text-decoration: underline; }
+.donate-bar a {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--navy) !important;
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 10px;
+    padding: 2px 12px;
+    border-radius: 3px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+}
+.donate-bar a:hover { background: #f5d55a; text-decoration: none; }
 
 /* ============================================================
    PAGE HERO (inner pages)
@@ -681,18 +701,36 @@ a:hover { text-decoration: underline; }
     transition: background 0.2s;
 }
 .qa-btn:hover { background: var(--navy-light); color: white; text-decoration: none; }
-.qa-btn.qa-donate { background: var(--gold); color: var(--navy-dark) !important; font-weight: 700; }
-.qa-btn.qa-donate:hover { background: var(--gold-dark); color: var(--navy-dark) !important; text-decoration: none; }
+.qa-btn.qa-donate {
+    background: linear-gradient(135deg, #f5d55a 0%, var(--gold) 60%, #d4a82a 100%);
+    color: var(--navy-dark) !important;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 13px 14px;
+    border: none;
+    box-shadow: 0 3px 12px rgba(232,200,74,0.45);
+    animation: donate-pulse 2.8s ease-in-out infinite;
+}
+.qa-btn.qa-donate:hover { background: linear-gradient(135deg, #ffe070 0%, #f5d55a 100%); color: var(--navy-dark) !important; text-decoration: none; box-shadow: 0 5px 18px rgba(232,200,74,0.6); }
 
 .tagline-bar {
-    background: var(--navy-light); text-align: center;
-    padding: 22px 32px; border-top: 3px solid var(--gold); border-bottom: 3px solid var(--gold);
+    background: linear-gradient(90deg, var(--navy-dark) 0%, var(--navy-light) 50%, var(--navy-dark) 100%);
+    text-align: center;
+    padding: 26px 32px;
+    border-top: 3px solid var(--gold);
+    border-bottom: 3px solid var(--gold);
 }
 .tagline-bar h2 {
-    font-family: var(--font-head); font-size: 1.25rem;
-    color: var(--gold); font-style: italic; font-weight: 700; margin: 0;
+    font-family: var(--font-head);
+    font-size: 1.4rem;
+    color: var(--gold);
+    font-style: italic;
+    font-weight: 900;
+    margin: 0;
+    letter-spacing: 0.2px;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.3);
 }
-.tagline-bar p { font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 6px; margin-bottom: 0; }
+.tagline-bar p { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 8px; margin-bottom: 0; font-weight: 500; }
 
 @media (max-width: 767px) {
     .hero-grid { grid-template-columns: 1fr; }
@@ -1946,11 +1984,13 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-
 /* Headings */
 .footer-col h5 {
     color: var(--gold);
-    font-size: 10px;
-    letter-spacing: 1.5px;
+    font-size: 13px;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    margin-bottom: 10px;
-    font-weight: 700; /* Reduced margin */
+    margin-bottom: 14px;
+    font-weight: 700;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 /* Links */
@@ -1963,10 +2003,12 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-
     .footer-col ul li a {
         display: block;
         color: #a0b8d8;
-        font-size: 12px;
+        font-size: 13px;
+        line-height: 1.6;
         text-decoration: none;
-        margin-bottom: 4px;
-        transition: color 0.2s; /* Reduced margin */
+        margin-bottom: 8px;
+        transition: color 0.2s;
+        padding-left: 2px;
     }
 
         .footer-col ul li a::before {
@@ -2031,9 +2073,9 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-
 .donate-footer-btn {
     display: block;
     text-align: center;
-    background: transparent;
-    color: var(--gold);
-    border: 1.5px solid var(--gold);
+    background: linear-gradient(135deg, #f5d55a 0%, var(--gold) 60%, #d4a82a 100%);
+    color: var(--navy) !important;
+    border: none;
     padding: 8px; /* Reduced button padding */
     font-size: 12px;
     font-weight: 700;
@@ -2045,9 +2087,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-
 }
 
     .donate-footer-btn:hover {
-        background: rgba(232, 200, 74, 0.1);
-        color: var(--gold);
+        background: linear-gradient(135deg, #ffe070 0%, #f5d55a 100%);
+        color: var(--navy);
         text-decoration: none;
+        box-shadow: 0 4px 14px rgba(232,200,74,0.4);
     }
 
 /* Footer Bottom Strip */
@@ -2064,8 +2107,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-
 }
 
     .footer-bottom p {
-        color: #5a6a8a;
-        font-size: 11px;
+        color: #7a8aaa;
+        font-size: 12px;
         margin: 0;
     }
 
@@ -2076,7 +2119,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-
 }
 
     .fnav a {
-        color: #5a6a8a;
+        color: #7a8aaa;
         font-size: 12px;
         text-decoration: none;
         transition: color 0.2s;
@@ -2095,6 +2138,62 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-
 /* ============================================================
    ANIMATIONS
    ============================================================ */
+
+/* ── Anchor scroll offset (accounts for sticky nav height) ── */
+.scroll-anchor {
+    display: block;
+    height: 0;
+    scroll-margin-top: 95px;
+}
+
+/* ── Donate pulse ── */
+@keyframes donate-pulse {
+    0%, 100% { box-shadow: 0 2px 10px rgba(232,200,74,0.4); }
+    50%       { box-shadow: 0 2px 22px rgba(232,200,74,0.75); }
+}
+
+/* ── Global typography overrides (higher specificity than local @section Styles) ── */
+body .ph-h1 {
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 1.25;
+    letter-spacing: -0.3px;
+}
+body .ph-p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: #bdd4ea;
+    max-width: 700px;
+}
+body .ph-bc {
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    margin-bottom: 8px;
+}
+/* Section labels — consistent gold uppercase across all pages */
+body .sec-lbl {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+/* Inner page h2 headings */
+body .about-content h2,
+body .gi-content h2,
+body .ev-content h2,
+body .res-content h2,
+body .mission-content h2 {
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -0.2px;
+}
+/* Sidebar card headings */
+body .sb-card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.1px;
+}
 
 /* ── Scroll Reveal ── */
 .reveal {
@@ -2178,4 +2277,60 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-
     .impact-item:nth-child(2) { border-right: none; }
     .impact-item:nth-child(3),
     .impact-item:nth-child(4) { border-top: 1px solid rgba(255,255,255,0.1); }
+}
+
+/* ============================================================
+   RESPONSIVE — Small mobile (max 480px)
+   ============================================================ */
+@media (max-width: 480px) {
+    /* Page heroes */
+    body .ph-h1 { font-size: 22px; }
+    body .ph-p  { font-size: 13px; }
+
+    /* Inner-page content padding */
+    .about-content,
+    .ev-content,
+    .mission-content,
+    .gi-content,
+    .res-content { padding: 24px 16px; }
+
+    /* About page */
+    .about-main,
+    .ev-main,
+    .mission-main { grid-template-columns: 1fr; }
+    .about-sidebar,
+    .ev-sidebar,
+    .mission-sidebar { padding: 20px 16px; position: static; border-left: none; border-top: 1px solid #dde; }
+
+    /* Inner page h2 */
+    body .about-content h2,
+    body .ev-content h2,
+    body .mission-content h2 { font-size: 18px; }
+
+    /* Founder card on tiny screens */
+    .founder-card { flex-direction: column; align-items: center; text-align: center; padding: 20px 16px; gap: 16px; }
+    .f-photo { width: 120px; height: 148px; }
+
+    /* Events */
+    .election-grid { grid-template-columns: 1fr; }
+    .event-actions { flex-direction: column; }
+
+    /* Mission justice cards */
+    .justice-body { padding: 16px; }
+    .justice-body h3 { font-size: 14px; }
+
+    /* Footer */
+    .footer-grid-wrap { grid-template-columns: 1fr; gap: 20px; }
+    .ft-name { font-size: 13px; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+    .fnav { flex-wrap: wrap; justify-content: center; gap: 10px; }
+
+    /* Impact strip */
+    .impact-inner { grid-template-columns: 1fr 1fr; }
+    .impact-num { font-size: 1.7rem; }
+    .impact-label { font-size: 10px; }
+
+    /* Nav logo smaller on narrow screens */
+    .nav-logo-name-lg { font-size: 13px !important; }
+    .nav-logo-circle-lg { width: 48px !important; height: 48px !important; }
 }

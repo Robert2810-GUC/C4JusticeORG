@@ -16,14 +16,16 @@
 .about-content { padding:36px 24px; }
 .sec-lbl { color:var(--gold); font-size:10px; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; font-weight:700; display:block; }
 .about-content h2 { color:var(--navy); font-size:22px; font-family:var(--font-head); margin-bottom:14px; line-height:1.3; }
-.about-content p { color:#444; font-size:14px; line-height:1.85; margin-bottom:12px; }
+.about-content p {  font-size:14px; line-height:1.85; margin-bottom:12px; }
 .about-content em { color:var(--navy-light); font-style:italic; }
 .a-divider { width:100%; height:1px; background:#eee; margin:28px 0; }
-.founder-card { display:flex; gap:18px; align-items:flex-start; background:#f0f4ff; border-left:4px solid var(--navy-light); padding:18px; margin-bottom:20px; border-radius:3px; }
-.f-av { width:56px; height:56px; border-radius:50%; background:var(--navy); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; color:var(--gold); flex-shrink:0; font-family:var(--font-head); }
-.f-name { color:var(--navy); font-size:14px; font-weight:700; margin-bottom:2px; font-family:var(--font-head); }
-.f-title { color:var(--gold); font-size:11px; margin-bottom:6px; font-weight:700; }
-.f-text { color:#555; font-size:13px; line-height:1.75; margin:0; }
+.founder-card { display:flex; gap:28px; align-items:flex-start; background:var(--navy); border-radius:6px; padding:28px; margin-bottom:20px; }
+.f-photo { width:150px; height:185px; flex-shrink:0; border-radius:4px; overflow:hidden; border:3px solid var(--gold); box-shadow:0 6px 24px rgba(0,0,0,0.35); }
+.f-photo img { width:100%; height:100%; object-fit:cover; object-position:top center; display:block; }
+.f-name { color:#fff; font-size:18px; font-weight:700; margin-bottom:4px; font-family:var(--font-head); }
+.f-title { color:var(--gold); font-size:11px; margin-bottom:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; display:block; }
+.f-text { color:rgba(255,255,255,.75); font-size:13px; line-height:1.8; margin:0; }
+@@media(max-width:600px){ .founder-card{flex-direction:column; align-items:center; text-align:center;} .f-photo{width:130px; height:160px;} }
 .justice-row { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 20px; }
 .jp { background:var(--navy); color:#fff; font-size:11px; padding:5px 12px; border-radius:20px; font-weight:600; border-left:3px solid var(--gold); }
 .read-more { color:var(--gold); font-size:13px; font-weight:700; text-decoration:none; border-bottom:1px solid var(--gold); padding-bottom:1px; display:inline-block; margin-top:4px; }
@@ -82,24 +84,29 @@
 <!-- MAIN CONTENT + SIDEBAR -->
 <div class="about-main">
   <div class="about-content">
+    <div class="scroll-anchor" id="who-we-are"></div>
     <span class="sec-lbl">Who We Are</span>
     <h2>Building a Platform for Justice</h2>
     <p>Communities United for Justice was formed to create a social justice advocacy platform that recognizes and encourages the oppressed, suppressed and marginalized to join forces to achieve common objectives through collaboration.</p>
     <p>For too long, grassroots organizations have advocated in silos on behalf of marginalized communities when all our social justice issues have a common thread: <em>that all individuals be treated with fairness and equity.</em></p>
     <div class="a-divider"></div>
 
+    <div class="scroll-anchor" id="founder"></div>
     <span class="sec-lbl">Our Founder</span>
     <h2>The Architect of Collaboration</h2>
     <div class="founder-card">
-        <div class="f-av">RR</div>
+        <div class="f-photo">
+            <img src="/images/founder.jpeg" alt="Mr. Richard Rose — Founder &amp; Executive Director" />
+        </div>
         <div>
-            <div class="f-name">Mr. Richard Rose</div>
-            <div class="f-title">Founder &amp; Executive Director</div>
+            <div class="f-name">Mr. Richard Rose </div>
+            <span class="f-title">Founder &amp; Executive Director</span>
             <p class="f-text">The architect of a successful collaborative strategy across three election cycles, Mr. Rose formed Communities United for Justice to combine grassroots power with a state-of-the-art technology platform for civic engagement to transform community outreach.</p>
         </div>
     </div>
     <div class="a-divider"></div>
 
+    <div class="scroll-anchor" id="what-we-fight-for"></div>
     <span class="sec-lbl">What We Fight For</span>
     <h2>Fighting for Political, Racial, Economic, Healthcare &amp; Environmental Justice</h2>
     <div class="justice-row">
@@ -109,9 +116,10 @@
         <span class="jp">Healthcare Justice</span>
         <span class="jp">Environmental Justice</span>
     </div>
-    <a class="read-more" href="/Issues">Read Our Full Mission &rarr;</a>
+    <a class="read-more" href="/Mission">Read Our Full Mission &rarr;</a>
     <div class="a-divider"></div>
 
+    <div class="scroll-anchor" id="what-we-do"></div>
     <span class="sec-lbl">What We Do</span>
     <h2>Our Actions &amp; Programs</h2>
     <div class="wwd">
