@@ -6,20 +6,20 @@
 
 @section Styles {
 <style>
-.page-hero-res{background:#0d1f3c;padding:28px 2rem;border-bottom:3px solid #e8c84a;}
+.page-hero-res{background:var(--navy);padding:36px 0;border-bottom:3px solid var(--gold);}
 .ph-bc{color:rgba(232,200,74,.7);font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
-.ph-h1{color:#fff;font-size:28px;font-family:Georgia,serif;margin-bottom:4px;}
-.ph-p{color:#a0b8d8;font-size:13px;}
-.tab-nav{background:#f0f4ff;border-bottom:2px solid #dde;padding:0 2rem;display:flex;gap:0;}
+.ph-h1{color:#fff;font-size:28px;font-family:var(--font-head);margin-bottom:4px;}
+.ph-p{color:#a0b8d8;font-size:14px;}
+.tab-nav{background:#f0f4ff;border-bottom:2px solid #dde;padding:0 24px;display:flex;gap:0;max-width:1400px;margin:0 auto;}
 .rtab{padding:14px 20px;font-size:13px;font-weight:600;color:#666;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;}
-.rtab:hover{color:#0d1f3c;}
-.rtab.act{color:#0d1f3c;border-bottom-color:#e8c84a;background:#fff;}
-.res-main{display:grid;grid-template-columns:1fr 300px;gap:0;align-items:start;max-width:1200px;margin:0 auto;}
-.res-content{padding:36px 2rem;}
+.rtab:hover{color:var(--navy);}
+.rtab.act{color:var(--navy);border-bottom-color:var(--gold);background:#fff;}
+.res-main{display:grid;grid-template-columns:1fr 300px;gap:0;align-items:start;max-width:1400px;margin:0 auto;}
+.res-content{padding:36px 24px;}
 .res-panel{display:none;}
 .res-panel.act{display:block;}
-.sec-lbl{color:#e8c84a;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:700;display:block;}
-.res-content h2{color:#0d1f3c;font-size:22px;font-family:Georgia,serif;margin-bottom:20px;line-height:1.3;}
+.sec-lbl{color:var(--gold);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:700;display:block;}
+.res-content h2{color:var(--navy);font-size:22px;font-family:var(--font-head);margin-bottom:20px;line-height:1.3;}
 /* DOCS */
 .docs-list{display:flex;flex-direction:column;gap:12px;}
 .doc-item{display:flex;gap:16px;align-items:center;padding:16px;border:1px solid #dde;border-radius:4px;border-left:4px solid #1a3a6b;}
@@ -46,37 +46,37 @@
 .op-img img{width:100%;height:100%;object-fit:cover;}
 .op-body{flex:1;}
 .op-cat{color:#e8c84a;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
-.op-body h3{color:#0d1f3c;font-size:14px;font-weight:700;margin-bottom:5px;font-family:Georgia,serif;line-height:1.3;}
-.op-body h3 a{color:#0d1f3c;text-decoration:none;}
-.op-body h3 a:hover{color:#e8c84a;}
-.op-body p{color:#555;font-size:12px;line-height:1.7;margin-bottom:8px;}
+.op-body h3{color:var(--navy);font-size:14px;font-weight:700;margin-bottom:5px;font-family:var(--font-head);line-height:1.3;}
+.op-body h3 a{color:var(--navy);text-decoration:none;}
+.op-body h3 a:hover{color:var(--gold);}
+.op-body p{color:#555;font-size:13px;line-height:1.75;margin-bottom:8px;}
 .op-footer{display:flex;align-items:center;gap:16px;}
 .op-date{color:#999;font-size:11px;}
 .read-more{color:#1a3a6b;font-size:12px;font-weight:700;text-decoration:none;border-bottom:1px solid #1a3a6b;margin-left:auto;}
 /* SIDEBAR */
 .res-sidebar{background:#f8f9fc;border-left:1px solid #dde;padding:28px 18px;display:flex;flex-direction:column;gap:18px;align-self:start;position:sticky;top:70px;}
-.sb-card{background:#fff;border:1px solid #dde;border-radius:4px;border-top:3px solid #e8c84a;padding:18px;}
-.sb-card h4{color:#0d1f3c;font-size:13px;font-weight:700;margin-bottom:8px;font-family:Georgia,serif;}
-.sb-card p{color:#666;font-size:11px;line-height:1.6;margin-bottom:10px;}
-.sb-btn{display:block;background:#1a3a6b;color:#fff;text-align:center;padding:9px;font-size:12px;font-weight:700;border-radius:3px;cursor:pointer;border:none;width:100%;margin-bottom:8px;text-decoration:none;}
-.sb-btn:hover{background:#0d1f3c;color:#fff;}
-.sb-btn.gold{background:#e8c84a;}
+.sb-card{background:#fff;border:1px solid #dde;border-radius:4px;border-top:3px solid var(--gold);padding:18px;}
+.sb-card h4{color:var(--navy);font-size:13px;font-weight:700;margin-bottom:8px;font-family:var(--font-head);}
+.sb-card p{color:#666;font-size:12px;line-height:1.65;margin-bottom:10px;}
+.sb-btn{display:block;background:var(--navy-light);color:#fff;text-align:center;padding:9px;font-size:12px;font-weight:700;border-radius:3px;cursor:pointer;border:none;width:100%;margin-bottom:8px;text-decoration:none;}
+.sb-btn:hover{background:var(--navy);color:#fff;text-decoration:none;}
+.sb-btn.gold{background:var(--gold);color:var(--navy);}
 .sb-btn.gold:hover{background:#e8b820;}
 .sb-links{display:flex;flex-direction:column;gap:6px;}
 .sb-link{display:flex;align-items:center;gap:8px;color:#0d1f3c;font-size:12px;text-decoration:none;padding:6px 0;border-bottom:.5px solid #eee;}
 .sb-link:hover{color:#e8c84a;}
 .sb-link:last-child{border-bottom:none;}
 .sb-link svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;}
-.sb-501{background:#0d1f3c;color:#fff;border-radius:4px;padding:14px;text-align:center;}
-.sb-501 .badge-501{font-size:16px;font-weight:700;color:#e8c84a;font-family:Georgia,serif;display:block;margin-bottom:3px;}
+.sb-501{background:var(--navy);color:#fff;border-radius:4px;padding:14px;text-align:center;}
+.sb-501 .badge-501{font-size:16px;font-weight:700;color:var(--gold);font-family:var(--font-head);display:block;margin-bottom:3px;}
 .sb-501 p{color:#a0b8d8;font-size:11px;margin:0;}
-@@media(max-width:767px){.res-main{grid-template-columns:1fr;}.res-sidebar{border-left:none;border-top:1px solid #dde;position:static;}.tab-nav{overflow-x:auto;flex-wrap:nowrap;}.rtab{white-space:nowrap;}}
+@@media(max-width:767px){.res-main{grid-template-columns:1fr;}.res-sidebar{border-left:none;border-top:1px solid #dde;position:static;}.tab-nav{overflow-x:auto;flex-wrap:nowrap;max-width:100%;padding:0 16px;}.rtab{white-space:nowrap;}}
 </style>
 }
 
 <!-- PAGE HERO -->
 <div class="page-hero-res">
-    <div style="max-width:1200px;margin:0 auto;padding:0 1rem;">
+    <div style="max-width:1400px;margin:0 auto;padding:0 24px;">
         <div class="ph-bc">Home &rsaquo; Resources</div>
         <h1 class="ph-h1">Resources</h1>
         <p class="ph-p">Documents, opinion pieces, press releases and curated links — all shareable via direct URL to social media and email.</p>

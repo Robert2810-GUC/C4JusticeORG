@@ -5,26 +5,26 @@
 
 @section Styles {
 <style>
-.page-hero-gi{background:#0d1f3c;padding:28px 2rem;border-bottom:3px solid #e8c84a;}
+.page-hero-gi{background:var(--navy);padding:36px 0;border-bottom:3px solid var(--gold);}
 .ph-bc{color:rgba(232,200,74,.7);font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
-.ph-h1{color:#fff;font-size:28px;font-family:Georgia,serif;margin-bottom:4px;}
-.ph-p{color:#a0b8d8;font-size:13px;}
-.action-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid #dde;}
+.ph-h1{color:#fff;font-size:28px;font-family:var(--font-head);margin-bottom:4px;}
+.ph-p{color:#a0b8d8;font-size:14px;}
+.action-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid #dde;max-width:1400px;margin:0 auto;}
 .ac{padding:20px;text-align:center;border-right:1px solid #dde;cursor:pointer;transition:background .2s;}
 .ac:last-child{border-right:none;}
 .ac:hover,.ac.act{background:#f0f4ff;}
-.ac.act{border-bottom:3px solid #e8c84a;margin-bottom:-1px;}
+.ac.act{border-bottom:3px solid var(--gold);margin-bottom:-1px;}
 .ac-icon{width:44px;height:44px;border-radius:50%;background:#e8f0ff;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
-.ac-icon svg{width:22px;height:22px;stroke:#1a3a6b;fill:none;stroke-width:1.5;}
-.ac h4{color:#0d1f3c;font-size:13px;font-weight:700;margin-bottom:4px;}
-.ac p{color:#888;font-size:11px;}
-.gi-main{display:grid;grid-template-columns:1fr 300px;gap:0;align-items:start;max-width:1200px;margin:0 auto;}
-.gi-content{padding:36px 2rem;}
+.ac-icon svg{width:22px;height:22px;stroke:var(--navy-light);fill:none;stroke-width:1.5;}
+.ac h4{color:var(--navy);font-size:13px;font-weight:700;margin-bottom:4px;}
+.ac p{color:#888;font-size:12px;}
+.gi-main{display:grid;grid-template-columns:1fr 300px;gap:0;align-items:start;max-width:1400px;margin:0 auto;}
+.gi-content{padding:36px 24px;}
 .gi-panel{display:none;}
 .gi-panel.act{display:block;}
-.sec-lbl{color:#e8c84a;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:700;display:block;}
-.gi-content h2{color:#0d1f3c;font-size:22px;font-family:Georgia,serif;margin-bottom:8px;}
-.gi-content .intro{color:#555;font-size:13px;line-height:1.8;margin-bottom:24px;}
+.sec-lbl{color:var(--gold);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:700;display:block;}
+.gi-content h2{color:var(--navy);font-size:22px;font-family:var(--font-head);margin-bottom:8px;}
+.gi-content .intro{color:#555;font-size:14px;line-height:1.85;margin-bottom:24px;}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .form-group{display:flex;flex-direction:column;gap:5px;}
 .form-group.full{grid-column:span 2;}
@@ -54,26 +54,26 @@
 .donate-note{background:#e8f5e8;border-left:4px solid #1a7a1a;padding:10px 14px;margin-bottom:16px;border-radius:0 3px 3px 0;}
 .donate-note p{color:#0a5a0a;font-size:12px;line-height:1.6;margin:0;}
 .success-box{background:#e8f5e8;border:1px solid #1a7a1a;border-radius:4px;padding:20px;text-align:center;display:none;margin-top:16px;}
-.success-box h3{color:#0a5a0a;font-size:16px;margin-bottom:6px;font-family:Georgia,serif;}
-.success-box p{color:#1a5a1a;font-size:13px;}
+.success-box h3{color:#0a5a0a;font-size:16px;margin-bottom:6px;font-family:var(--font-head);}
+.success-box p{color:#1a5a1a;font-size:14px;}
 .gi-sidebar{background:#f8f9fc;border-left:1px solid #dde;padding:28px 18px;display:flex;flex-direction:column;gap:18px;align-self:start;position:sticky;top:70px;}
-.sb-card{background:#fff;border:1px solid #dde;border-radius:4px;border-top:3px solid #e8c84a;padding:18px;}
-.sb-card h4{color:#0d1f3c;font-size:13px;font-weight:700;margin-bottom:8px;font-family:Georgia,serif;}
-.sb-card p{color:#666;font-size:11px;line-height:1.6;margin-bottom:10px;}
-.sb-btn{display:block;background:#1a3a6b;color:#fff;text-align:center;padding:9px;font-size:12px;font-weight:700;border-radius:3px;cursor:pointer;border:none;width:100%;margin-bottom:8px;text-decoration:none;}
-.sb-btn:hover{background:#0d1f3c;color:#fff;}
-.sb-btn.gold{background:#e8c84a;}
+.sb-card{background:#fff;border:1px solid #dde;border-radius:4px;border-top:3px solid var(--gold);padding:18px;}
+.sb-card h4{color:var(--navy);font-size:13px;font-weight:700;margin-bottom:8px;font-family:var(--font-head);}
+.sb-card p{color:#666;font-size:12px;line-height:1.65;margin-bottom:10px;}
+.sb-btn{display:block;background:var(--navy-light);color:#fff;text-align:center;padding:9px;font-size:12px;font-weight:700;border-radius:3px;cursor:pointer;border:none;width:100%;margin-bottom:8px;text-decoration:none;}
+.sb-btn:hover{background:var(--navy);color:#fff;text-decoration:none;}
+.sb-btn.gold{background:var(--gold);color:var(--navy);}
 .sb-btn.gold:hover{background:#e8b820;}
-.sb-501{background:#0d1f3c;color:#fff;border-radius:4px;padding:14px;text-align:center;}
-.sb-501 .badge-501{font-size:16px;font-weight:700;color:#e8c84a;font-family:Georgia,serif;display:block;margin-bottom:3px;}
+.sb-501{background:var(--navy);color:#fff;border-radius:4px;padding:14px;text-align:center;}
+.sb-501 .badge-501{font-size:16px;font-weight:700;color:var(--gold);font-family:var(--font-head);display:block;margin-bottom:3px;}
 .sb-501 p{color:#a0b8d8;font-size:11px;margin:0;}
-@@media(max-width:767px){.gi-main{grid-template-columns:1fr;}.gi-sidebar{border-left:none;border-top:1px solid #dde;position:static;}.action-row{grid-template-columns:1fr 1fr;}.form-grid{grid-template-columns:1fr;}.form-group.full{grid-column:span 1;}.vol-areas{grid-template-columns:1fr;}.amount-grid{grid-template-columns:repeat(2,1fr);}}
+@@media(max-width:767px){.gi-main{grid-template-columns:1fr;}.gi-sidebar{border-left:none;border-top:1px solid #dde;position:static;}.action-row{grid-template-columns:1fr 1fr;max-width:100%;}.form-grid{grid-template-columns:1fr;}.form-group.full{grid-column:span 1;}.vol-areas{grid-template-columns:1fr;}.amount-grid{grid-template-columns:repeat(2,1fr);}}
 </style>
 }
 
 <!-- PAGE HERO -->
 <div class="page-hero-gi">
-    <div style="max-width:1200px;margin:0 auto;padding:0 1rem;">
+    <div style="max-width:1400px;margin:0 auto;padding:0 24px;">
         <div class="ph-bc">Home &rsaquo; Get Involved</div>
         <h1 class="ph-h1">Get Involved</h1>
         <p class="ph-p">Every action counts. Join the movement for political, racial, economic, healthcare and environmental justice.</p>

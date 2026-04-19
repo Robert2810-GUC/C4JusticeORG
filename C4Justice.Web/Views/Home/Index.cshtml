@@ -114,39 +114,55 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════
-     ABOUT US  +  JUSTICE CATEGORY GRID
+     IMPACT COUNTER STRIP
 ═══════════════════════════════════════════════════ -->
-<section class="home-about-section">
-    <div class="home-about-inner">
-
-        <!-- Left: Text -->
-        <div class="home-about-text">
-            <span class="section-label">About Us</span>
-            <h2>Fighting for Political, Racial, Economic, Healthcare &amp; Environmental Justice</h2>
-            <p>A 501(c)(3) nonprofit organization uniting grassroots communities to achieve social justice through collaboration.</p>
-            <div class="home-about-tags">
-                <span><i class="fas fa-check me-1"></i>Direct Action &amp; Voter Engagement</span>
-                <span><i class="fas fa-check me-1"></i>Local, State &amp; Federal Advocacy</span>
-                <span><i class="fas fa-check me-1"></i>Year-Round Community Organizing</span>
-            </div>
-            <a href="/About" class="home-about-link">Read Our Full Story &rarr;</a>
+<div class="impact-strip">
+    <div class="impact-inner">
+        <div class="impact-item reveal">
+            <span class="impact-num" data-target="501">0</span>
+            <span class="impact-label">501(c)(3) Certified</span>
         </div>
-
-        <!-- Right: Justice category grid -->
-        <div class="home-justice-grid">
-            <div class="hjg-cell hjg-political at-photo-1">
-                <span class="hjg-label">Political Justice</span>
-            </div>
-            <div class="hjg-cell hjg-racial at-photo-2">
-                <span class="hjg-label">Racial Justice</span>
-            </div>
-            <div class="hjg-cell hjg-env hjg-wide at-photo-3">
-                <span class="hjg-label">Environmental &amp; Economic Justice</span>
-            </div>
+        <div class="impact-item reveal reveal-d1">
+            <span class="impact-num" data-target="5" data-suffix="+">0</span>
+            <span class="impact-label">Years of Service</span>
         </div>
-
+        <div class="impact-item reveal reveal-d2">
+            <span class="impact-num" data-target="50" data-suffix="+">0</span>
+            <span class="impact-label">Events Hosted</span>
+        </div>
+        <div class="impact-item reveal reveal-d3">
+            <span class="impact-num" data-target="1000" data-suffix="+">0</span>
+            <span class="impact-label">Community Members</span>
+        </div>
     </div>
-</section>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ABOUT US  +  COLLAGE GRID
+═══════════════════════════════════════════════════ -->
+<div class="about-sec">
+
+    <!-- Left: Text -->
+    <div class="about-left">
+        <div class="about-lbl reveal">About Us</div>
+        <h2 class="reveal reveal-d1">Fighting for Political, Racial, Economic,<br>Healthcare &amp; Environmental Justice</h2>
+        <p class="reveal reveal-d2">A 501(c)(3) nonprofit organization uniting grassroots communities to achieve social justice through collaboration.</p>
+        <div class="checks">
+            <div class="chk reveal reveal-d2"><span class="chk-icon">&#10003;</span> Direct Action &amp; Voter Engagement</div>
+            <div class="chk reveal reveal-d3"><span class="chk-icon">&#10003;</span> Local, State &amp; Federal Advocacy</div>
+            <div class="chk reveal reveal-d4"><span class="chk-icon">&#10003;</span> Year-Round Community Organizing</div>
+        </div>
+        <a href="/About" class="read-more-link reveal reveal-d5">Read Our Full Story &#8594;</a>
+    </div>
+
+    <!-- Right: Collage grid -->
+    <div class="collage-grid reveal reveal-d1">
+        <div class="ci at-photo-1" data-l="Political Justice"></div>
+        <div class="ci at-photo-2" data-l="Racial Justice"></div>
+        <div class="ci sp2 at-photo-3" data-l="Environmental &amp; Economic Justice"></div>
+    </div>
+
+</div>
 
 @section Scripts {
 <script>
@@ -184,6 +200,46 @@
     document.getElementById('slidePrev')?.addEventListener('click', () => goTo(current - 1));
     document.getElementById('slideNext')?.addEventListener('click', () => goTo(current + 1));
     resetTimer();
+})();
+
+// ── Scroll Reveal ──
+(function () {
+    const els = document.querySelectorAll('.reveal');
+    if (!els.length) return;
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                io.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.15 });
+    els.forEach(el => io.observe(el));
+})();
+
+// ── Impact Counter ──
+(function () {
+    const nums = document.querySelectorAll('.impact-num[data-target]');
+    if (!nums.length) return;
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (!e.isIntersecting) return;
+            const el = e.target;
+            const target = +el.dataset.target;
+            const suffix = el.dataset.suffix || '';
+            const duration = 1400;
+            const start = performance.now();
+            function step(now) {
+                const p = Math.min((now - start) / duration, 1);
+                const ease = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.floor(ease * target).toLocaleString() + suffix;
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+            io.unobserve(el);
+        });
+    }, { threshold: 0.5 });
+    nums.forEach(n => io.observe(n));
 })();
 </script>
 }
