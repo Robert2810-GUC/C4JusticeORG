@@ -1,0 +1,223 @@
+@using C4Justice.Web.Models
+@model List<SpeakerRequest>
+@{ ViewData["Title"] = "Speaker Requests"; }
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div>
+        <div class="page-title">Speaker Requests</div>
+        <div class="page-sub">Review and respond to incoming speaker booking requests</div>
+    </div>
+</div>
+
+<!-- MINI STATS -->
+<div class="mini-stats">
+    <div class="mini-stat">
+        <div class="num">@Model.Count(s => !s.IsRead)</div>
+        <div class="lbl">New Requests</div>
+    </div>
+    <div class="mini-stat blue">
+        <div class="num">@Model.Count</div>
+        <div class="lbl">Total This Year</div>
+    </div>
+    <div class="mini-stat green">
+        <div class="num">@Model.Count(s => s.IsRead)</div>
+        <div class="lbl">Reviewed</div>
+    </div>
+    <div class="mini-stat red">
+        <div class="num">@Model.Count(s => s.EventDate < DateTime.UtcNow)</div>
+        <div class="lbl">Past Events</div>
+    </div>
+</div>
+
+<!-- CAPTCHA NOTICE -->
+<div class="info-banner">
+    <span style="font-size:18px;flex-shrink:0">🔒</span>
+    <p><strong>CAPTCHA Protected:</strong> All speaker requests submitted through the public form are verified with reCAPTCHA to reduce spam. Review each request carefully before responding.</p>
+</div>
+
+@if (!Model.Any())
+{
+    <div style="text-align:center;padding:60px 20px;color:#aaa;font-family:Arial">
+        <div style="font-size:48px;margin-bottom:12px">🎤</div>
+        <p>No speaker requests yet.</p>
+    </div>
+}
+else
+{
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterReqs('all',this)">All Requests</button>
+        <button class="filter-btn" onclick="filterReqs('new',this)">New <span style="background:rgba(13,31,60,.1);color:#0d1f3c;font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700;margin-left:4px">@Model.Count(s => !s.IsRead)</span></button>
+        <button class="filter-btn" onclick="filterReqs('reviewed',this)">Reviewed</button>
+        <button class="filter-btn" onclick="filterReqs('upcoming',this)">Upcoming</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start">
+        <!-- REQUEST CARDS -->
+        <div style="display:flex;flex-direction:column;gap:12px" id="req-list">
+            @foreach (var s in Model.OrderByDescending(r => r.SubmittedAt))
+            {
+                var isPast = s.EventDate < DateTime.UtcNow;
+                var statusClass = !s.IsRead ? "new-card" : (isPast ? "past-card" : "reviewed-card");
+                <div class="req-card @statusClass" data-status="@(!s.IsRead ? "new" : "reviewed")" data-upcoming="@(!isPast ? "1" : "0")" onclick="loadReq(@s.Id)" id="req-card-@s.Id">
+                    <div class="req-inner">
+                        <div class="req-top">
+                            <div class="req-left">
+                                <div class="req-name">@s.ContactName</div>
+                                <div class="req-org">@(s.Organization ?? "Independent")</div>
+                                <div class="req-meta">
+                                    <span>📅 <strong>@s.EventDate.ToString("MMM d, yyyy")</strong></span>
+                                    <span>📍 <strong>@s.EventLocation</strong></span>
+                                    <span>🎯 <strong>@(s.EventType ?? "General")</strong></span>
+                                </div>
+                            </div>
+                            <div class="req-right">
+                                <span class="badge @(!s.IsRead ? "new-badge" : "upcoming")">@(!s.IsRead ? "New" : "Reviewed")</span>
+                                <span class="req-date">@s.SubmittedAt.ToString("MMM d, yyyy")</span>
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(s.AdditionalInfo))
+                        {
+                            <div style="font-size:12px;color:#666;font-family:Arial;line-height:1.6;padding:10px 12px;background:#f8faff;border-radius:4px;margin-bottom:10px;border-left:3px solid #dde">
+                                "@s.AdditionalInfo"
+                            </div>
+                        }
+                        <div style="display:flex;gap:6px;flex-wrap:wrap">
+                            @if (!s.IsRead)
+                            {
+                                <form asp-action="MarkRead" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@s.Id" />
+                                    <button type="submit" class="action-btn mark">✓ Mark Reviewed</button>
+                                </form>
+                            }
+                            <a href="mailto:@s.Email" class="action-btn edit">Reply</a>
+                            <form asp-action="Delete" method="post" style="display:inline" onsubmit="return confirm('Delete this request?')">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@s.Id" />
+                                <button type="submit" class="action-btn del">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- DETAIL PANEL -->
+        <div id="detail-panel" style="background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);position:sticky;top:76px">
+            <div id="detail-empty" style="padding:40px 20px;text-align:center;color:#aaa;font-family:Arial">
+                <div style="font-size:32px;margin-bottom:8px">🎤</div>
+                <p style="font-size:13px">Click a request to view details</p>
+            </div>
+            <div id="detail-content" style="display:none">
+                <div style="background:#0d1f3c;padding:14px 18px;border-radius:6px 6px 0 0">
+                    <div id="d-name" style="color:#e8c84a;font-size:14px;font-weight:700;font-family:Arial"></div>
+                    <div id="d-org" style="color:rgba(255,255,255,.7);font-size:11px;font-family:Arial;margin-top:2px"></div>
+                </div>
+                <div style="padding:18px">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+                        <div>
+                            <div style="font-size:10px;color:#aaa;font-family:Arial;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Email</div>
+                            <div id="d-email" style="font-size:12px;color:#0d1f3c;font-family:Arial"></div>
+                        </div>
+                        <div>
+                            <div style="font-size:10px;color:#aaa;font-family:Arial;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Phone</div>
+                            <div id="d-phone" style="font-size:12px;color:#333;font-family:Arial"></div>
+                        </div>
+                        <div>
+                            <div style="font-size:10px;color:#aaa;font-family:Arial;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Event Date</div>
+                            <div id="d-date" style="font-size:12px;font-weight:700;color:#0d1f3c;font-family:Arial"></div>
+                        </div>
+                        <div>
+                            <div style="font-size:10px;color:#aaa;font-family:Arial;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Event Type</div>
+                            <div id="d-type" style="font-size:12px;color:#333;font-family:Arial"></div>
+                        </div>
+                        <div>
+                            <div style="font-size:10px;color:#aaa;font-family:Arial;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Location</div>
+                            <div id="d-location" style="font-size:12px;color:#333;font-family:Arial"></div>
+                        </div>
+                        <div>
+                            <div style="font-size:10px;color:#aaa;font-family:Arial;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Attendance</div>
+                            <div id="d-attendance" style="font-size:12px;color:#333;font-family:Arial"></div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom:14px">
+                        <div style="font-size:10px;color:#aaa;font-family:Arial;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Message</div>
+                        <div id="d-message" style="font-size:12px;color:#555;font-family:Arial;line-height:1.7;background:#f8faff;padding:12px;border-radius:4px;border-left:3px solid #e8c84a"></div>
+                    </div>
+                    <div id="d-actions"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Styles {
+<style>
+.req-card{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;transition:box-shadow .2s;cursor:pointer}
+.req-card:hover{box-shadow:0 3px 14px rgba(0,0,0,.1)}
+.req-card.new-card{border-left:4px solid #e8c84a}
+.req-card.reviewed-card{border-left:4px solid #3498db}
+.req-card.past-card{border-left:4px solid #ccc;opacity:.75}
+.req-inner{padding:16px 18px}
+.req-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.req-left{flex:1}
+.req-name{font-size:14px;font-weight:700;color:#0d1f3c;margin-bottom:2px;font-family:Arial}
+.req-org{font-size:12px;color:#888;font-family:Arial;margin-bottom:6px}
+.req-meta{display:flex;gap:14px;flex-wrap:wrap}
+.req-meta span{font-size:11px;color:#aaa;font-family:Arial}
+.req-meta strong{color:#555}
+.req-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.req-date{font-size:10px;color:#bbb;font-family:Arial}
+</style>
+}
+
+@section Scripts {
+<script>
+var reqs = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(s => new {
+    s.Id, s.ContactName, s.Organization, s.Email, s.Phone, s.EventLocation,
+    s.EventType, s.ExpectedAttendance, s.AdditionalInfo, s.IsRead,
+    EventDate = s.EventDate.ToString("MMM d, yyyy"),
+    Submitted = s.SubmittedAt.ToString("MMM d, yyyy")
+})));
+
+function loadReq(id) {
+    var r = reqs.find(function(x){ return x.id === id; });
+    if (!r) return;
+
+    document.querySelectorAll('.req-card').forEach(function(c){ c.style.outline = ''; });
+    var card = document.getElementById('req-card-'+id);
+    if (card) card.style.outline = '2px solid #e8c84a';
+
+    document.getElementById('detail-empty').style.display = 'none';
+    document.getElementById('detail-content').style.display = 'block';
+    document.getElementById('d-name').textContent = r.contactName;
+    document.getElementById('d-org').textContent = r.organization || 'Independent';
+    document.getElementById('d-email').textContent = r.email;
+    document.getElementById('d-phone').textContent = r.phone || '—';
+    document.getElementById('d-date').textContent = r.eventDate;
+    document.getElementById('d-type').textContent = r.eventType || 'General';
+    document.getElementById('d-location').textContent = r.eventLocation;
+    document.getElementById('d-attendance').textContent = r.expectedAttendance || '—';
+    document.getElementById('d-message').textContent = r.additionalInfo || 'No additional message provided.';
+
+    var token = document.querySelector('input[name="__RequestVerificationToken"]');
+    var t = token ? token.value : '';
+    var actions = document.getElementById('d-actions');
+    actions.innerHTML = '<a href="mailto:'+r.email+'" class="action-btn edit" style="margin-bottom:6px;display:inline-block">Reply via Email</a>';
+}
+
+function filterReqs(type, btn) {
+    document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('.req-card').forEach(function(row) {
+        var show = true;
+        if (type === 'new') show = row.dataset.status === 'new';
+        else if (type === 'reviewed') show = row.dataset.status === 'reviewed';
+        else if (type === 'upcoming') show = row.dataset.upcoming === '1';
+        row.style.display = show ? '' : 'none';
+    });
+}
+</script>
+}

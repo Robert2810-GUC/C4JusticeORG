@@ -2,8 +2,14 @@
 @{
     ViewData["Title"] = "Home";
     ViewData["ActivePage"] = "Home";
-    var sliderImages = ViewBag.SliderImages as List<C4Justice.Web.Models.SliderImage> ?? new();
-    var cfg = ViewBag.Settings as Dictionary<string, string> ?? new Dictionary<string, string>();
+    var sliderImages   = ViewBag.SliderImages   as List<C4Justice.Web.Models.SliderImage>   ?? new();
+    var collagePhotos  = ViewBag.CollagePhotos  as List<C4Justice.Web.Models.GalleryPhoto>  ?? new();
+    var cfg            = ViewBag.Settings       as Dictionary<string, string>               ?? new Dictionary<string, string>();
+
+    // Collage slots: SortOrder 0=top-left, 1=top-right, 2=bottom-full
+    var col0 = collagePhotos.FirstOrDefault(p => p.SortOrder == 0);
+    var col1 = collagePhotos.FirstOrDefault(p => p.SortOrder == 1);
+    var col2 = collagePhotos.FirstOrDefault(p => p.SortOrder == 2);
 }
 
 <!-- ═══════════════════════════════════════════════════
@@ -95,7 +101,7 @@
     <div class="quick-actions">
         <h4>Quick Links</h4>
         <a href="/Contact#mailing-list" class="qa-btn">Join Our Mailing List</a>
-        <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="qa-btn qa-donate">
+        <a href="@(cfg.GetValueOrDefault("zeffy_form_url", "https://www.zeffy.com/en-US/donation-form/5e9631aa-fbe9-400f-a8b4-d62361bc7ed0"))" target="_blank" rel="noopener" class="qa-btn qa-donate">
             <i class="fas fa-heart me-1"></i> Donate Today
         </a>
         <a href="/Events" class="qa-btn">Upcoming Events</a>
@@ -155,11 +161,40 @@
         <a href="/About" class="read-more-link reveal reveal-d5">Read Our Full Story &#8594;</a>
     </div>
 
-    <!-- Right: Collage grid -->
+    <!-- Right: Collage grid (dynamic from admin, falls back to static images) -->
     <div class="collage-grid reveal reveal-d1">
-        <div class="ci at-photo-1" data-l="Political Justice"></div>
-        <div class="ci at-photo-2" data-l="Racial Justice"></div>
-        <div class="ci sp2 at-photo-3" data-l="Environmental &amp; Economic Justice"></div>
+        @if (col0 != null)
+        {
+            <div class="ci"
+                 style="background-image:url('@col0.ImageUrl');background-size:cover;background-position:center"
+                 data-l="@(col0.Label ?? "")"></div>
+        }
+        else
+        {
+            <div class="ci at-photo-1" data-l="Political Justice"></div>
+        }
+
+        @if (col1 != null)
+        {
+            <div class="ci"
+                 style="background-image:url('@col1.ImageUrl');background-size:cover;background-position:center"
+                 data-l="@(col1.Label ?? "")"></div>
+        }
+        else
+        {
+            <div class="ci at-photo-2" data-l="Racial Justice"></div>
+        }
+
+        @if (col2 != null)
+        {
+            <div class="ci sp2"
+                 style="background-image:url('@col2.ImageUrl');background-size:cover;background-position:center"
+                 data-l="@(col2.Label ?? "")"></div>
+        }
+        else
+        {
+            <div class="ci sp2 at-photo-3" data-l="Environmental &amp; Economic Justice"></div>
+        }
     </div>
 
 </div>

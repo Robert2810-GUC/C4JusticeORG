@@ -1,4 +1,4 @@
-@model C4Justice.Web.Models.Article
+@model C4Justice.Web.Models.OpinionPost
 @{
     ViewData["Title"] = Model.Title;
 }
@@ -9,13 +9,15 @@
         <span class="page-hero-label">@Model.Category</span>
         <h1 class="page-hero-title" style="font-size:clamp(1.4rem,3.5vw,2.2rem);max-width:800px;">@Model.Title</h1>
         <div style="color:rgba(255,255,255,.65);font-size:.875rem;margin-top:12px;">
+            <i class="fas fa-user me-1"></i>@Model.Author
+            &nbsp;&bull;&nbsp;
             <i class="fas fa-calendar me-1"></i>@(Model.PublishedAt?.ToString("MMMM d, yyyy"))
         </div>
         <nav aria-label="breadcrumb" class="page-hero-breadcrumb mt-3">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
                 <li class="breadcrumb-item"><a href="/Opinion">Opinion</a></li>
-                <li class="breadcrumb-item active">Article</li>
+                <li class="breadcrumb-item active">@Model.Title</li>
             </ol>
         </nav>
     </div>
@@ -26,13 +28,18 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
 
-                @if (!string.IsNullOrWhiteSpace(Model.FeaturedImageUrl))
+                @if (!string.IsNullOrWhiteSpace(Model.CoverImageUrl))
                 {
-                    <img src="@Model.FeaturedImageUrl" alt="@Model.Title" class="img-fluid mb-4" style="width:100%;border-radius:3px;" />
+                    <img src="@Model.CoverImageUrl" alt="@Model.Title" class="img-fluid mb-4" style="width:100%;border-radius:3px;" />
+                }
+
+                @if (!string.IsNullOrWhiteSpace(Model.Excerpt))
+                {
+                    <p style="font-size:1.1rem;color:#555;font-style:italic;border-left:3px solid var(--gold);padding-left:16px;margin-bottom:28px;line-height:1.7;">@Model.Excerpt</p>
                 }
 
                 <div class="article-content-body">
-                    @Html.Raw(Model.Content)
+                    @Html.Raw(Model.Body)
                 </div>
 
                 <hr style="border-color:var(--border);margin:40px 0;" />

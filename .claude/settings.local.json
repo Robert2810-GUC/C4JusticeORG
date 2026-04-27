@@ -30,7 +30,11 @@
       "Bash(cmd /c \"dir C:\\\\Bharat\\\\C4Justice\"\")",
       "Bash(dir C:BharatC4JusticeC4Justice.WebViews /s /b)",
       "Bash(dotnet add:*)",
-      "WebFetch(domain:claude.ai)"
+      "WebFetch(domain:claude.ai)",
+      "Bash(dotnet restore *)",
+      "Bash(xargs grep *)",
+      "Bash(python3 *)",
+      "Bash(xargs cat *)"
     ]
   }
 }

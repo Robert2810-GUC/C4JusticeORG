@@ -1,3 +1,11 @@
+@inject C4Justice.Web.Data.AppDbContext _layoutDb
+@inject Microsoft.Extensions.Configuration.IConfiguration _layoutConfig
+@{
+    var _donateUrl = _layoutDb.SiteSettings.FirstOrDefault(s => s.Key == "zeffy_form_url")?.Value;
+    if (string.IsNullOrWhiteSpace(_donateUrl)) _donateUrl = "@_donateUrl";
+    var _rcEnabled = _layoutConfig.GetValue<bool>("Recaptcha:Enabled");
+    var _rcSiteKey = _layoutConfig["Recaptcha:SiteKey"] ?? "";
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -95,7 +103,7 @@
                                 <div class="mega-alt-icon"><i class="fas fa-newspaper"></i></div>
                                 <div class="mega-alt-body"><span class="mega-alt-title">Join Our Newsletter</span><span class="mega-alt-desc">Stay connected with updates.</span></div>
                             </a>
-                            <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="mega-alt-item">
+                            <a href="@_donateUrl" target="_blank" rel="noopener" class="mega-alt-item">
                                 <div class="mega-alt-icon" style="background:rgba(200,169,81,.15);color:var(--gold)"><i class="fas fa-heart"></i></div>
                                 <div class="mega-alt-body"><span class="mega-alt-title">Donate</span><span class="mega-alt-desc">Support our 501(c)(3) fund.</span></div>
                             </a>
@@ -188,7 +196,7 @@
                         </div>
                         <div class="mega-col mega-col-alt">
                             <div class="mega-col-label">Support Us</div>
-                            <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="mega-alt-item">
+                            <a href="@_donateUrl" target="_blank" rel="noopener" class="mega-alt-item">
                                 <div class="mega-alt-icon" style="background:rgba(200,169,81,.15);color:var(--gold)"><i class="fas fa-heart"></i></div>
                                 <div class="mega-alt-body"><span class="mega-alt-title">Donate Today</span><span class="mega-alt-desc">Support our 501(c)(3) fund.</span></div>
                             </a>
@@ -253,7 +261,7 @@
 
             <!-- Mobile-only: Donate link inside the menu -->
             <li class="d-lg-none">
-                <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" style="color:var(--gold) !important;">
+                <a href="@_donateUrl" target="_blank" rel="noopener" style="color:var(--gold) !important;">
                     <i class="fas fa-heart me-1"></i> Donate
                 </a>
             </li>
@@ -264,7 +272,7 @@
             <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="nav-fb-icon" title="Follow us on Facebook">
                 <i class="fab fa-facebook-f"></i>
             </a>
-            <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="nav-donate">
+            <a href="@_donateUrl" target="_blank" rel="noopener" class="nav-donate">
                 <i class="fas fa-heart me-1"></i> Donate
             </a>
         </div>
@@ -275,7 +283,7 @@
 <!-- ── DONATE BAR ── -->
 <div class="donate-bar">
     Donations to the Communities United For Justice Fund 501(c)(3) are tax deductible.
-    <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener">Donate Now &rarr;</a>
+    <a href="@_donateUrl" target="_blank" rel="noopener">Donate Now &rarr;</a>
 </div>
 
 <!-- Main Content -->
@@ -316,7 +324,7 @@
                         <li><a href="/Events">Events</a></li>
                         <li><a href="/GetInvolved">Get Involved</a></li>
                         <li><a href="/Contact">Contact</a></li>
-                        <li><a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" class="gd"><i class="fas fa-heart" style="font-size:10px; margin-right:4px;"></i> Donate</a></li>
+                        <li><a href="@_donateUrl" target="_blank" class="gd"><i class="fas fa-heart" style="font-size:10px; margin-right:4px;"></i> Donate</a></li>
                     </ul>
                 </div>
 
@@ -333,8 +341,9 @@
 
                 <div class="footer-col">
                     <h5>Stay Informed</h5>
-                    <form asp-action="Subscribe" asp-controller="Home" method="post" class="nl-footer-stack">
+                    <form asp-action="Subscribe" asp-controller="Home" method="post" class="nl-footer-stack" data-recaptcha>
                         @Html.AntiForgeryToken()
+                        <input type="hidden" name="recaptchaToken" value="" />
                         <p>Join our mailing list for updates on events and ways to get involved.</p>
                         <input type="text" name="Name" placeholder="Full Name" required>
                         <input type="email" name="Email" placeholder="Email Address" required>
@@ -342,7 +351,7 @@
                         <input type="text" name="ZipCode" placeholder="Zip Code">
                         <button type="submit" class="sub">Subscribe</button>
                     </form>
-                    <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" class="donate-footer-btn">
+                    <a href="@_donateUrl" target="_blank" class="donate-footer-btn">
                         &#10084; Donate to the Fund
                     </a>
                 </div>
@@ -353,7 +362,7 @@
                 <div class="fnav">
                     <a href="#">A registered 501(c)(3) nonprofit organization.</a>
                     <a href="/Contact">Contact Us</a>
-                    <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" class="gd">Donate</a>
+                    <a href="@_donateUrl" target="_blank" class="gd">Donate</a>
                 </div>
             </div>
         </footer>
@@ -498,5 +507,27 @@
 </script>
 
 @await RenderSectionAsync("Scripts", required: false)
+@if (_rcEnabled && !string.IsNullOrWhiteSpace(_rcSiteKey) && !_rcSiteKey.StartsWith("YOUR_"))
+{
+<script src="https://www.google.com/recaptcha/api.js?render=@_rcSiteKey"></script>
+<script>
+(function(){
+    function attachRecaptcha(form) {
+        form.addEventListener('submit', function(e) {
+            var tokenInput = form.querySelector('input[name="recaptchaToken"]');
+            if (!tokenInput) return;
+            e.preventDefault();
+            grecaptcha.ready(function() {
+                grecaptcha.execute('@_rcSiteKey', {action: 'submit'}).then(function(token) {
+                    tokenInput.value = token;
+                    form.submit();
+                });
+            });
+        });
+    }
+    document.querySelectorAll('form[data-recaptcha]').forEach(attachRecaptcha);
+})();
+</script>
+}
 </body>
 </html>

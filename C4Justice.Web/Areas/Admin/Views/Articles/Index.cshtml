@@ -1,49 +1,102 @@
 @model IEnumerable<C4Justice.Web.Models.Article>
 @{
     ViewData["Title"] = "Articles";
+    var list = Model.ToList();
 }
 
 @section TopbarActions {
-    <a href="/Admin/Articles/Create" class="btn-sm-admin btn-primary-admin"><i class="fas fa-plus me-1"></i>New Article</a>
+    <a href="/Admin/Articles/Create" class="view-site-btn" style="background:#e8c84a;color:#0d1f3c">+ New Article</a>
 }
 
-<div class="admin-card">
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>Title</th><th>Category</th><th>Status</th><th>Published</th><th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach (var a in Model)
-        {
-            <tr>
-                <td style="max-width:280px;">
-                    <div style="font-weight:600;color:#e6edf3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">@a.Title</div>
-                    <div style="font-size:.75rem;color:#8b949e;">/Opinion/@a.Slug</div>
-                </td>
-                <td><span class="badge-cat">@a.Category</span></td>
-                <td><span class="@(a.IsPublished ? "badge-active" : "badge-inactive")">@(a.IsPublished ? "Published" : "Draft")</span></td>
-                <td style="font-size:.8rem;color:#8b949e;">@(a.PublishedAt?.ToString("MMM d, yyyy") ?? "—")</td>
-                <td>
-                    <div class="d-flex gap-2">
-                        <a href="/Admin/Articles/Edit/@a.Id" class="btn-sm-admin btn-ghost-admin" style="padding:4px 10px;font-size:.75rem;">Edit</a>
-                        <form method="post" asp-action="TogglePublish" asp-route-id="@a.Id" style="display:inline;">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn-sm-admin btn-ghost-admin" style="padding:4px 10px;font-size:.75rem;">@(a.IsPublished ? "Unpublish" : "Publish")</button>
-                        </form>
-                        <form method="post" asp-action="Delete" asp-route-id="@a.Id" style="display:inline;" onsubmit="return confirm('Delete this article?')">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn-sm-admin" style="padding:4px 10px;font-size:.75rem;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);">Delete</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-        }
-        @if (!Model.Any())
-        {
-            <tr><td colspan="5" style="color:#8b949e;text-align:center;padding:32px;">No articles yet.</td></tr>
-        }
-        </tbody>
-    </table>
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div>
+        <div class="page-title">Articles</div>
+        <div class="page-sub">Manage published articles and blog content</div>
+    </div>
 </div>
+
+<!-- MINI STATS -->
+<div class="mini-stats">
+    <div class="mini-stat blue">
+        <div class="num">@list.Count</div>
+        <div class="lbl">Total Articles</div>
+    </div>
+    <div class="mini-stat green">
+        <div class="num">@list.Count(a => a.IsPublished)</div>
+        <div class="lbl">Published</div>
+    </div>
+    <div class="mini-stat">
+        <div class="num">@list.Count(a => !a.IsPublished)</div>
+        <div class="lbl">Drafts</div>
+    </div>
+    <div class="mini-stat red">
+        <div class="num">@list.Count(a => a.CreatedAt >= DateTime.UtcNow.AddDays(-30))</div>
+        <div class="lbl">This Month</div>
+    </div>
+</div>
+
+<div class="filter-bar">
+    <button class="filter-btn active" onclick="filterArts('all',this)">All</button>
+    <button class="filter-btn" onclick="filterArts('published',this)">Published</button>
+    <button class="filter-btn" onclick="filterArts('draft',this)">Drafts</button>
+    <input type="text" placeholder="Search articles..." onkeyup="searchArts(this.value)" style="margin-left:auto;border:1.5px solid #dde;border-radius:4px;padding:6px 12px;font-size:12px;font-family:Arial;color:#333;width:220px" />
+</div>
+
+<div class="table-card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Title</th><th>Category</th><th>Status</th><th>Published</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+            @foreach (var a in list.OrderByDescending(a => a.CreatedAt))
+            {
+                <tr class="art-row" data-status="@(a.IsPublished ? "published" : "draft")" data-search="@($"{a.Title} {a.Category}".ToLower())">
+                    <td>
+                        <strong style="color:#0d1f3c">@a.Title</strong>
+                        <div style="font-size:11px;color:#aaa;font-family:Arial">/Opinion/@a.Slug</div>
+                    </td>
+                    <td><span class="badge upcoming">@(a.Category ?? "General")</span></td>
+                    <td><span class="badge @(a.IsPublished ? "published" : "draft")">@(a.IsPublished ? "Published" : "Draft")</span></td>
+                    <td style="font-size:11px;color:#aaa">@(a.PublishedAt?.ToString("MMM d, yyyy") ?? "—")</td>
+                    <td>
+                        <a href="/Admin/Articles/Edit/@a.Id" class="action-btn edit">Edit</a>
+                        <form method="post" asp-action="TogglePublish" asp-route-id="@a.Id" style="display:inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="action-btn mark">@(a.IsPublished ? "Unpublish" : "Publish")</button>
+                        </form>
+                        <form method="post" asp-action="Delete" asp-route-id="@a.Id" style="display:inline" onsubmit="return confirm('Delete this article?')">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="action-btn del">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (!list.Any())
+            {
+                <tr><td colspan="5" style="text-align:center;padding:40px;color:#aaa;font-family:Arial">No articles yet.</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function filterArts(type, btn) {
+    document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('.art-row').forEach(function(row) {
+        if (type === 'all') row.style.display = '';
+        else row.style.display = row.dataset.status === type ? '' : 'none';
+    });
+}
+function searchArts(q) {
+    var lower = q.toLowerCase();
+    document.querySelectorAll('.art-row').forEach(function(row) {
+        row.style.display = row.dataset.search.indexOf(lower) !== -1 ? '' : 'none';
+    });
+}
+</script>
+}

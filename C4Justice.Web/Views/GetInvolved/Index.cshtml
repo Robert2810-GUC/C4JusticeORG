@@ -1,6 +1,10 @@
+@inject C4Justice.Web.Data.AppDbContext _settingsDb
+@{ var _donateUrl = _settingsDb.SiteSettings.FirstOrDefault(s => s.Key == "zeffy_form_url")?.Value; if (string.IsNullOrWhiteSpace(_donateUrl)) _donateUrl = "@_donateUrl"; }
 @{
     ViewData["Title"] = "Get Involved";
     ViewData["ActivePage"] = "GetInvolved";
+    var successTab = TempData["GISuccess"]?.ToString() ?? "";
+    var errorTab   = TempData["GIError"]?.ToString() ?? "";
 }
 
 @section Styles {
@@ -35,7 +39,7 @@
 .form-note{color:#888;font-size:11px;margin-top:3px;}
 .submit-btn{background:#1a3a6b;color:#fff;border:none;padding:12px 32px;font-size:13px;font-weight:700;border-radius:3px;cursor:pointer;margin-top:8px;}
 .submit-btn:hover{background:#0d1f3c;}
-.submit-btn.gold{background:#e8c84a;}
+.submit-btn.gold{background:#e8c84a;color:#0d1f3c;}
 .submit-btn.gold:hover{background:#e8b820;}
 .vol-areas{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
 .va{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #dde;border-radius:3px;cursor:pointer;}
@@ -53,9 +57,11 @@
 .custom-amount input{flex:1;padding:10px 12px;border:1px solid #dde;border-radius:3px;font-size:16px;color:#333;}
 .donate-note{background:#e8f5e8;border-left:4px solid #1a7a1a;padding:10px 14px;margin-bottom:16px;border-radius:0 3px 3px 0;}
 .donate-note p{color:#0a5a0a;font-size:12px;line-height:1.6;margin:0;}
-.success-box{background:#e8f5e8;border:1px solid #1a7a1a;border-radius:4px;padding:20px;text-align:center;display:none;margin-top:16px;}
+.success-box{background:#e8f5e8;border:1px solid #1a7a1a;border-radius:4px;padding:20px;text-align:center;margin-top:16px;}
 .success-box h3{color:#0a5a0a;font-size:16px;margin-bottom:6px;font-family:var(--font-head);}
 .success-box p{color:#1a5a1a;font-size:14px;}
+.error-box{background:#fff3f3;border:1px solid #f87171;border-radius:4px;padding:12px 16px;margin-bottom:16px;}
+.error-box p{color:#b91c1c;font-size:13px;margin:0;}
 .gi-sidebar{background:#f8f9fc;border-left:1px solid #dde;padding:28px 18px;display:flex;flex-direction:column;gap:18px;align-self:start;position:sticky;top:70px;}
 .sb-card{background:#fff;border:1px solid #dde;border-radius:4px;border-top:3px solid var(--gold);padding:18px;}
 .sb-card h4{color:var(--navy);font-size:13px;font-weight:700;margin-bottom:8px;font-family:var(--font-head);}
@@ -82,19 +88,19 @@
 
 <!-- ACTION TABS -->
 <div class="action-row" id="actionRow">
-    <div class="ac act" onclick="showPanel('volunteer',this)">
+    <div class="ac act" onclick="showPanel('volunteer',this)" id="tab-volunteer">
         <div class="ac-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
         <h4>Volunteer</h4><p>Join our network</p>
     </div>
-    <div class="ac" onclick="showPanel('newsletter',this)">
+    <div class="ac" onclick="showPanel('newsletter',this)" id="tab-newsletter">
         <div class="ac-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
         <h4>Join Newsletter</h4><p>Stay informed</p>
     </div>
-    <div class="ac" onclick="showPanel('speaker',this)">
+    <div class="ac" onclick="showPanel('speaker',this)" id="tab-speaker">
         <div class="ac-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
         <h4>Speaker Request</h4><p>Invite us to speak</p>
     </div>
-    <div class="ac" onclick="showPanel('donate',this)">
+    <div class="ac" onclick="showPanel('donate',this)" id="tab-donate">
         <div class="ac-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
         <h4>Donate</h4><p>Support our mission</p>
     </div>
@@ -107,26 +113,49 @@
     <div class="gi-panel act" id="panel-volunteer">
         <span class="sec-lbl">Volunteer</span>
         <h2>Sign Up to Volunteer</h2>
-        <p class="intro">Join our volunteer network and contribute your time and skills to the movement for justice. We have volunteer opportunities for everyone.</p>
-        <div class="vol-areas">
-            <div class="va"><input type="checkbox" id="v1"><label for="v1">Voter Registration Drives</label></div>
-            <div class="va"><input type="checkbox" id="v2"><label for="v2">Community Town Halls</label></div>
-            <div class="va"><input type="checkbox" id="v3"><label for="v3">Event Organization</label></div>
-            <div class="va"><input type="checkbox" id="v4"><label for="v4">Social Media &amp; Communications</label></div>
-            <div class="va"><input type="checkbox" id="v5"><label for="v5">Canvassing &amp; Outreach</label></div>
-            <div class="va"><input type="checkbox" id="v6"><label for="v6">Administrative Support</label></div>
-        </div>
-        <div class="form-grid">
-            <div class="form-group"><label>First Name *</label><input type="text" placeholder="First Name"/></div>
-            <div class="form-group"><label>Last Name *</label><input type="text" placeholder="Last Name"/></div>
-            <div class="form-group"><label>Email Address *</label><input type="email" placeholder="your@email.com"/></div>
-            <div class="form-group"><label>Mobile Phone *</label><input type="tel" placeholder="(404) 555-0100"/></div>
-            <div class="form-group"><label>Zip Code *</label><input type="text" placeholder="30344"/></div>
-            <div class="form-group"><label>Availability</label><select><option>Weekdays</option><option>Weekends</option><option>Both</option><option>Flexible</option></select></div>
-            <div class="form-group full"><label>Tell us about yourself</label><textarea placeholder="Any skills, experience or interests you'd like to share..."></textarea></div>
-        </div>
-        <button class="submit-btn" onclick="showSuccess('vol-success')">Sign Up to Volunteer</button>
-        <div class="success-box" id="vol-success"><h3>Thank you for signing up!</h3><p>We'll be in touch shortly with volunteer opportunities in your area.</p></div>
+        <p class="intro">Join our volunteer network and contribute your time and skills to the movement for justice.</p>
+
+        @if (successTab == "volunteer")
+        {
+            <div class="success-box"><h3>Thank you for signing up!</h3><p>We'll be in touch shortly with volunteer opportunities in your area.</p></div>
+        }
+        else
+        {
+            @if (errorTab == "volunteer")
+            {
+                <div class="error-box"><p>Please fill in your name and email address.</p></div>
+            }
+            <form asp-action="Volunteer" asp-controller="GetInvolved" method="post" data-recaptcha>
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="recaptchaToken" value="" />
+                <div class="vol-areas">
+                    <div class="va"><input type="checkbox" name="interests" value="Voter Registration Drives" id="v1"><label for="v1">Voter Registration Drives</label></div>
+                    <div class="va"><input type="checkbox" name="interests" value="Community Town Halls" id="v2"><label for="v2">Community Town Halls</label></div>
+                    <div class="va"><input type="checkbox" name="interests" value="Event Organization" id="v3"><label for="v3">Event Organization</label></div>
+                    <div class="va"><input type="checkbox" name="interests" value="Social Media & Communications" id="v4"><label for="v4">Social Media &amp; Communications</label></div>
+                    <div class="va"><input type="checkbox" name="interests" value="Canvassing & Outreach" id="v5"><label for="v5">Canvassing &amp; Outreach</label></div>
+                    <div class="va"><input type="checkbox" name="interests" value="Administrative Support" id="v6"><label for="v6">Administrative Support</label></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label>First Name *</label><input type="text" name="FirstName" placeholder="First Name" required /></div>
+                    <div class="form-group"><label>Last Name *</label><input type="text" name="LastName" placeholder="Last Name" /></div>
+                    <div class="form-group"><label>Email Address *</label><input type="email" name="Email" placeholder="your@email.com" required /></div>
+                    <div class="form-group"><label>Mobile Phone *</label><input type="tel" name="Phone" placeholder="(404) 555-0100" /></div>
+                    <div class="form-group"><label>Zip Code *</label><input type="text" name="ZipCode" placeholder="30344" /></div>
+                    <div class="form-group">
+                        <label>Availability</label>
+                        <select name="Availability">
+                            <option>Weekdays</option>
+                            <option>Weekends</option>
+                            <option>Both</option>
+                            <option>Flexible</option>
+                        </select>
+                    </div>
+                    <div class="form-group full"><label>Tell us about yourself</label><textarea name="Notes" placeholder="Any skills, experience or interests you'd like to share..."></textarea></div>
+                </div>
+                <button type="submit" class="submit-btn">Sign Up to Volunteer</button>
+            </form>
+        }
     </div>
 
     <!-- NEWSLETTER -->
@@ -134,15 +163,48 @@
         <span class="sec-lbl">Join Our Newsletter</span>
         <h2>Stay Informed &amp; Engaged</h2>
         <p class="intro">Sign up for our mailing list to receive updates on events, issues, and ways to get involved in the fight for justice.</p>
-        <div class="form-grid">
-            <div class="form-group full"><label>Full Name *</label><input type="text" placeholder="Your Full Name"/></div>
-            <div class="form-group"><label>Email Address *</label><input type="email" placeholder="your@email.com"/></div>
-            <div class="form-group"><label>Mobile Phone *</label><input type="tel" placeholder="(404) 555-0100"/><span class="form-note">We may send event reminders via SMS</span></div>
-            <div class="form-group"><label>Zip Code *</label><input type="text" placeholder="30344"/><span class="form-note">Helps us send local event info</span></div>
-            <div class="form-group full"><label>Topics of Interest</label><select><option>All Justice Areas</option><option>Political Justice</option><option>Racial Justice</option><option>Economic Justice</option><option>Healthcare Justice</option><option>Environmental Justice</option></select></div>
-        </div>
-        <button class="submit-btn" onclick="showSuccess('nl-success')">Subscribe to Newsletter</button>
-        <div class="success-box" id="nl-success"><h3>Thank you for subscribing!</h3><p>You'll start receiving updates on events, issues and ways to get involved.</p></div>
+
+        @if (successTab == "newsletter")
+        {
+            <div class="success-box"><h3>Thank you for subscribing!</h3><p>You'll start receiving updates on events, issues and ways to get involved.</p></div>
+        }
+        else
+        {
+            @if (errorTab == "newsletter")
+            {
+                <div class="error-box"><p>Please fill in your name and email address.</p></div>
+            }
+            <form asp-action="Newsletter" asp-controller="GetInvolved" method="post" data-recaptcha>
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="recaptchaToken" value="" />
+                <div class="form-grid">
+                    <div class="form-group full"><label>Full Name *</label><input type="text" name="FullName" placeholder="Your Full Name" required /></div>
+                    <div class="form-group"><label>Email Address *</label><input type="email" name="Email" placeholder="your@email.com" required /></div>
+                    <div class="form-group">
+                        <label>Mobile Phone</label>
+                        <input type="tel" name="Phone" placeholder="(404) 555-0100" />
+                        <span class="form-note">We may send event reminders via SMS</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Zip Code</label>
+                        <input type="text" name="ZipCode" placeholder="30344" />
+                        <span class="form-note">Helps us send local event info</span>
+                    </div>
+                    <div class="form-group full">
+                        <label>Topics of Interest</label>
+                        <select name="TopicInterest">
+                            <option>All Justice Areas</option>
+                            <option>Political Justice</option>
+                            <option>Racial Justice</option>
+                            <option>Economic Justice</option>
+                            <option>Healthcare Justice</option>
+                            <option>Environmental Justice</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">Subscribe to Newsletter</button>
+            </form>
+        }
     </div>
 
     <!-- SPEAKER REQUEST -->
@@ -150,20 +212,66 @@
         <span class="sec-lbl">Speaker Request</span>
         <h2>Request a Speaker</h2>
         <p class="intro">Invite Communities United for Justice to speak at your next event, town hall, community meeting or conference. We will respond within 5 business days.</p>
-        <div class="form-grid">
-            <div class="form-group"><label>Your Name *</label><input type="text" placeholder="Full Name"/></div>
-            <div class="form-group"><label>Organization *</label><input type="text" placeholder="Organization Name"/></div>
-            <div class="form-group"><label>Email Address *</label><input type="email" placeholder="your@email.com"/></div>
-            <div class="form-group"><label>Phone Number *</label><input type="tel" placeholder="(404) 555-0100"/></div>
-            <div class="form-group"><label>Event Date *</label><input type="date"/></div>
-            <div class="form-group"><label>Event Type *</label><select><option>Select Event Type</option><option>Town Hall</option><option>Community Meeting</option><option>Conference</option><option>Church/Faith Event</option><option>School/University</option><option>Other</option></select></div>
-            <div class="form-group"><label>Expected Attendance</label><select><option>Select Range</option><option>Under 50</option><option>50 - 100</option><option>100 - 250</option><option>250 - 500</option><option>Over 500</option></select></div>
-            <div class="form-group"><label>Topic of Interest</label><select><option>All Justice Areas</option><option>Political Justice</option><option>Racial Justice</option><option>Economic Justice</option><option>Healthcare Justice</option><option>Environmental Justice</option></select></div>
-            <div class="form-group full"><label>Event Location &amp; Address *</label><input type="text" placeholder="Full address of event venue"/></div>
-            <div class="form-group full"><label>Additional Information</label><textarea placeholder="Please describe your event, audience and any specific topics..."></textarea></div>
-        </div>
-        <button class="submit-btn" onclick="showSuccess('sp-success')">Submit Speaker Request</button>
-        <div class="success-box" id="sp-success"><h3>Request Submitted!</h3><p>Thank you for your speaker request. We will respond within 5 business days.</p></div>
+
+        @if (successTab == "speaker")
+        {
+            <div class="success-box"><h3>Request Submitted!</h3><p>Thank you for your speaker request. We will respond within 5 business days.</p></div>
+        }
+        else
+        {
+            @if (errorTab == "speaker")
+            {
+                <div class="error-box"><p>Please fill in your name and email address.</p></div>
+            }
+            <form asp-action="Speaker" asp-controller="GetInvolved" method="post" data-recaptcha>
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="recaptchaToken" value="" />
+                <div class="form-grid">
+                    <div class="form-group"><label>Your Name *</label><input type="text" name="ContactName" placeholder="Full Name" required /></div>
+                    <div class="form-group"><label>Organization *</label><input type="text" name="Organization" placeholder="Organization Name" /></div>
+                    <div class="form-group"><label>Email Address *</label><input type="email" name="Email" placeholder="your@email.com" required /></div>
+                    <div class="form-group"><label>Phone Number *</label><input type="tel" name="Phone" placeholder="(404) 555-0100" /></div>
+                    <div class="form-group"><label>Event Date *</label><input type="date" name="EventDate" required /></div>
+                    <div class="form-group">
+                        <label>Event Type *</label>
+                        <select name="EventType">
+                            <option value="">Select Event Type</option>
+                            <option>Town Hall</option>
+                            <option>Community Meeting</option>
+                            <option>Conference</option>
+                            <option>Church/Faith Event</option>
+                            <option>School/University</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Attendance</label>
+                        <select name="ExpectedAttendance">
+                            <option value="">Select Range</option>
+                            <option>Under 50</option>
+                            <option>50 - 100</option>
+                            <option>100 - 250</option>
+                            <option>250 - 500</option>
+                            <option>Over 500</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Topic of Interest</label>
+                        <select name="TopicInterest">
+                            <option>All Justice Areas</option>
+                            <option>Political Justice</option>
+                            <option>Racial Justice</option>
+                            <option>Economic Justice</option>
+                            <option>Healthcare Justice</option>
+                            <option>Environmental Justice</option>
+                        </select>
+                    </div>
+                    <div class="form-group full"><label>Event Location &amp; Address *</label><input type="text" name="EventLocation" placeholder="Full address of event venue" /></div>
+                    <div class="form-group full"><label>Additional Information</label><textarea name="AdditionalInfo" placeholder="Please describe your event, audience and any specific topics..."></textarea></div>
+                </div>
+                <button type="submit" class="submit-btn">Submit Speaker Request</button>
+            </form>
+        }
     </div>
 
     <!-- DONATE -->
@@ -185,12 +293,7 @@
         </div>
         <div class="custom-amount"><span>$</span><input type="number" placeholder="Custom amount" id="custom-amt"/></div>
         <div class="donate-note"><p>Communities United for Justice Fund is a registered 501(c)(3) nonprofit. We fundraise with Zeffy to ensure 100% of your donation goes to our mission.</p></div>
-        <div class="form-grid">
-            <div class="form-group"><label>First Name *</label><input type="text" placeholder="First Name"/></div>
-            <div class="form-group"><label>Last Name *</label><input type="text" placeholder="Last Name"/></div>
-            <div class="form-group full"><label>Email Address *</label><input type="email" placeholder="your@email.com"/></div>
-        </div>
-        <button class="submit-btn gold" onclick="window.open('https://www.zeffy.com/en-US/donation-form/end-the-confederacy-one-america','_blank')">&#10084; Donate Now via Zeffy</button>
+        <button class="submit-btn gold" onclick="window.open('@_donateUrl','_blank')">&#10084; Donate Now via Zeffy</button>
     </div>
 
   </div>
@@ -219,27 +322,33 @@
 
 @section Scripts {
 <script>
+var activeTab = '@successTab' || '@errorTab' || '';
+
 function showPanel(id, el) {
     document.querySelectorAll('.gi-panel').forEach(p => p.classList.remove('act'));
     document.querySelectorAll('.ac').forEach(a => a.classList.remove('act'));
     document.getElementById('panel-' + id).classList.add('act');
-    if (el) el.classList.add('act');
-    else {
-        const map = {volunteer:0,newsletter:1,speaker:2,donate:3};
-        document.querySelectorAll('.ac')[map[id]].classList.add('act');
+    if (el) {
+        el.classList.add('act');
+    } else {
+        var tab = document.getElementById('tab-' + id);
+        if (tab) tab.classList.add('act');
     }
 }
-function showSuccess(id) { document.getElementById(id).style.display = 'block'; }
+
 function setFreq(el) { document.querySelectorAll('.dt').forEach(d => d.classList.remove('act')); el.classList.add('act'); }
 function setAmount(el, amt) { document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('act')); el.classList.add('act'); document.getElementById('custom-amt').value = amt; }
 
-// Handle #hash navigation to open specific panel
 window.addEventListener('load', function() {
-    const hash = window.location.hash.replace('#','');
+    // After form post, open the right panel
+    if (activeTab && ['volunteer','newsletter','speaker','donate'].includes(activeTab)) {
+        showPanel(activeTab, null);
+        return;
+    }
+    // Handle #hash navigation
+    var hash = window.location.hash.replace('#','');
     if (['volunteer','newsletter','speaker','donate'].includes(hash)) {
-        const tabs = document.querySelectorAll('.ac');
-        const map = {volunteer:0,newsletter:1,speaker:2,donate:3};
-        showPanel(hash, tabs[map[hash]]);
+        showPanel(hash, null);
     }
 });
 </script>

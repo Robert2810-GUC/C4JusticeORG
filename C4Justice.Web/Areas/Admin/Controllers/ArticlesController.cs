@@ -12,12 +12,12 @@ namespace C4Justice.Web.Areas.Admin.Controllers
     public class ArticlesController : Controller
     {
         private readonly AppDbContext _db;
-        private readonly ICloudinaryService _cloudinary;
+        private readonly IStorageService _storage;
 
-        public ArticlesController(AppDbContext db, ICloudinaryService cloudinary)
+        public ArticlesController(AppDbContext db, IStorageService storage)
         {
             _db = db;
-            _cloudinary = cloudinary;
+            _storage = storage;
         }
 
         public IActionResult Index()
@@ -35,7 +35,7 @@ namespace C4Justice.Web.Areas.Admin.Controllers
 
             if (FeaturedImage != null && FeaturedImage.Length > 0)
             {
-                var url = await _cloudinary.UploadImageAsync(FeaturedImage, "c4justice/articles");
+                var url = await _storage.UploadImageAsync(FeaturedImage, "c4justice/articles");
                 if (url != null) model.FeaturedImageUrl = url;
             }
 
@@ -80,14 +80,10 @@ namespace C4Justice.Web.Areas.Admin.Controllers
 
             if (newImage != null && newImage.Length > 0)
             {
-                // Delete old image from Cloudinary if it lives there
-                if (!string.IsNullOrWhiteSpace(existing.FeaturedImageUrl)
-                    && existing.FeaturedImageUrl.Contains("cloudinary.com"))
-                {
-                    await _cloudinary.DeleteAsync(existing.FeaturedImageUrl);
-                }
+                if (!string.IsNullOrWhiteSpace(existing.FeaturedImageUrl))
+                    await _storage.DeleteAsync(existing.FeaturedImageUrl);
 
-                var url = await _cloudinary.UploadImageAsync(newImage, "c4justice/articles");
+                var url = await _storage.UploadImageAsync(newImage, "c4justice/articles");
                 if (url != null) existing.FeaturedImageUrl = url;
             }
             else if (!string.IsNullOrWhiteSpace(model.FeaturedImageUrl))
@@ -110,11 +106,9 @@ namespace C4Justice.Web.Areas.Admin.Controllers
             var item = await _db.Articles.FindAsync(id);
             if (item != null)
             {
-                if (!string.IsNullOrWhiteSpace(item.FeaturedImageUrl)
-                    && item.FeaturedImageUrl.Contains("cloudinary.com"))
-                {
-                    await _cloudinary.DeleteAsync(item.FeaturedImageUrl);
-                }
+                if (!string.IsNullOrWhiteSpace(item.FeaturedImageUrl))
+                    await _storage.DeleteAsync(item.FeaturedImageUrl);
+
                 _db.Articles.Remove(item);
                 await _db.SaveChangesAsync();
             }

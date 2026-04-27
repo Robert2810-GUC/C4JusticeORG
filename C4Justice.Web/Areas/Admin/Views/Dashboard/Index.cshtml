@@ -1,83 +1,250 @@
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "Dashboard Overview";
 }
 
-<div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card d-flex align-items-center gap-3">
-            <div class="stat-card-icon" style="background:rgba(59,130,246,.15);color:#60a5fa;"><i class="fas fa-pen-nib"></i></div>
-            <div><div class="stat-card-num">@ViewBag.ArticleCount</div><div class="stat-card-label">Articles</div></div>
+<!-- STATS -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="label">Subscribers</div>
+        <div class="value">@ViewBag.SubscriberCount</div>
+        <div class="sub">Newsletter signups</div>
+    </div>
+    <div class="stat-card blue">
+        <div class="label">Upcoming Events</div>
+        <div class="value">@ViewBag.UpcomingEvents</div>
+        <div class="sub">Active &amp; scheduled</div>
+    </div>
+    <div class="stat-card green">
+        <div class="label">Documents</div>
+        <div class="value">@ViewBag.DocumentCount</div>
+        <div class="sub">Shareable links</div>
+    </div>
+    <div class="stat-card red">
+        <div class="label">Pending Requests</div>
+        <div class="value">@ViewBag.PendingRequests</div>
+        <div class="sub">Unread contact messages</div>
+    </div>
+</div>
+
+<!-- EVENTS + ADD EVENT FORM -->
+<div class="two-col" style="align-items:start">
+    <div>
+        <div class="section-title">
+            Events Management
+            <a href="/Admin/Events/Create" class="add-btn gold">+ Add Event</a>
+        </div>
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (ViewBag.RecentEvents?.Count > 0)
+                {
+                    foreach (var e in ViewBag.RecentEvents)
+                    {
+                        var isPast = e.EventDate < DateTime.UtcNow;
+                        <tr>
+                            <td><strong>@e.Title</strong><br/><span style="font-size:11px;color:#999">@(e.Location ?? "")</span></td>
+                            <td>@e.EventDate.ToString("MMM d, yyyy")</td>
+                            <td>
+                                @if (isPast) { <span class="badge expired">Expired</span> }
+                                else if (e.EventDate <= DateTime.UtcNow.AddDays(7)) { <span class="badge pending">This Week</span> }
+                                else { <span class="badge upcoming">Upcoming</span> }
+                            </td>
+                            <td>
+                                <a href="/Admin/Events/Edit/@e.Id" class="action-btn edit">Edit</a>
+                                <form method="post" action="/Admin/Events/Delete/@e.Id" style="display:inline;" onsubmit="return confirm('Delete?')">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="action-btn del">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="text-align:center;color:#aaa;padding:20px">No events yet.</td></tr>
+                }
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card d-flex align-items-center gap-3">
-            <div class="stat-card-icon" style="background:rgba(34,197,94,.15);color:#4ade80;"><i class="fas fa-calendar-days"></i></div>
-            <div><div class="stat-card-num">@ViewBag.EventCount</div><div class="stat-card-label">Events</div></div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card d-flex align-items-center gap-3">
-            <div class="stat-card-icon" style="background:rgba(217,119,6,.15);color:#fbbf24;"><i class="fas fa-file-lines"></i></div>
-            <div><div class="stat-card-num">@ViewBag.DocumentCount</div><div class="stat-card-label">Documents</div></div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card d-flex align-items-center gap-3">
-            <div class="stat-card-icon" style="background:rgba(185,28,28,.15);color:#fca5a5;"><i class="fas fa-images"></i></div>
-            <div><div class="stat-card-num">@ViewBag.SliderCount</div><div class="stat-card-label">Slider Images</div></div>
+
+    <!-- QUICK ADD EVENT -->
+    <div>
+        <div class="section-title">Add New Event</div>
+        <div class="form-preview">
+            <form method="post" action="/Admin/Events/Create" id="dash-event-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="IsActive" value="true" />
+                <div class="form-group">
+                    <label>Event Title</label>
+                    <input type="text" name="Title" placeholder="e.g. Community Town Hall Meeting" required />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" name="EventDate" required />
+                    </div>
+                    <div class="form-group">
+                        <label>End Date <span style="color:#aaa;font-weight:400">(opt)</span></label>
+                        <input type="date" name="EndDate" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" name="Location" placeholder="Venue or address" />
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="Category">
+                            <option value="Town Halls">Town Halls</option>
+                            <option value="Voter Registration">Voter Registration</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Environmental">Environmental</option>
+                            <option value="Election Cycles">Election Cycles</option>
+                            <option value="Political">Political</option>
+                            <option value="General">General</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description <span id="dash-desc-count" style="float:right;color:#aaa;font-weight:400">0 / 300</span></label>
+                    <textarea name="Description" maxlength="300" oninput="dashUpdateCount(this)" placeholder="Brief event description..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Registration URL <span style="color:#aaa;font-weight:400">(optional)</span></label>
+                    <input type="url" name="RegisterUrl" placeholder="https://..." />
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px;background:#fff8f8;border-radius:4px;border:1px solid #f5e6e6">
+                    <input type="checkbox" name="IsCompleted" value="true" id="dash-completed" style="width:15px;height:15px;accent-color:#c0392b" />
+                    <label for="dash-completed" style="font-size:11px;color:#c0392b;font-family:Arial;font-weight:600;cursor:pointer;margin:0">Mark as Completed — hides from public site</label>
+                </div>
+                <div style="display:flex;gap:8px">
+                    <button type="button" onclick="document.getElementById('dash-event-form').reset();document.getElementById('dash-desc-count').textContent='0 / 300'" class="submit-btn dark" style="flex:1">Clear</button>
+                    <button type="submit" class="submit-btn" style="flex:2">Publish Event</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<div class="row g-4">
-    <div class="col-lg-6">
-        <div class="admin-card">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <h6 class="mb-0" style="font-weight:700;color:#e6edf3;">Recent Articles</h6>
-                <a href="/Admin/Articles/Create" class="btn-sm-admin btn-primary-admin">+ New</a>
-            </div>
-            @if (ViewBag.RecentArticles?.Count > 0)
-            {
-                <table class="admin-table">
-                    <thead><tr><th>Title</th><th>Category</th><th>Status</th></tr></thead>
-                    <tbody>
-                    @foreach (var a in ViewBag.RecentArticles)
+<!-- DOCUMENTS + SUBSCRIBERS -->
+<div class="two-col" style="align-items:start">
+    <div>
+        <div class="section-title">
+            Documents &amp; Files
+            <a href="/Admin/Documents/Create" class="add-btn">+ Upload Document</a>
+        </div>
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr><th>Document</th><th>Uploaded</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                @if (ViewBag.RecentDocuments?.Count > 0)
+                {
+                    foreach (var d in ViewBag.RecentDocuments)
                     {
                         <tr>
-                            <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">@a.Title</td>
-                            <td><span class="badge-cat">@a.Category</span></td>
-                            <td><span class="@(a.IsPublished ? "badge-active" : "badge-inactive")">@(a.IsPublished ? "Published" : "Draft")</span></td>
+                            <td><strong>@d.FileName</strong><br/><span style="font-size:11px;color:#999">@d.Category</span></td>
+                            <td style="font-size:11px">@d.CreatedAt.ToString("MMM d")</td>
+                            <td>
+                                <button class="action-btn copy" onclick="copyDocLink('@d.FileUrl')">Copy Link</button>
+                                <form method="post" action="/Admin/Documents/Delete/@d.Id" style="display:inline;" onsubmit="return confirm('Delete?')">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="action-btn del">Del</button>
+                                </form>
+                            </td>
                         </tr>
                     }
-                    </tbody>
-                </table>
-            }
-            else { <p style="color:#8b949e;font-size:.875rem;">No articles yet.</p> }
+                }
+                else
+                {
+                    <tr><td colspan="3" style="text-align:center;color:#aaa;padding:20px">No documents yet.</td></tr>
+                }
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="col-lg-6">
-        <div class="admin-card">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <h6 class="mb-0" style="font-weight:700;color:#e6edf3;">Upcoming Events</h6>
-                <a href="/Admin/Events/Create" class="btn-sm-admin btn-primary-admin">+ New</a>
-            </div>
-            @if (ViewBag.RecentEvents?.Count > 0)
-            {
-                <table class="admin-table">
-                    <thead><tr><th>Title</th><th>Date</th><th>Status</th></tr></thead>
-                    <tbody>
-                    @foreach (var e in ViewBag.RecentEvents)
+
+    <div>
+        <div class="section-title">
+            Newsletter Subscribers
+            <a href="/Admin/Newsletter/Export" class="add-btn" style="background:#1a3a6b">⬇ Export</a>
+        </div>
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr><th>Name</th><th>Email</th><th>Mobile</th><th>Zip</th></tr>
+                </thead>
+                <tbody>
+                @if (ViewBag.RecentSubscribers?.Count > 0)
+                {
+                    foreach (var s in ViewBag.RecentSubscribers)
                     {
                         <tr>
-                            <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">@e.Title</td>
-                            <td style="font-size:.8rem;">@e.EventDate.ToString("MMM d, yyyy")</td>
-                            <td><span class="@(e.IsActive ? "badge-active" : "badge-inactive")">@(e.IsActive ? "Active" : "Hidden")</span></td>
+                            <td>@s.FullName</td>
+                            <td style="font-size:11px">@s.Email</td>
+                            <td style="font-size:11px">@(s.Phone ?? "—")</td>
+                            <td>@(s.ZipCode ?? "—")</td>
                         </tr>
                     }
-                    </tbody>
-                </table>
-            }
-            else { <p style="color:#8b949e;font-size:.875rem;">No events yet.</p> }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="text-align:center;color:#aaa;padding:20px">No subscribers yet.</td></tr>
+                }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+<!-- CONTACT MESSAGES -->
+<div class="section-title">Contact Messages</div>
+<div class="table-card" style="margin-bottom:24px">
+    <table>
+        <thead>
+            <tr><th>Name</th><th>Email</th><th>Message</th><th>Date</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+        @if (ViewBag.RecentMessages?.Count > 0)
+        {
+            foreach (var m in ViewBag.RecentMessages)
+            {
+                <tr>
+                    <td><strong>@m.Name</strong></td>
+                    <td style="font-size:11px">@m.Email</td>
+                    <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@m.Message</td>
+                    <td style="font-size:11px">@m.SubmittedAt.ToString("MMM d")</td>
+                    <td><span class="badge @(m.IsRead ? "active" : "pending")">@(m.IsRead ? "Read" : "New")</span></td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="5" style="text-align:center;color:#aaa;padding:20px">No contact messages yet.</td></tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+<script>
+function copyDocLink(url) {
+    var full = window.location.origin + url;
+    navigator.clipboard.writeText(full).then(function(){ showToast('Link copied!'); });
+}
+function dashUpdateCount(el) {
+    document.getElementById('dash-desc-count').textContent = el.value.length + ' / ' + el.maxLength;
+}
+</script>
+}

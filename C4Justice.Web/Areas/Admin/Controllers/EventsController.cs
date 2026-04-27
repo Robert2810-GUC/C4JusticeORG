@@ -21,11 +21,12 @@ namespace C4Justice.Web.Areas.Admin.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SiteEvent model)
         {
+            ModelState.Remove(nameof(SiteEvent.CreatedAt));
             if (!ModelState.IsValid) return View(model);
             model.CreatedAt = DateTime.UtcNow;
             _db.Events.Add(model);
             await _db.SaveChangesAsync();
-            TempData["Success"] = "Event created.";
+            TempData["Success"] = "Event published.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -40,18 +41,21 @@ namespace C4Justice.Web.Areas.Admin.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(SiteEvent model)
         {
+            ModelState.Remove(nameof(SiteEvent.CreatedAt));
             if (!ModelState.IsValid) return View(model);
             var existing = await _db.Events.FindAsync(model.Id);
             if (existing == null) return NotFound();
 
-            existing.Title = model.Title;
+            existing.Title       = model.Title;
             existing.Description = model.Description;
-            existing.EventDate = model.EventDate;
-            existing.Location = model.Location;
-            existing.ImageUrl = model.ImageUrl;
+            existing.EventDate   = model.EventDate;
+            existing.EndDate     = model.EndDate;
+            existing.IsCompleted = model.IsCompleted;
+            existing.Location    = model.Location;
+            existing.ImageUrl    = model.ImageUrl;
             existing.RegisterUrl = model.RegisterUrl;
-            existing.Category = model.Category;
-            existing.IsActive = model.IsActive;
+            existing.Category    = model.Category;
+            existing.IsActive    = model.IsActive;
             await _db.SaveChangesAsync();
             TempData["Success"] = "Event updated.";
             return RedirectToAction(nameof(Index));

@@ -1,0 +1,90 @@
+@model C4Justice.Web.Models.OpinionPost
+@{ ViewData["Title"] = "Write New Post"; }
+
+<div class="page-header">
+    <div>
+        <div class="page-title">Write New Post</div>
+        <div class="page-sub">Create a new opinion piece or essay</div>
+    </div>
+    <a href="/Admin/Opinion" style="background:#f0f4ff;color:#0d1f3c;border:1.5px solid #dde;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:700;font-family:Arial;text-decoration:none">← Back</a>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start">
+    <div class="form-preview">
+        <form method="post" enctype="multipart/form-data" id="post-form">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label>Post Title *</label>
+                <input asp-for="Title" placeholder="Enter a compelling title..." required oninput="updateSlug(this.value)" />
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select asp-for="Category">
+                        <option value="Political">Political Justice</option>
+                        <option value="Racial">Racial Justice</option>
+                        <option value="Economic">Economic Justice</option>
+                        <option value="Healthcare">Healthcare Access</option>
+                        <option value="Environmental">Environmental</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Author</label>
+                    <input asp-for="Author" placeholder="Author name" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Excerpt <span id="excerpt-count" style="float:right;color:#aaa;font-weight:400">0 / 200</span></label>
+                <textarea asp-for="Excerpt" maxlength="200" oninput="updateCount('excerpt-count',this)" placeholder="1-2 sentence summary shown in listings..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Full Article Body</label>
+                <div style="background:#fff3cd;border-radius:4px;padding:8px 12px;margin-bottom:8px;font-size:11px;color:#856404;font-family:Arial">
+                    ✏ You can use basic HTML for formatting: &lt;b&gt;, &lt;i&gt;, &lt;p&gt;, &lt;h3&gt;, &lt;blockquote&gt;, &lt;ul&gt;, &lt;li&gt;
+                </div>
+                <textarea asp-for="Body" style="min-height:280px" placeholder="Write the full article content here..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Cover Image (optional)</label>
+                <input type="file" name="coverImage" accept=".jpg,.jpeg,.png,.webp" />
+            </div>
+            <div style="font-size:10px;color:#aaa;font-family:Arial;margin-bottom:12px">
+                URL Slug: <strong id="slug-preview">auto-generated-from-title</strong>
+            </div>
+            <div style="display:flex;gap:8px">
+                <a href="/Admin/Opinion" class="submit-btn dark" style="flex:1;text-align:center;text-decoration:none;padding:9px;display:block">Cancel</a>
+                <button type="submit" name="action" value="draft" class="submit-btn dark" style="flex:1">Save Draft</button>
+                <button type="submit" name="action" value="publish" class="submit-btn" style="flex:2">Publish Post</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- TIPS PANEL -->
+    <div style="position:sticky;top:76px">
+        <div class="section-title">Writing Tips</div>
+        <div class="form-preview">
+            <div style="font-size:12px;color:#555;font-family:Arial;line-height:1.8">
+                <p style="margin-bottom:10px"><strong style="color:#0d1f3c">Title:</strong> Make it clear and compelling. Aim for 60-80 characters for best SEO.</p>
+                <p style="margin-bottom:10px"><strong style="color:#0d1f3c">Excerpt:</strong> Write 1-2 sentences that summarize the key point. This appears in listings.</p>
+                <p style="margin-bottom:10px"><strong style="color:#0d1f3c">Category:</strong> Choose the justice theme most relevant to your piece.</p>
+                <p style="margin-bottom:10px"><strong style="color:#0d1f3c">Body:</strong> Write in clear paragraphs. Cite facts and personal experience to support your argument.</p>
+            </div>
+            <div style="background:#e8f4fd;border:1px solid #b8d9f0;border-radius:4px;padding:10px;margin-top:10px;font-size:11px;color:#1a5276;font-family:Arial">
+                💡 Posts saved as drafts are only visible to admins. Publish when ready to share publicly.
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function updateSlug(title) {
+    var slug = title.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+    document.getElementById('slug-preview').textContent = slug || 'auto-generated-from-title';
+}
+function updateCount(id, el) {
+    document.getElementById(id).textContent = el.value.length + ' / ' + el.maxLength;
+}
+</script>
+}

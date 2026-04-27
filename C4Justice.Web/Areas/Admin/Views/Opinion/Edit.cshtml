@@ -1,0 +1,100 @@
+@model C4Justice.Web.Models.OpinionPost
+@{ ViewData["Title"] = "Edit Post"; }
+
+<div class="page-header">
+    <div>
+        <div class="page-title">Edit Post</div>
+        <div class="page-sub">Editing: "@Model.Title"</div>
+    </div>
+    <a href="/Admin/Opinion" style="background:#f0f4ff;color:#0d1f3c;border:1.5px solid #dde;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:700;font-family:Arial;text-decoration:none">← Back</a>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start">
+    <div class="form-preview">
+        <form method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input asp-for="Id" type="hidden" />
+            <div class="form-group">
+                <label>Post Title *</label>
+                <input asp-for="Title" required />
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select asp-for="Category">
+                        <option value="Political">Political Justice</option>
+                        <option value="Racial">Racial Justice</option>
+                        <option value="Economic">Economic Justice</option>
+                        <option value="Healthcare">Healthcare Access</option>
+                        <option value="Environmental">Environmental</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Author</label>
+                    <input asp-for="Author" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Excerpt <span id="excerpt-count" style="float:right;color:#aaa;font-weight:400">@(Model.Excerpt?.Length ?? 0) / 200</span></label>
+                <textarea asp-for="Excerpt" maxlength="200" oninput="updateCount('excerpt-count',this)"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Full Article Body</label>
+                <textarea asp-for="Body" style="min-height:280px"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Replace Cover Image (optional)</label>
+                @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+                {
+                    <div style="margin-bottom:8px">
+                        <img src="@Model.CoverImageUrl" style="max-width:200px;border-radius:4px" />
+                        <div style="font-size:11px;color:#aaa;font-family:Arial;margin-top:4px">Current cover image</div>
+                    </div>
+                }
+                <input type="file" name="coverImage" accept=".jpg,.jpeg,.png,.webp" />
+            </div>
+            <div style="font-size:10px;color:#aaa;font-family:Arial;margin-bottom:12px">
+                URL: <strong>/Opinion/@Model.Slug</strong>
+            </div>
+            <div style="display:flex;gap:8px">
+                <a href="/Admin/Opinion" class="submit-btn dark" style="flex:1;text-align:center;text-decoration:none;padding:9px;display:block">Cancel</a>
+                @if (Model.IsPublished)
+                {
+                    <button type="submit" name="action" value="unpublish" class="submit-btn dark" style="flex:1">Unpublish</button>
+                    <button type="submit" name="action" value="publish" class="submit-btn" style="flex:2">Save &amp; Update</button>
+                }
+                else
+                {
+                    <button type="submit" name="action" value="draft" class="submit-btn dark" style="flex:1">Save Draft</button>
+                    <button type="submit" name="action" value="publish" class="submit-btn" style="flex:2">Publish Post</button>
+                }
+            </div>
+        </form>
+    </div>
+
+    <div style="position:sticky;top:76px">
+        <div class="section-title">Post Status</div>
+        <div class="form-preview">
+            <div style="display:flex;align-items:center;gap:10px;padding:12px;background:@(Model.IsPublished ? "#d4edda" : "#fff3cd");border-radius:4px;margin-bottom:14px">
+                <div style="width:10px;height:10px;border-radius:50%;background:@(Model.IsPublished ? "#28a745" : "#f39c12");flex-shrink:0"></div>
+                <div style="font-size:13px;font-weight:700;color:@(Model.IsPublished ? "#155724" : "#856404");font-family:Arial">@(Model.IsPublished ? "Published" : "Draft")</div>
+            </div>
+            @if (Model.PublishedAt.HasValue)
+            {
+                <div style="font-size:11px;color:#aaa;font-family:Arial;margin-bottom:8px">Published: @Model.PublishedAt.Value.ToString("MMM d, yyyy")</div>
+            }
+            <div style="font-size:11px;color:#aaa;font-family:Arial;margin-bottom:8px">Created: @Model.CreatedAt.ToString("MMM d, yyyy")</div>
+            <div style="font-size:11px;color:#aaa;font-family:Arial;margin-bottom:8px">Updated: @Model.UpdatedAt.ToString("MMM d, yyyy")</div>
+            <div style="font-size:11px;color:#aaa;font-family:Arial">Views: @Model.ViewCount</div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function updateCount(id, el) {
+    document.getElementById(id).textContent = el.value.length + ' / ' + el.maxLength;
+}
+</script>
+}

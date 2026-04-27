@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CU4J Admin — Opinion & Essays</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Georgia',serif;background:#f0f2f7;color:#1a1a2e;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:240px;background:#0d1f3c;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100}
+.sidebar-logo{padding:20px 18px;border-bottom:1px solid rgba(232,200,74,.2);display:flex;align-items:center;gap:10px}
+.logo-box{width:42px;height:42px;border-radius:50%;border:2px solid #e8c84a;background:#0d1f3c;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#e8c84a;flex-shrink:0}
+.logo-text span{display:block;color:#fff;font-size:11px;font-weight:700}
+.logo-text small{color:#e8c84a;font-size:9px;letter-spacing:.8px;font-family:Arial,sans-serif}
+.sidebar-label{color:rgba(232,200,74,.5);font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:16px 18px 6px;font-family:Arial,sans-serif}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;border-left:3px solid transparent;transition:all .2s;font-family:Arial,sans-serif;font-size:13px;color:#a0b4cc}
+.nav-item:hover{background:rgba(232,200,74,.08);color:#fff;border-left-color:rgba(232,200,74,.3)}
+.nav-item.active{background:rgba(232,200,74,.12);color:#e8c84a;border-left-color:#e8c84a}
+.nav-icon{width:15px;height:15px;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon{opacity:1}
+.sidebar-footer{margin-top:auto;padding:16px 18px;border-top:1px solid rgba(255,255,255,.08)}
+.logout-btn{display:flex;align-items:center;gap:8px;color:#a0b4cc;font-size:12px;font-family:Arial,sans-serif;cursor:pointer}
+.logout-btn:hover{color:#e8c84a}
+
+/* MAIN */
+.main{margin-left:240px;flex:1}
+.topbar{background:#fff;padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e0e4ec;position:sticky;top:0;z-index:50}
+.breadcrumb{font-size:12px;color:#aaa;font-family:Arial,sans-serif}
+.breadcrumb span{color:#0d1f3c;font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.admin-badge{background:#0d1f3c;color:#e8c84a;font-size:11px;padding:4px 12px;border-radius:20px;font-family:Arial,sans-serif;font-weight:700}
+.view-site-btn{background:#e8c84a;color:#0d1f3c;font-size:12px;padding:6px 14px;border-radius:3px;border:none;cursor:pointer;font-weight:700;font-family:Arial,sans-serif}
+
+.content{padding:24px 28px}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.page-title{font-size:22px;color:#0d1f3c;font-weight:700}
+.page-sub{font-size:12px;color:#888;font-family:Arial,sans-serif;margin-top:3px}
+.new-post-btn{background:#e8c84a;color:#0d1f3c;border:none;padding:10px 20px;border-radius:4px;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px}
+.new-post-btn:hover{background:#f5d55a}
+
+/* MINI STATS */
+.mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.mini-stat{background:#fff;border-radius:6px;padding:14px 16px;border-left:3px solid #e8c84a;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.mini-stat.blue{border-left-color:#0d1f3c}
+.mini-stat.green{border-left-color:#27ae60}
+.mini-stat.red{border-left-color:#e74c3c}
+.mini-stat .num{font-size:22px;font-weight:700;color:#0d1f3c}
+.mini-stat .lbl{font-size:10px;color:#999;font-family:Arial,sans-serif;letter-spacing:.8px;text-transform:uppercase;margin-top:2px}
+
+/* TWO COLUMN */
+.main-layout{display:grid;grid-template-columns:1fr 400px;gap:20px;align-items:start}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.filter-btn{border:1.5px solid #dde;background:#fff;color:#555;padding:6px 16px;border-radius:20px;font-size:12px;font-family:Arial,sans-serif;cursor:pointer;font-weight:500}
+.filter-btn.active{border-color:#0d1f3c;background:#0d1f3c;color:#fff}
+.search-input{margin-left:auto;border:1.5px solid #dde;border-radius:4px;padding:6px 12px;font-size:12px;font-family:Arial,sans-serif;color:#333;width:220px}
+.search-input:focus{outline:none;border-color:#0d1f3c}
+
+/* POST CARDS */
+.posts-list{display:flex;flex-direction:column;gap:12px}
+
+.post-card{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;transition:box-shadow .2s}
+.post-card:hover{box-shadow:0 3px 14px rgba(0,0,0,.1)}
+.post-card.draft-card{border-left:4px solid #f39c12;opacity:.85}
+.post-card.published-card{border-left:4px solid #27ae60}
+
+.post-card-inner{padding:16px 18px}
+.post-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.post-left{flex:1;min-width:0}
+.post-category{display:inline-block;font-size:10px;padding:2px 8px;border-radius:3px;font-family:Arial,sans-serif;font-weight:700;margin-bottom:6px}
+.cat-political{background:#e8f0ff;color:#0d1f3c}
+.cat-racial{background:#fde8e8;color:#7b241c}
+.cat-economic{background:#e8f5e9;color:#1b5e20}
+.cat-healthcare{background:#fce4ec;color:#880e4f}
+.cat-environmental{background:#e0f7fa;color:#006064}
+.cat-general{background:#f3e5f5;color:#4a148c}
+
+.post-title{font-size:15px;font-weight:700;color:#0d1f3c;line-height:1.3;margin-bottom:6px}
+.post-excerpt{font-size:12px;color:#777;font-family:Arial,sans-serif;line-height:1.6;margin-bottom:8px}
+.post-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.post-meta span{font-size:11px;color:#aaa;font-family:Arial,sans-serif}
+.post-meta .author{color:#0d1f3c;font-weight:600}
+
+.post-url{display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:8px;border-top:.5px solid #f0f0f0}
+.post-url input{flex:1;border:1px solid #eee;border-radius:3px;padding:5px 8px;font-size:11px;font-family:'Courier New',monospace;color:#555;background:#fafbff;min-width:0}
+.copy-btn{background:#0d1f3c;color:#e8c84a;border:none;padding:5px 10px;border-radius:3px;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;white-space:nowrap}
+.copy-btn:hover{background:#1a3a6b}
+.copy-btn.copied{background:#27ae60;color:#fff}
+
+.post-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.badge{display:inline-block;font-size:10px;padding:3px 9px;border-radius:3px;font-weight:700;font-family:Arial,sans-serif}
+.badge.published{background:#d4edda;color:#155724}
+.badge.draft{background:#fff3cd;color:#856404}
+.badge.archived{background:#f8d7da;color:#721c24}
+.post-stats{font-size:10px;color:#bbb;font-family:Arial,sans-serif;text-align:right}
+
+.post-actions{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
+.act-btn{font-size:10px;padding:5px 10px;border-radius:3px;border:none;cursor:pointer;font-family:Arial,sans-serif;font-weight:600}
+.act-btn.edit{background:#e8f0ff;color:#0d1f3c}
+.act-btn.edit:hover{background:#d0e0ff}
+.act-btn.publish{background:#d4edda;color:#155724}
+.act-btn.publish:hover{background:#c3e6cb}
+.act-btn.unpublish{background:#fff3cd;color:#856404}
+.act-btn.del{background:#ffeaea;color:#c0392b}
+.act-btn.del:hover{background:#ffcdcd}
+.act-btn.preview{background:#f5f5f5;color:#555}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.page-info{font-size:12px;color:#888;font-family:Arial,sans-serif}
+.page-btns{display:flex;gap:4px}
+.page-btn{width:30px;height:30px;border:1.5px solid #dde;border-radius:4px;background:#fff;font-size:12px;font-family:Arial,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#555}
+.page-btn.active{background:#0d1f3c;border-color:#0d1f3c;color:#e8c84a;font-weight:700}
+.page-btn:hover:not(.active){background:#f0f0f0}
+
+/* WRITE FORM PANEL */
+.form-panel{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;position:sticky;top:76px}
+.form-panel-header{background:#0d1f3c;padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+.form-panel-header h3{color:#e8c84a;font-size:14px}
+.form-panel-header .mode-badge{background:rgba(232,200,74,.2);color:#e8c84a;font-size:10px;padding:3px 8px;border-radius:3px;font-family:Arial,sans-serif}
+.form-body{padding:18px}
+
+.form-group{margin-bottom:13px}
+.form-group label{display:block;font-size:11px;color:#555;font-family:Arial,sans-serif;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.form-group input,.form-group select,.form-group textarea{width:100%;border:1.5px solid #dde;border-radius:4px;padding:8px 10px;font-size:12px;font-family:Arial,sans-serif;color:#333;transition:border .15s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#0d1f3c}
+.form-group textarea{resize:vertical}
+.form-group textarea.body-field{height:180px;font-family:Georgia,serif;font-size:13px;line-height:1.7}
+
+.required-star{color:#e74c3c}
+
+/* RICH TEXT TOOLBAR */
+.toolbar{display:flex;gap:4px;flex-wrap:wrap;padding:6px 8px;background:#f8faff;border:1.5px solid #dde;border-bottom:none;border-radius:4px 4px 0 0}
+.tb-btn{background:#fff;border:1px solid #dde;border-radius:3px;padding:3px 7px;font-size:11px;font-family:Arial,sans-serif;cursor:pointer;color:#333;font-weight:600}
+.tb-btn:hover{background:#e8f0ff;border-color:#0d1f3c;color:#0d1f3c}
+.tb-sep{width:1px;background:#dde;margin:2px 3px}
+
+/* URL PREVIEW */
+.url-preview{background:#f8faff;border:1px solid #dde;border-radius:4px;padding:10px 12px;margin-top:6px}
+.url-preview .url-label{font-size:10px;color:#888;font-family:Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.url-preview .url-text{font-size:11px;font-family:'Courier New',monospace;color:#0d1f3c;word-break:break-all}
+.url-preview .url-note{font-size:10px;color:#aaa;font-family:Arial,sans-serif;margin-top:4px}
+
+/* COVER IMAGE */
+.cover-zone{border:2px dashed #c0cce0;border-radius:4px;padding:16px;text-align:center;cursor:pointer;background:#f8faff;transition:all .2s}
+.cover-zone:hover{border-color:#0d1f3c;background:#eef3ff}
+.cover-zone p{font-size:11px;color:#aaa;font-family:Arial,sans-serif}
+.cover-zone strong{font-size:12px;color:#0d1f3c;display:block;margin-bottom:3px}
+
+/* CHAR COUNT */
+.char-count{font-size:10px;color:#aaa;font-family:Arial,sans-serif;text-align:right;margin-top:3px}
+
+/* FORM ACTIONS */
+.form-actions{display:flex;gap:6px;margin-top:14px}
+.publish-btn{flex:1;background:#27ae60;color:#fff;border:none;padding:10px;font-size:12px;font-weight:700;border-radius:4px;cursor:pointer;font-family:Arial,sans-serif}
+.publish-btn:hover{background:#219a52}
+.draft-btn{background:#fff3cd;color:#856404;border:1.5px solid #ffc107;padding:10px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:Arial,sans-serif;font-weight:700}
+.cancel-btn{background:#f5f5f5;color:#555;border:1.5px solid #dde;padding:10px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:Arial,sans-serif}
+
+/* SHARE TIP */
+.share-tip{background:#e8f4fd;border:1px solid #b8d9f0;border-radius:4px;padding:10px 12px;margin-top:10px}
+.share-tip p{font-size:11px;color:#1a5276;font-family:Arial,sans-serif;line-height:1.5}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#0d1f3c;color:#fff;padding:12px 20px;border-radius:6px;font-size:13px;font-family:Arial,sans-serif;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.25);opacity:0;transform:translateY(10px);transition:all .3s;z-index:999}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast .dot{width:8px;height:8px;border-radius:50%;background:#e8c84a;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-box">CU4J</div>
+    <div class="logo-text">
+      <span>CU4J Admin</span>
+      <small>501(C)(3) PORTAL</small>
+    </div>
+  </div>
+
+  <div class="sidebar-label">Main</div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Events
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Documents
+  </div>
+  <div class="nav-item active">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    Opinion & Essays
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    Subscribers
+  </div>
+
+  <div class="sidebar-label">Manage</div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2"/></svg>
+    Speaker Requests
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    Contact Messages
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    Photo Gallery
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+    Donations — Zeffy
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="logout-btn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="breadcrumb">Admin / <span>Opinion & Essays</span></div>
+    <div class="topbar-right">
+      <span style="font-size:12px;color:#888;font-family:Arial,sans-serif">Richard Rose</span>
+      <div class="admin-badge">Admin</div>
+      <button class="view-site-btn">View Live Site ↗</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">Opinion & Essays</div>
+        <div class="page-sub">Write and publish opinion pieces. Each post gets a unique shareable URL for Facebook and email.</div>
+      </div>
+      <button class="new-post-btn" onclick="newPost()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Write New Post
+      </button>
+    </div>
+
+    <!-- MINI STATS -->
+    <div class="mini-stats">
+      <div class="mini-stat">
+        <div class="num">24</div>
+        <div class="lbl">Total Posts</div>
+      </div>
+      <div class="mini-stat blue">
+        <div class="num">18</div>
+        <div class="lbl">Published</div>
+      </div>
+      <div class="mini-stat green">
+        <div class="num">3,841</div>
+        <div class="lbl">Total Views</div>
+      </div>
+      <div class="mini-stat red">
+        <div class="num">3</div>
+        <div class="lbl">Drafts</div>
+      </div>
+    </div>
+
+    <div class="main-layout">
+
+      <!-- POSTS LIST -->
+      <div>
+        <div class="filter-bar">
+          <button class="filter-btn active" onclick="setFilter(this)">All Posts</button>
+          <button class="filter-btn" onclick="setFilter(this)">Published</button>
+          <button class="filter-btn" onclick="setFilter(this)">Drafts</button>
+          <button class="filter-btn" onclick="setFilter(this)">Political</button>
+          <button class="filter-btn" onclick="setFilter(this)">Racial</button>
+          <button class="filter-btn" onclick="setFilter(this)">Economic</button>
+          <input class="search-input" type="text" placeholder="🔍  Search posts...">
+        </div>
+
+        <div class="posts-list">
+
+          <!-- POST 1 -->
+          <div class="post-card published-card">
+            <div class="post-card-inner">
+              <div class="post-top">
+                <div class="post-left">
+                  <span class="post-category cat-political">Political Justice</span>
+                  <div class="post-title">Georgia's Gerrymandering Crisis: How Voter Maps Are Silencing Communities of Color</div>
+                  <div class="post-excerpt">The recently redrawn district maps in Georgia represent one of the most egregious examples of modern gerrymandering — deliberately cracking and packing communities of color to dilute their political power...</div>
+                  <div class="post-meta">
+                    <span class="author">Richard Rose</span>
+                    <span>•</span>
+                    <span>Published Apr 18, 2026</span>
+                    <span>•</span>
+                    <span>5 min read</span>
+                  </div>
+                  <div class="post-url">
+                    <input type="text" value="cu4justice.org/opinion/georgia-gerrymandering-crisis" readonly>
+                    <button class="copy-btn" onclick="copyLink(this)">Copy Link</button>
+                  </div>
+                </div>
+                <div class="post-right">
+                  <span class="badge published">Published</span>
+                  <div class="post-stats">842 views<br>94 shares</div>
+                </div>
+              </div>
+              <div class="post-actions">
+                <button class="act-btn edit" onclick="loadEdit('Georgia\'s Gerrymandering Crisis')">✏ Edit</button>
+                <button class="act-btn unpublish" onclick="showToast('Post moved to draft')">Unpublish</button>
+                <button class="act-btn preview" onclick="showToast('Opening preview...')">👁 Preview</button>
+                <button class="act-btn del" onclick="showToast('Post deleted')">🗑 Delete</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- POST 2 -->
+          <div class="post-card published-card">
+            <div class="post-card-inner">
+              <div class="post-top">
+                <div class="post-left">
+                  <span class="post-category cat-racial">Racial Justice</span>
+                  <div class="post-title">Stone Mountain and the Confederacy: Why Georgia's Monument to White Supremacy Must Come Down</div>
+                  <div class="post-excerpt">Stone Mountain Park, carved as a tribute to Confederate leaders, stands as one of the most powerful symbols of institutional racism in America. Purchased with public funds, it continues to be maintained by Black taxpayers...</div>
+                  <div class="post-meta">
+                    <span class="author">Richard Rose</span>
+                    <span>•</span>
+                    <span>Published Apr 10, 2026</span>
+                    <span>•</span>
+                    <span>8 min read</span>
+                  </div>
+                  <div class="post-url">
+                    <input type="text" value="cu4justice.org/opinion/stone-mountain-confederacy" readonly>
+                    <button class="copy-btn" onclick="copyLink(this)">Copy Link</button>
+                  </div>
+                </div>
+                <div class="post-right">
+                  <span class="badge published">Published</span>
+                  <div class="post-stats">1,284 views<br>218 shares</div>
+                </div>
+              </div>
+              <div class="post-actions">
+                <button class="act-btn edit" onclick="loadEdit('Stone Mountain and the Confederacy')">✏ Edit</button>
+                <button class="act-btn unpublish" onclick="showToast('Post moved to draft')">Unpublish</button>
+                <button class="act-btn preview" onclick="showToast('Opening preview...')">👁 Preview</button>
+                <button class="act-btn del" onclick="showToast('Post deleted')">🗑 Delete</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- POST 3 — DRAFT -->
+          <div class="post-card draft-card">
+            <div class="post-card-inner">
+              <div class="post-top">
+                <div class="post-left">
+                  <span class="post-category cat-economic">Economic Justice</span>
+                  <div class="post-title">Redlining Never Really Ended — It Just Changed Its Name</div>
+                  <div class="post-excerpt">Modern predatory lending, discriminatory zoning, and intentional disinvestment in Black communities are the direct descendants of the original redlining maps drawn by the federal government...</div>
+                  <div class="post-meta">
+                    <span class="author">Richard Rose</span>
+                    <span>•</span>
+                    <span>Draft — Last saved Apr 20, 2026</span>
+                    <span>•</span>
+                    <span>6 min read</span>
+                  </div>
+                  <div class="post-url">
+                    <input type="text" value="cu4justice.org/opinion/redlining-never-ended" readonly style="opacity:.6">
+                    <button class="copy-btn" onclick="showToast('Publish first to get a shareable link')">Not live yet</button>
+                  </div>
+                </div>
+                <div class="post-right">
+                  <span class="badge draft">Draft</span>
+                  <div class="post-stats">Not published</div>
+                </div>
+              </div>
+              <div class="post-actions">
+                <button class="act-btn edit" onclick="loadEdit('Redlining Never Really Ended')">✏ Edit</button>
+                <button class="act-btn publish" onclick="showToast('✓ Post published! Link is now live.')">Publish Now</button>
+                <button class="act-btn preview" onclick="showToast('Opening preview...')">👁 Preview</button>
+                <button class="act-btn del" onclick="showToast('Draft deleted')">🗑 Delete</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- POST 4 -->
+          <div class="post-card published-card">
+            <div class="post-card-inner">
+              <div class="post-top">
+                <div class="post-left">
+                  <span class="post-category cat-healthcare">Healthcare Justice</span>
+                  <div class="post-title">The Maternal Mortality Crisis Is a Racial Justice Crisis — And Georgia Is Ground Zero</div>
+                  <div class="post-excerpt">Black women in Georgia are dying during childbirth at nearly three times the rate of white women. This is not a coincidence — it is the predictable outcome of decades of disinvestment...</div>
+                  <div class="post-meta">
+                    <span class="author">Richard Rose</span>
+                    <span>•</span>
+                    <span>Published Mar 28, 2026</span>
+                    <span>•</span>
+                    <span>7 min read</span>
+                  </div>
+                  <div class="post-url">
+                    <input type="text" value="cu4justice.org/opinion/maternal-mortality-georgia" readonly>
+                    <button class="copy-btn" onclick="copyLink(this)">Copy Link</button>
+                  </div>
+                </div>
+                <div class="post-right">
+                  <span class="badge published">Published</span>
+                  <div class="post-stats">976 views<br>142 shares</div>
+                </div>
+              </div>
+              <div class="post-actions">
+                <button class="act-btn edit" onclick="loadEdit('Maternal Mortality Crisis')">✏ Edit</button>
+                <button class="act-btn unpublish" onclick="showToast('Post moved to draft')">Unpublish</button>
+                <button class="act-btn preview" onclick="showToast('Opening preview...')">👁 Preview</button>
+                <button class="act-btn del" onclick="showToast('Post deleted')">🗑 Delete</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- PAGINATION -->
+        <div class="pagination">
+          <div class="page-info">Showing 4 of 24 posts</div>
+          <div class="page-btns">
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">4</button>
+            <button class="page-btn">5</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- WRITE FORM PANEL -->
+      <div class="form-panel">
+        <div class="form-panel-header">
+          <h3 id="form-title">Write New Post</h3>
+          <span class="mode-badge" id="mode-badge">NEW</span>
+        </div>
+        <div class="form-body">
+
+          <div class="form-group">
+            <label>Post Title <span class="required-star">*</span></label>
+            <input type="text" id="f-title" placeholder="e.g. Why Voter Suppression Is Still a Crisis in Georgia" oninput="updateSlug(this)">
+          </div>
+
+          <div class="form-group">
+            <label>Category <span class="required-star">*</span></label>
+            <select id="f-cat">
+              <option value="">Select justice area...</option>
+              <option>Political Justice</option>
+              <option>Racial Justice</option>
+              <option>Economic Justice</option>
+              <option>Healthcare Justice</option>
+              <option>Environmental Justice</option>
+              <option>General Opinion</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Author</label>
+            <input type="text" id="f-author" value="Richard Rose">
+          </div>
+
+          <div class="form-group">
+            <label>Short Excerpt <span class="required-star">*</span></label>
+            <textarea id="f-excerpt" style="height:60px" placeholder="1–2 sentence summary shown in post listings..." oninput="updateCount(this,'exc-count',200)"></textarea>
+            <div class="char-count"><span id="exc-count">0</span> / 200</div>
+          </div>
+
+          <div class="form-group">
+            <label>Full Post Body <span class="required-star">*</span></label>
+            <div class="toolbar">
+              <button class="tb-btn" onclick="showToast('Bold applied')"><b>B</b></button>
+              <button class="tb-btn" onclick="showToast('Italic applied')"><i>I</i></button>
+              <button class="tb-btn" onclick="showToast('Underline applied')"><u>U</u></button>
+              <div class="tb-sep"></div>
+              <button class="tb-btn" onclick="showToast('Heading applied')">H1</button>
+              <button class="tb-btn" onclick="showToast('Subheading applied')">H2</button>
+              <div class="tb-sep"></div>
+              <button class="tb-btn" onclick="showToast('List added')">• List</button>
+              <button class="tb-btn" onclick="showToast('Quote added')">" Quote</button>
+              <div class="tb-sep"></div>
+              <button class="tb-btn" onclick="showToast('Link added')">🔗</button>
+            </div>
+            <textarea class="body-field" id="f-body" style="border-radius:0 0 4px 4px;border-top:none" placeholder="Write your opinion piece here...&#10;&#10;The full text will appear on the public post page. Visitors can read it and share the link on social media." oninput="updateCount(this,'body-count',5000)"></textarea>
+            <div class="char-count"><span id="body-count">0</span> / 5,000</div>
+          </div>
+
+          <div class="form-group">
+            <label>Cover Image <small style="color:#aaa;font-weight:400">(optional)</small></label>
+            <div class="cover-zone" onclick="showToast('Image browser opened')">
+              <strong>Click to upload cover photo</strong>
+              <p>JPG or PNG — recommended 1200×600px</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>URL Slug</label>
+            <input type="text" id="f-slug" placeholder="auto-generated from title">
+            <div class="url-preview">
+              <div class="url-label">Shareable URL</div>
+              <div class="url-text" id="url-preview">cu4justice.org/opinion/</div>
+              <div class="url-note">Goes live when you publish — share on Facebook or email</div>
+            </div>
+          </div>
+
+          <div class="share-tip">
+            <p>📤 <strong>Share tip:</strong> Once published, copy the URL above and post it directly to your Facebook page, email it to your mailing list, or include it in a press release.</p>
+          </div>
+
+          <div class="form-actions">
+            <button class="cancel-btn" onclick="clearForm()">Cancel</button>
+            <button class="draft-btn" onclick="saveDraft()">Save Draft</button>
+            <button class="publish-btn" onclick="publishPost()">Publish ✓</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="dot"></div>
+  <span id="toast-msg">Done!</span>
+</div>
+
+<script>
+function setFilter(btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+function copyLink(btn){
+  const url=btn.previousElementSibling.value;
+  navigator.clipboard.writeText('https://'+url).catch(()=>{});
+  const orig=btn.textContent;
+  btn.textContent='✓ Copied!';
+  btn.classList.add('copied');
+  setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2000);
+  showToast('Link copied — ready to share on Facebook!');
+}
+
+function updateSlug(input){
+  const slug=input.value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  document.getElementById('f-slug').value=slug;
+  document.getElementById('url-preview').textContent='cu4justice.org/opinion/'+(slug||'');
+}
+
+function updateCount(el,countId,max){
+  document.getElementById(countId).textContent=el.value.length;
+}
+
+function loadEdit(title){
+  document.getElementById('form-title').textContent='Edit Post';
+  document.getElementById('mode-badge').textContent='EDITING';
+  document.getElementById('f-title').value=title;
+  const slug=title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  document.getElementById('f-slug').value=slug;
+  document.getElementById('url-preview').textContent='cu4justice.org/opinion/'+slug;
+  document.getElementById('f-author').value='Richard Rose';
+  document.getElementById('f-excerpt').value='This is the excerpt for the selected post. You can edit it here before republishing.';
+  document.getElementById('exc-count').textContent=document.getElementById('f-excerpt').value.length;
+  document.querySelector('.form-panel').scrollIntoView({behavior:'smooth'});
+  showToast('Post loaded for editing');
+}
+
+function newPost(){
+  clearForm();
+  document.getElementById('form-title').textContent='Write New Post';
+  document.getElementById('mode-badge').textContent='NEW';
+  document.querySelector('.form-panel').scrollIntoView({behavior:'smooth'});
+}
+
+function clearForm(){
+  ['f-title','f-excerpt','f-body','f-slug'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('f-cat').value='';
+  document.getElementById('url-preview').textContent='cu4justice.org/opinion/';
+  document.getElementById('exc-count').textContent='0';
+  document.getElementById('body-count').textContent='0';
+  document.getElementById('form-title').textContent='Write New Post';
+  document.getElementById('mode-badge').textContent='NEW';
+}
+
+function saveDraft(){
+  const title=document.getElementById('f-title').value;
+  if(!title){showToast('Please enter a post title');return;}
+  showToast('Draft saved — not yet visible on public site');
+}
+
+function publishPost(){
+  const title=document.getElementById('f-title').value;
+  if(!title){showToast('Please enter a post title');return;}
+  const body=document.getElementById('f-body').value;
+  if(!body){showToast('Please write some content before publishing');return;}
+  showToast('✓ Post published! Shareable link is now live.');
+  clearForm();
+}
+</script>
+</body>
+</html>

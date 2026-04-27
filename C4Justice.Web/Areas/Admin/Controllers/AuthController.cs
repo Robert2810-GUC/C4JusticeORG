@@ -31,14 +31,18 @@ namespace C4Justice.Web.Areas.Admin.Controllers
             var hash = AuthHelper.HashPassword(password);
             var user = _db.AdminUsers.FirstOrDefault(u => u.Username == username && u.PasswordHash == hash);
 
-            if (user == null)
+            if (user == null || !user.IsActive)
             {
                 ViewBag.Error = "Invalid username or password.";
                 return View();
             }
 
+            user.LastLoginAt = DateTime.UtcNow;
+            _db.SaveChanges();
+
             HttpContext.Session.SetInt32("AdminUserId", user.Id);
             HttpContext.Session.SetString("AdminUsername", user.Username);
+            HttpContext.Session.SetString("AdminRole", user.Role);
             return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
         }
 

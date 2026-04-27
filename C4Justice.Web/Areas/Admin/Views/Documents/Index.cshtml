@@ -1,48 +1,207 @@
 @model IEnumerable<C4Justice.Web.Models.SiteDocument>
 @{
     ViewData["Title"] = "Documents";
+    var list = Model.ToList();
 }
 
 @section TopbarActions {
-    <a href="/Admin/Documents/Create" class="btn-sm-admin btn-primary-admin"><i class="fas fa-upload me-1"></i>Upload Document</a>
+    <a href="/Admin/Documents/Create" class="view-site-btn" style="background:#e8c84a;color:#0d1f3c">+ Upload Document</a>
 }
 
-<div class="admin-card">
-    <table class="admin-table">
-        <thead>
-            <tr><th>Title</th><th>Category</th><th>File</th><th>Size</th><th>Status</th><th>Actions</th></tr>
-        </thead>
-        <tbody>
-        @foreach (var d in Model)
-        {
-            <tr>
-                <td style="font-weight:600;color:#e6edf3;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">@d.Title</td>
-                <td><span class="badge-cat">@d.Category</span></td>
-                <td style="font-size:.78rem;">
-                    <a href="@d.FileUrl" target="_blank" style="color:#60a5fa;">
-                        <i class="fas fa-@(d.FileType == "pdf" ? "file-pdf" : "file") me-1"></i>@d.FileName
-                    </a>
-                </td>
-                <td style="font-size:.78rem;color:#8b949e;">@d.FileSizeDisplay</td>
-                <td><span class="@(d.IsPublished ? "badge-active" : "badge-inactive")">@(d.IsPublished ? "Published" : "Hidden")</span></td>
-                <td>
-                    <div class="d-flex gap-2">
-                        <form method="post" asp-action="TogglePublish" asp-route-id="@d.Id" style="display:inline;">
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div>
+        <div class="page-title">Documents &amp; Files</div>
+        <div class="page-sub">Upload and manage shareable document links</div>
+    </div>
+</div>
+
+<!-- MINI STATS -->
+<div class="mini-stats">
+    <div class="mini-stat">
+        <div class="num">@list.Count</div>
+        <div class="lbl">Total Documents</div>
+    </div>
+    <div class="mini-stat blue">
+        <div class="num">@list.Count(d => d.IsPublished)</div>
+        <div class="lbl">Published</div>
+    </div>
+    <div class="mini-stat green">
+        <div class="num">@list.Count(d => d.FileType == "pdf")</div>
+        <div class="lbl">PDF Files</div>
+    </div>
+    <div class="mini-stat purple">
+        <div class="num">@list.Count(d => d.CreatedAt >= DateTime.UtcNow.AddDays(-30))</div>
+        <div class="lbl">Added This Month</div>
+    </div>
+</div>
+
+<!-- INFO BANNER -->
+<div class="info-banner">
+    <span style="font-size:16px;flex-shrink:0">🔗</span>
+    <p><strong>Shareable Links:</strong> Each document gets a direct download link that you can share publicly. Published documents are accessible via their file URL on the live site.</p>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start">
+    <!-- DOCUMENTS LIST -->
+    <div>
+        <!-- FILTER BAR -->
+        <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterDocs('all',this)">All Files</button>
+            <button class="filter-btn" onclick="filterDocs('pdf',this)">PDF</button>
+            <button class="filter-btn" onclick="filterDocs('doc',this)">Word</button>
+            <button class="filter-btn" onclick="filterDocs('report',this)">Reports</button>
+            <input type="text" placeholder="Search documents..." onkeyup="searchDocs(this.value)" style="margin-left:auto;border:1.5px solid #dde;border-radius:4px;padding:6px 12px;font-size:12px;font-family:Arial;color:#333;width:200px" />
+        </div>
+
+        <div id="docs-list" style="display:flex;flex-direction:column;gap:10px">
+            @if (!list.Any())
+            {
+                <div style="text-align:center;padding:60px 20px;color:#aaa;font-family:Arial;background:#fff;border-radius:6px">
+                    <div style="font-size:48px;margin-bottom:12px">📁</div>
+                    <p>No documents yet. Upload your first document.</p>
+                </div>
+            }
+            @foreach (var d in list.OrderByDescending(doc => doc.CreatedAt))
+            {
+                var iconClass = d.FileType == "pdf" ? "pdf" : d.FileType is "doc" or "docx" ? "docx" : d.FileType is "xls" or "xlsx" ? "xlsx" : "img";
+                var iconEmoji = d.FileType == "pdf" ? "📄" : d.FileType is "doc" or "docx" ? "📝" : d.FileType is "xls" or "xlsx" ? "📊" : "📎";
+                var fullUrl = $"{ViewContext.HttpContext.Request.Scheme}://{ViewContext.HttpContext.Request.Host}{d.FileUrl}";
+                <div class="doc-card" data-type="@d.FileType" data-category="@d.Category.ToLower()" data-search="@($"{d.Title} {d.FileName} {d.Category}".ToLower())">
+                    <div class="doc-icon @iconClass">@iconEmoji</div>
+                    <div class="doc-info">
+                        <div class="doc-name">@d.Title</div>
+                        <div class="doc-meta">
+                            <span>@d.CreatedAt.ToString("MMM d, yyyy")</span>
+                            <span>@d.FileSizeDisplay</span>
+                            <span class="category-tag">@d.Category</span>
+                            @if (d.IsPublished) { <span style="color:#27ae60;font-weight:600">● Published</span> }
+                            else { <span style="color:#aaa">○ Hidden</span> }
+                        </div>
+                        <div class="doc-url">
+                            <input type="text" value="@fullUrl" readonly id="url-@d.Id" />
+                            <button class="copy-url-btn" onclick="copyDocUrl(@d.Id)" id="copy-@d.Id">Copy</button>
+                        </div>
+                    </div>
+                    <div class="doc-actions">
+                        <a href="@d.FileUrl" target="_blank" class="act-btn download">⬇ Download</a>
+                        <a href="/Admin/Documents/Edit/@d.Id" class="action-btn edit">Edit</a>
+                        <form method="post" action="/Admin/Documents/TogglePublish/@d.Id" style="display:inline">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn-sm-admin btn-ghost-admin" style="padding:4px 10px;font-size:.75rem;">@(d.IsPublished ? "Hide" : "Show")</button>
+                            <button type="submit" class="act-btn share">@(d.IsPublished ? "Hide" : "Show")</button>
                         </form>
-                        <form method="post" asp-action="Delete" asp-route-id="@d.Id" style="display:inline;" onsubmit="return confirm('Delete this document?')">
+                        <form method="post" action="/Admin/Documents/Delete/@d.Id" style="display:inline" onsubmit="return confirm('Delete this document?')">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn-sm-admin" style="padding:4px 10px;font-size:.75rem;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);">Delete</button>
+                            <button type="submit" class="act-btn del">Delete</button>
                         </form>
                     </div>
-                </td>
-            </tr>
-        }
-        @if (!Model.Any())
-        {
-            <tr><td colspan="6" style="color:#8b949e;text-align:center;padding:32px;">No documents yet.</td></tr>
-        }
-        </tbody>
-    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- UPLOAD FORM -->
+    <div style="position:sticky;top:76px">
+        <div class="section-title">Upload New Document</div>
+        <div class="form-preview">
+            <form method="post" action="/Admin/Documents/Create" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="upload-zone" onclick="document.getElementById('doc-file').click()">
+                    <div style="font-size:28px;margin-bottom:6px">📤</div>
+                    <h4 style="font-size:13px;color:#0d1f3c;font-weight:700;margin-bottom:3px">Drag &amp; drop or click to upload</h4>
+                    <p>PDF, Word, Excel, PowerPoint, Images</p>
+                    <input type="file" id="doc-file" name="docFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg,.webp" style="display:none" onchange="updateFileName(this)" required />
+                    <div id="file-name" style="font-size:11px;color:#0d1f3c;font-family:Arial;margin-top:6px;font-weight:700"></div>
+                </div>
+                <div class="form-group">
+                    <label>Document Title *</label>
+                    <input type="text" name="Title" placeholder="e.g. 2026 Annual Report" required />
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="Category">
+                        <option value="Annual Report">Annual Report</option>
+                        <option value="Press Release">Press Release</option>
+                        <option value="Policy">Policy</option>
+                        <option value="Research">Research</option>
+                        <option value="Voter Rights">Voter Rights</option>
+                        <option value="Environmental">Environmental</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description (optional)</label>
+                    <textarea name="Description" placeholder="Brief description..."></textarea>
+                </div>
+                <div style="background:#e8f4fd;border:1px solid #b8d9f0;border-radius:4px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:#1a5276;font-family:Arial;line-height:1.5">
+                    📢 Uploaded documents will get a public URL at <strong>/uploads/documents/filename</strong> that you can share.
+                </div>
+                <button type="submit" class="submit-btn">⬆ Upload &amp; Publish</button>
+            </form>
+        </div>
+    </div>
 </div>
+
+@section Styles {
+<style>
+.doc-card{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);padding:16px 18px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s}
+.doc-card:hover{box-shadow:0 3px 12px rgba(0,0,0,.1)}
+.doc-icon{width:44px;height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.doc-icon.pdf{background:#fde8e8}
+.doc-icon.docx{background:#e8f0ff}
+.doc-icon.xlsx{background:#e8f5e9}
+.doc-icon.img{background:#f3e5f5}
+.doc-info{flex:1;min-width:0}
+.doc-name{font-size:13px;font-weight:700;color:#0d1f3c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:Arial}
+.doc-meta{display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap}
+.doc-meta span{font-size:11px;color:#999;font-family:Arial}
+.doc-meta .category-tag{background:#e8f0ff;color:#0d1f3c;padding:2px 7px;border-radius:3px;font-weight:600}
+.doc-url{margin-top:6px;display:flex;align-items:center;gap:6px}
+.doc-url input{flex:1;border:1px solid #eee;border-radius:3px;padding:5px 8px;font-size:10px;font-family:'Courier New',monospace;color:#555;background:#fafbff;min-width:0}
+.copy-url-btn{background:#0d1f3c;color:#e8c84a;border:none;padding:5px 10px;border-radius:3px;font-size:10px;font-weight:700;font-family:Arial;cursor:pointer;white-space:nowrap}
+.copy-url-btn:hover{background:#1a3a6b}
+.copy-url-btn.copied{background:#27ae60;color:#fff}
+.doc-actions{display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex-shrink:0}
+.act-btn{font-size:10px;padding:5px 10px;border-radius:3px;border:none;cursor:pointer;font-family:Arial;font-weight:600;white-space:nowrap;text-decoration:none;display:inline-block}
+.act-btn.share{background:#e8f0ff;color:#0d1f3c}
+.act-btn.share:hover{background:#d0e0ff}
+.act-btn.del{background:#ffeaea;color:#c0392b}
+.act-btn.del:hover{background:#ffcdcd}
+.act-btn.download{background:#e8f5e9;color:#1b5e20}
+.act-btn.download:hover{background:#d0edd0}
+</style>
+}
+
+@section Scripts {
+<script>
+function copyDocUrl(id) {
+    var input = document.getElementById('url-'+id);
+    var btn = document.getElementById('copy-'+id);
+    navigator.clipboard.writeText(input.value).then(function() {
+        btn.textContent = '✓ Copied';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+}
+function filterDocs(type, btn) {
+    document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('.doc-card').forEach(function(card) {
+        if (type === 'all') { card.style.display = ''; return; }
+        if (type === 'pdf') card.style.display = card.dataset.type === 'pdf' ? '' : 'none';
+        else if (type === 'doc') card.style.display = (card.dataset.type === 'doc' || card.dataset.type === 'docx') ? '' : 'none';
+        else if (type === 'report') card.style.display = card.dataset.category.indexOf('report') !== -1 ? '' : 'none';
+    });
+}
+function searchDocs(q) {
+    var lower = q.toLowerCase();
+    document.querySelectorAll('.doc-card').forEach(function(card) {
+        card.style.display = card.dataset.search.indexOf(lower) !== -1 ? '' : 'none';
+    });
+}
+function updateFileName(input) {
+    var name = input.files[0] ? input.files[0].name : '';
+    document.getElementById('file-name').textContent = name ? '📎 ' + name : '';
+}
+</script>
+}

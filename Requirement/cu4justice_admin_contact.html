@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CU4J Admin — Contact Messages</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Georgia',serif;background:#f0f2f7;color:#1a1a2e;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:240px;background:#0d1f3c;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100}
+.sidebar-logo{padding:20px 18px;border-bottom:1px solid rgba(232,200,74,.2);display:flex;align-items:center;gap:10px}
+.logo-box{width:42px;height:42px;border-radius:50%;border:2px solid #e8c84a;background:#0d1f3c;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#e8c84a;flex-shrink:0}
+.logo-text span{display:block;color:#fff;font-size:11px;font-weight:700}
+.logo-text small{color:#e8c84a;font-size:9px;letter-spacing:.8px;font-family:Arial,sans-serif}
+.sidebar-label{color:rgba(232,200,74,.5);font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:16px 18px 6px;font-family:Arial,sans-serif}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;border-left:3px solid transparent;transition:all .2s;font-family:Arial,sans-serif;font-size:13px;color:#a0b4cc}
+.nav-item:hover{background:rgba(232,200,74,.08);color:#fff;border-left-color:rgba(232,200,74,.3)}
+.nav-item.active{background:rgba(232,200,74,.12);color:#e8c84a;border-left-color:#e8c84a}
+.nav-icon{width:15px;height:15px;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon{opacity:1}
+.notif-dot{background:#e8c84a;color:#0d1f3c;font-size:9px;font-weight:700;border-radius:10px;padding:1px 6px;margin-left:auto;font-family:Arial,sans-serif}
+.sidebar-footer{margin-top:auto;padding:16px 18px;border-top:1px solid rgba(255,255,255,.08)}
+.logout-btn{display:flex;align-items:center;gap:8px;color:#a0b4cc;font-size:12px;font-family:Arial,sans-serif;cursor:pointer}
+.logout-btn:hover{color:#e8c84a}
+
+/* MAIN */
+.main{margin-left:240px;flex:1}
+.topbar{background:#fff;padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e0e4ec;position:sticky;top:0;z-index:50}
+.breadcrumb{font-size:12px;color:#aaa;font-family:Arial,sans-serif}
+.breadcrumb span{color:#0d1f3c;font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.admin-badge{background:#0d1f3c;color:#e8c84a;font-size:11px;padding:4px 12px;border-radius:20px;font-family:Arial,sans-serif;font-weight:700}
+.view-site-btn{background:#e8c84a;color:#0d1f3c;font-size:12px;padding:6px 14px;border-radius:3px;border:none;cursor:pointer;font-weight:700;font-family:Arial,sans-serif}
+
+.content{padding:24px 28px}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.page-title{font-size:22px;color:#0d1f3c;font-weight:700}
+.page-sub{font-size:12px;color:#888;font-family:Arial,sans-serif;margin-top:3px}
+.mark-all-btn{background:#f0f4ff;color:#0d1f3c;border:1.5px solid #dde;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer}
+.mark-all-btn:hover{background:#e0e8ff}
+
+/* MINI STATS */
+.mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.mini-stat{background:#fff;border-radius:6px;padding:14px 16px;border-left:3px solid #e8c84a;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.mini-stat.blue{border-left-color:#0d1f3c}
+.mini-stat.green{border-left-color:#27ae60}
+.mini-stat.red{border-left-color:#e74c3c}
+.mini-stat .num{font-size:22px;font-weight:700;color:#0d1f3c}
+.mini-stat .lbl{font-size:10px;color:#999;font-family:Arial,sans-serif;letter-spacing:.8px;text-transform:uppercase;margin-top:2px}
+
+/* LAYOUT */
+.inbox-layout{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.filter-btn{border:1.5px solid #dde;background:#fff;color:#555;padding:6px 14px;border-radius:20px;font-size:12px;font-family:Arial,sans-serif;cursor:pointer;font-weight:500;display:flex;align-items:center;gap:5px}
+.filter-btn.active{border-color:#0d1f3c;background:#0d1f3c;color:#fff}
+.filter-btn .count{background:rgba(232,200,74,.3);color:#e8c84a;font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700}
+.filter-btn.active .count{background:rgba(232,200,74,.2);color:#e8c84a}
+.search-wrap{margin-left:auto;position:relative}
+.search-wrap input{border:1.5px solid #dde;border-radius:4px;padding:7px 12px 7px 32px;font-size:12px;font-family:Arial,sans-serif;color:#333;width:200px}
+.search-wrap input:focus{outline:none;border-color:#0d1f3c}
+.search-wrap .sicon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#aaa}
+
+/* MESSAGE LIST */
+.msg-list{display:flex;flex-direction:column;gap:0;background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden}
+
+.msg-row{padding:14px 18px;border-bottom:.5px solid #f0f0f0;cursor:pointer;transition:background .15s;display:flex;align-items:flex-start;gap:12px}
+.msg-row:last-child{border-bottom:none}
+.msg-row:hover{background:#f8faff}
+.msg-row.active{background:#f0f4ff;border-left:3px solid #0d1f3c}
+.msg-row.unread{background:#fffef8}
+.msg-row.unread .msg-name{font-weight:700}
+
+.unread-indicator{width:8px;height:8px;border-radius:50%;background:#e8c84a;flex-shrink:0;margin-top:6px}
+.read-indicator{width:8px;height:8px;border-radius:50%;background:transparent;flex-shrink:0;margin-top:6px}
+
+.msg-info{flex:1;min-width:0}
+.msg-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.msg-name{font-size:13px;color:#0d1f3c;font-family:Arial,sans-serif}
+.msg-time{font-size:10px;color:#bbb;font-family:Arial,sans-serif;white-space:nowrap;margin-left:8px}
+.msg-subject{font-size:12px;color:#555;font-family:Arial,sans-serif;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg-preview{font-size:11px;color:#aaa;font-family:Arial,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg-badges{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+.msg-tag{font-size:9px;padding:2px 6px;border-radius:3px;font-family:Arial,sans-serif;font-weight:700}
+.tag-volunteer{background:#e8f5e9;color:#1b5e20}
+.tag-donate{background:#fff3e0;color:#e65100}
+.tag-speaker{background:#e8f0ff;color:#0d1f3c}
+.tag-general{background:#f3e5f5;color:#4a148c}
+.tag-media{background:#e0f7fa;color:#006064}
+.tag-urgent{background:#fde8e8;color:#7b241c}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:.5px solid #f0f0f0;background:#fafbff}
+.page-info{font-size:12px;color:#888;font-family:Arial,sans-serif}
+.page-btns{display:flex;gap:4px}
+.page-btn{width:28px;height:28px;border:1.5px solid #dde;border-radius:4px;background:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#555;font-family:Arial,sans-serif}
+.page-btn.active{background:#0d1f3c;border-color:#0d1f3c;color:#e8c84a;font-weight:700}
+.page-btn:hover:not(.active){background:#f0f0f0}
+
+/* DETAIL PANEL */
+.detail-panel{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;position:sticky;top:76px}
+.panel-header{background:#0d1f3c;padding:14px 18px}
+.panel-header h3{color:#e8c84a;font-size:14px}
+.panel-header p{color:rgba(255,255,255,.5);font-size:11px;font-family:Arial,sans-serif;margin-top:2px}
+.panel-body{padding:0}
+
+.empty-state{text-align:center;padding:50px 20px;color:#bbb}
+.empty-state .es-icon{font-size:40px;margin-bottom:12px}
+.empty-state p{font-size:12px;font-family:Arial,sans-serif;line-height:1.7}
+
+/* MESSAGE VIEW */
+.msg-view-header{padding:16px 18px;border-bottom:.5px solid #f0f0f0}
+.mv-sender{font-size:15px;font-weight:700;color:#0d1f3c;margin-bottom:3px}
+.mv-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.mv-meta span{font-size:11px;color:#888;font-family:Arial,sans-serif;display:flex;align-items:center;gap:4px}
+.mv-subject{font-size:13px;font-weight:700;color:#333;margin-top:8px;padding:8px 10px;background:#f8faff;border-radius:4px;font-family:Arial,sans-serif}
+
+.msg-view-body{padding:16px 18px;border-bottom:.5px solid #f0f0f0}
+.msg-full-text{font-size:13px;color:#555;font-family:Arial,sans-serif;line-height:1.8}
+
+.msg-view-actions{padding:12px 18px;border-bottom:.5px solid #f0f0f0;display:flex;gap:6px;flex-wrap:wrap}
+.act-btn{font-size:11px;padding:6px 12px;border-radius:3px;border:none;cursor:pointer;font-family:Arial,sans-serif;font-weight:600}
+.act-btn.reply{background:#0d1f3c;color:#fff}
+.act-btn.reply:hover{background:#1a3a6b}
+.act-btn.archive{background:#f5f5f5;color:#555}
+.act-btn.archive:hover{background:#ebebeb}
+.act-btn.del{background:#ffeaea;color:#c0392b}
+.act-btn.del:hover{background:#ffcdcd}
+.act-btn.spam{background:#fff3cd;color:#856404}
+
+/* REPLY AREA */
+.reply-section{padding:14px 18px}
+.reply-section label{display:block;font-size:11px;color:#555;font-family:Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.reply-section textarea{width:100%;border:1.5px solid #dde;border-radius:4px;padding:10px;font-size:12px;font-family:Arial,sans-serif;color:#333;height:110px;resize:vertical;line-height:1.6}
+.reply-section textarea:focus{outline:none;border-color:#0d1f3c}
+.reply-footer{display:flex;gap:6px;margin-top:8px}
+.send-btn{flex:1;background:#e8c84a;color:#0d1f3c;border:none;padding:9px;font-size:12px;font-weight:700;border-radius:4px;cursor:pointer;font-family:Arial,sans-serif}
+.send-btn:hover{background:#f5d55a}
+.cancel-btn{background:#f5f5f5;color:#555;border:1.5px solid #dde;padding:9px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:Arial,sans-serif}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#0d1f3c;color:#fff;padding:12px 20px;border-radius:6px;font-size:13px;font-family:Arial,sans-serif;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.25);opacity:0;transform:translateY(10px);transition:all .3s;z-index:999}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast .dot{width:8px;height:8px;border-radius:50%;background:#e8c84a;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-box">CU4J</div>
+    <div class="logo-text">
+      <span>CU4J Admin</span>
+      <small>501(C)(3) PORTAL</small>
+    </div>
+  </div>
+
+  <div class="sidebar-label">Main</div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Events
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Documents
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    Opinion & Essays
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    Subscribers
+  </div>
+
+  <div class="sidebar-label">Manage</div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    Speaker Requests
+  </div>
+  <div class="nav-item active">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    Contact Messages
+    <span class="notif-dot">7</span>
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    Photo Gallery
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+    Donations — Zeffy
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="logout-btn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="breadcrumb">Admin / <span>Contact Messages</span></div>
+    <div class="topbar-right">
+      <span style="font-size:12px;color:#888;font-family:Arial,sans-serif">Richard Rose</span>
+      <div class="admin-badge">Admin</div>
+      <button class="view-site-btn">View Live Site ↗</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">Contact Messages</div>
+        <div class="page-sub">All incoming messages from the public contact form — 7 unread messages.</div>
+      </div>
+      <button class="mark-all-btn" onclick="showToast('All messages marked as read')">Mark All as Read</button>
+    </div>
+
+    <!-- MINI STATS -->
+    <div class="mini-stats">
+      <div class="mini-stat">
+        <div class="num">7</div>
+        <div class="lbl">Unread</div>
+      </div>
+      <div class="mini-stat blue">
+        <div class="num">24</div>
+        <div class="lbl">Total This Month</div>
+      </div>
+      <div class="mini-stat green">
+        <div class="num">18</div>
+        <div class="lbl">Replied</div>
+      </div>
+      <div class="mini-stat red">
+        <div class="num">3</div>
+        <div class="lbl">Archived</div>
+      </div>
+    </div>
+
+    <!-- INBOX LAYOUT -->
+    <div class="inbox-layout">
+
+      <!-- MESSAGE LIST -->
+      <div>
+        <div class="filter-bar">
+          <button class="filter-btn active" onclick="setFilter(this)">All <span class="count">24</span></button>
+          <button class="filter-btn" onclick="setFilter(this)">Unread <span class="count">7</span></button>
+          <button class="filter-btn" onclick="setFilter(this)">Volunteer</button>
+          <button class="filter-btn" onclick="setFilter(this)">Donate</button>
+          <button class="filter-btn" onclick="setFilter(this)">Media</button>
+          <button class="filter-btn" onclick="setFilter(this)">Archived</button>
+          <div class="search-wrap">
+            <span class="sicon">🔍</span>
+            <input type="text" placeholder="Search messages...">
+          </div>
+        </div>
+
+        <div class="msg-list">
+
+          <!-- UNREAD MESSAGES -->
+          <div class="msg-row unread" onclick="loadMsg(1)">
+            <div class="unread-indicator"></div>
+            <div class="msg-info">
+              <div class="msg-top">
+                <div class="msg-name">Patricia Brown</div>
+                <div class="msg-time">Today, 9:14 AM</div>
+              </div>
+              <div class="msg-subject">Interested in volunteering for voter registration drives</div>
+              <div class="msg-preview">Hello, I came across your organization on Facebook and I am very passionate about voting rights. I would love to help...</div>
+              <div class="msg-badges"><span class="msg-tag tag-volunteer">Volunteer</span></div>
+            </div>
+          </div>
+
+          <div class="msg-row unread" onclick="loadMsg(2)">
+            <div class="unread-indicator"></div>
+            <div class="msg-info">
+              <div class="msg-top">
+                <div class="msg-name">James Washington</div>
+                <div class="msg-time">Today, 7:42 AM</div>
+              </div>
+              <div class="msg-subject">Question about donating and tax deductibility</div>
+              <div class="msg-preview">I would like to make a donation to your organization. Can you confirm that you are a registered 501(c)(3) and that my donation...</div>
+              <div class="msg-badges"><span class="msg-tag tag-donate">Donation</span></div>
+            </div>
+          </div>
+
+          <div class="msg-row unread" onclick="loadMsg(3)">
+            <div class="unread-indicator"></div>
+            <div class="msg-info">
+              <div class="msg-top">
+                <div class="msg-name">CNN Atlanta Bureau</div>
+                <div class="msg-time">Yesterday, 4:30 PM</div>
+              </div>
+              <div class="msg-subject">Interview request — Georgia voting rights story</div>
+              <div class="msg-preview">We are producing a segment on voter suppression in Georgia ahead of the primary elections and would like to feature your organization...</div>
+              <div class="msg-badges"><span class="msg-tag tag-media">Media</span><span class="msg-tag tag-urgent">Urgent</span></div>
+            </div>
+          </div>
+
+          <div class="msg-row unread" onclick="loadMsg(4)">
+            <div class="unread-indicator"></div>
+            <div class="msg-info">
+              <div class="msg-top">
+                <div class="msg-name">Keisha Thompson</div>
+                <div class="msg-time">Yesterday, 2:18 PM</div>
+              </div>
+              <div class="msg-subject">How can I get involved with environmental justice efforts?</div>
+              <div class="msg-preview">I am a resident of South Atlanta and our neighborhood has been dealing with air quality issues for years. I found your website while...</div>
+              <div class="msg-badges"><span class="msg-tag tag-volunteer">Volunteer</span></div>
+            </div>
+          </div>
+
+          <div class="msg-row unread" onclick="loadMsg(5)">
+            <div class="unread-indicator"></div>
+            <div class="msg-info">
+              <div class="msg-top">
+                <div class="msg-name">Dr. Marcus Jones</div>
+                <div class="msg-time">Apr 20, 2026</div>
+              </div>
+              <div class="msg-subject">Partnership opportunity — Grady Hospital Community Health</div>
+              <div class="msg-preview">I represent the community outreach department at Grady Hospital and we are looking for community organizations to partner with on...</div>
+              <div class="msg-badges"><span class="msg-tag tag-general">Partnership</span></div>
+            </div>
+          </div>
+
+          <!-- READ MESSAGES -->
+          <div class="msg-row" onclick="loadMsg(6)">
+            <div class="read-indicator"></div>
+            <div class="msg-info">
+              <div class="msg-top">
+                <div class="msg-name">Thomas Green</div>
+                <div class="msg-time">Apr 19, 2026</div>
+              </div>
+              <div class="msg-subject">Can you speak at our community meeting in June?</div>
+              <div class="msg-preview">We are a small neighborhood association in East Point and we hold monthly community meetings. We would love to have someone from...</div>
+              <div class="msg-badges"><span class="msg-tag tag-speaker">Speaker</span></div>
+            </div>
+          </div>
+
+          <div class="msg-row" onclick="loadMsg(7)">
+            <div class="read-indicator"></div>
+            <div class="msg-info">
+              <div class="msg-top">
+                <div class="msg-name">Lisa Washington</div>
+                <div class="msg-time">Apr 18, 2026</div>
+              </div>
+              <div class="msg-subject">Thank you for the voter rights guide PDF — very helpful!</div>
+              <div class="msg-preview">Hello, I just wanted to reach out and say thank you for the voter rights guide you published. I shared it with my entire church congregation...</div>
+              <div class="msg-badges"><span class="msg-tag tag-general">General</span></div>
+            </div>
+          </div>
+
+          <div class="msg-row" onclick="loadMsg(8)">
+            <div class="read-indicator"></div>
+            <div class="msg-info">
+              <div class="msg-top">
+                <div class="msg-name">Robert Hill</div>
+                <div class="msg-time">Apr 17, 2026</div>
+              </div>
+              <div class="msg-subject">Monthly donation — payment method question</div>
+              <div class="msg-preview">I set up a monthly donation last month but I am not seeing the charge on my statement. Can you help me confirm whether my recurring...</div>
+              <div class="msg-badges"><span class="msg-tag tag-donate">Donation</span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- PAGINATION -->
+        <div class="pagination">
+          <div class="page-info">Showing 8 of 24 messages</div>
+          <div class="page-btns">
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DETAIL PANEL -->
+      <div class="detail-panel">
+        <div class="panel-header">
+          <h3 id="panel-title">Inbox</h3>
+          <p id="panel-sub">Click any message to read and reply</p>
+        </div>
+        <div class="panel-body" id="panel-body">
+          <div class="empty-state">
+            <div class="es-icon">✉️</div>
+            <p>Select a message from the inbox to read the full content and send a reply directly from here.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="dot"></div>
+  <span id="toast-msg">Done!</span>
+</div>
+
+<script>
+const messages = {
+  1:{name:'Patricia Brown',email:'pbrown@gmail.com',phone:'404-555-0192',time:'Today, 9:14 AM',subject:'Interested in volunteering for voter registration drives',tag:'Volunteer',body:`Hello,\n\nI came across your organization on Facebook and I am very passionate about voting rights and civic engagement. I would love to help with your voter registration drives.\n\nI am available on weekends and most evenings after 6pm. I have experience working with community organizations and I am comfortable talking to people and helping them navigate the registration process.\n\nPlease let me know how I can get involved. I am ready to help however I can!\n\nThank you,\nPatricia Brown`,reply:`Dear Patricia,\n\nThank you for reaching out and for your interest in volunteering with Communities United For Justice Fund! We are always grateful for dedicated community members like yourself.\n\nWe would love to have you join our volunteer team for voter registration drives. Please visit our website at cu4justice.org/volunteer to complete a volunteer sign-up form and we will be in touch with upcoming opportunities.\n\nThank you for your commitment to our community!\n\nBest regards,\nRichard Rose\nCommunities United For Justice Fund`},
+  2:{name:'James Washington',email:'jwashington@email.com',phone:'678-555-0177',time:'Today, 7:42 AM',subject:'Question about donating and tax deductibility',tag:'Donation',body:`Hello,\n\nI would like to make a donation to your organization. Can you confirm that you are a registered 501(c)(3) and that my donation would be tax deductible?\n\nAlso, do you accept recurring monthly donations? I would like to set up an automatic contribution of $60 per month if possible.\n\nThank you for the important work you are doing for our community.\n\nJames Washington`,reply:`Dear James,\n\nThank you so much for your interest in supporting Communities United For Justice Fund!\n\nYes, we are a registered 501(c)(3) nonprofit organization, and all donations are fully tax deductible to the extent provided by law. You will receive an email receipt for your records after each donation.\n\nWe do accept recurring monthly donations through our Zeffy donation platform. You can set up a monthly contribution at cu4justice.org/donate — simply select "Monthly" and enter your preferred amount.\n\nThank you for your generous support!\n\nBest regards,\nRichard Rose\nCommunities United For Justice Fund`},
+  3:{name:'CNN Atlanta Bureau',email:'atlanta.news@cnn.com',phone:'404-827-1500',time:'Yesterday, 4:30 PM',subject:'Interview request — Georgia voting rights story',tag:'Media — Urgent',body:`Hello Mr. Rose,\n\nMy name is Jennifer Walsh and I am a producer with CNN's Atlanta Bureau. We are currently producing a segment on voter suppression in Georgia ahead of the upcoming primary elections and we would like to feature Communities United For Justice Fund in our coverage.\n\nWe are specifically interested in your organization's perspective on the recently redrawn district maps and the impact on communities of color. The segment is scheduled to air next week and we would need to conduct the interview by this Friday if possible.\n\nPlease let me know your availability. We can accommodate an in-studio interview at our Midtown Atlanta location or a remote interview if preferred.\n\nThank you,\nJennifer Walsh\nCNN Atlanta Bureau`,reply:`Dear Jennifer,\n\nThank you for reaching out to Communities United For Justice Fund regarding your upcoming segment on voter suppression in Georgia.\n\nWe would be honored to participate and share our perspective on the impact of the redistricting on communities of color. I am available for an interview this Thursday afternoon or Friday morning, whichever works best for your production schedule.\n\nPlease feel free to call me directly at 404-555-0100 to finalize the details.\n\nBest regards,\nRichard Rose\nFounder & Executive Director\nCommunities United For Justice Fund`},
+  4:{name:'Keisha Thompson',email:'kthompson@gmail.com',phone:'404-555-0214',time:'Yesterday, 2:18 PM',subject:'How can I get involved with environmental justice efforts?',tag:'Volunteer',body:`Hello,\n\nI am a resident of South Atlanta and our neighborhood has been dealing with serious air quality issues for years due to industrial facilities nearby. I found your website while researching organizations fighting for environmental justice.\n\nI am very interested in getting involved and taking action. I am not sure where to start — can you point me in the right direction? Are there any upcoming events or meetings I can attend?\n\nI am also willing to share my personal story if that would be helpful to your advocacy work.\n\nThank you,\nKeisha Thompson\nSouth Atlanta`,reply:`Dear Keisha,\n\nThank you for reaching out, and we are so sorry to hear about the air quality challenges your neighborhood is facing. This is exactly the kind of issue that Communities United For Justice Fund exists to address.\n\nWe would love to connect you with our Environmental Justice efforts. Please join us at our upcoming Town Hall on April 20th where environmental justice will be a key topic of discussion. Details are on our Events page at cu4justice.org/events.\n\nYour personal story is powerful and we would welcome the opportunity to hear it. Please reply to this email and we will set up a time to speak.\n\nIn solidarity,\nRichard Rose\nCommunities United For Justice Fund`},
+  5:{name:'Dr. Marcus Jones',email:'mjones@grady.org',phone:'404-616-0000',time:'Apr 20, 2026',subject:'Partnership opportunity — Grady Hospital Community Health',tag:'Partnership',body:`Dear Mr. Rose,\n\nMy name is Dr. Marcus Jones and I represent the Community Health Outreach department at Grady Memorial Hospital. We are actively seeking community organization partners to help us address healthcare disparities in underserved Atlanta neighborhoods.\n\nI came across Communities United For Justice Fund and I believe there is a strong alignment between your healthcare justice mission and our community health initiatives. We would love to explore a potential partnership that could benefit the communities we both serve.\n\nWould you be available for a brief call this week to discuss possibilities?\n\nBest regards,\nDr. Marcus Jones\nGrady Memorial Hospital`,reply:`Dear Dr. Jones,\n\nThank you so much for reaching out — this is exactly the kind of partnership that can make a real difference for our communities.\n\nHealthcare justice is one of the five core pillars of our mission at Communities United For Justice Fund, and I would be very interested in exploring how Grady Hospital and our organization might work together to address healthcare disparities in Atlanta.\n\nI am available for a call this Thursday between 2pm and 5pm. Please let me know if that works for you and we can connect.\n\nBest regards,\nRichard Rose\nFounder & Executive Director\nCommunities United For Justice Fund`},
+  6:{name:'Thomas Green',email:'tgreen@hotmail.com',phone:'678-555-0231',time:'Apr 19, 2026',subject:'Can you speak at our community meeting in June?',tag:'Speaker',body:`Hello,\n\nWe are a small neighborhood association in East Point and we hold monthly community meetings for our residents. We would love to have someone from Communities United For Justice Fund come and speak about voting rights and civic engagement at our June meeting.\n\nWe typically have about 40-50 residents attend. The meeting would be on the first Tuesday of June at 7pm at the East Point Community Center.\n\nPlease let me know if this is something you might be interested in.\n\nThank you,\nThomas Green\nEast Point Neighborhood Association`,reply:`Dear Thomas,\n\nThank you for thinking of us! We would love to speak at your June neighborhood association meeting.\n\nFor formal speaker requests, please visit cu4justice.org and complete the Speaker Request form — this helps us coordinate scheduling and logistics. We typically confirm engagements within 3-5 business days.\n\nWe look forward to meeting your community!\n\nBest regards,\nRichard Rose\nCommunities United For Justice Fund`},
+  7:{name:'Lisa Washington',email:'lwashington@email.com',phone:'770-555-0155',time:'Apr 18, 2026',subject:'Thank you for the voter rights guide PDF — very helpful!',tag:'General',body:`Hello,\n\nI just wanted to reach out and say thank you for the voter rights guide you published. I shared it with my entire church congregation and several members are planning to use it to help register new voters before the primary.\n\nYour organization is doing amazing work and I appreciate everything you do for our community. Please keep it up!\n\nGod bless,\nLisa Washington`,reply:`Dear Lisa,\n\nThank you so much for this heartwarming message — it truly means the world to us!\n\nKnowing that the Voter Rights Guide is being shared with your church congregation and helping people register to vote is exactly why we do this work. Every new registered voter is a victory for our community.\n\nPlease encourage your congregation to sign up for our newsletter at cu4justice.org to stay informed about upcoming events and resources.\n\nThank you for being a champion for justice in your community!\n\nWith gratitude,\nRichard Rose\nCommunities United For Justice Fund`},
+  8:{name:'Robert Hill',email:'rhill@email.com',phone:'404-555-0109',time:'Apr 17, 2026',subject:'Monthly donation — payment method question',tag:'Donation',body:`Hello,\n\nI set up a monthly recurring donation last month through your website but I am not seeing the charge on my credit card statement. Can you help me confirm whether my recurring donation went through?\n\nI set it up for $60 per month. My email address on the donation was rhill@email.com.\n\nThank you,\nRobert Hill`,reply:`Dear Robert,\n\nThank you for your generous monthly support of Communities United For Justice Fund — we truly appreciate your commitment!\n\nOur donations are processed through Zeffy, and you should receive a confirmation email from them for each transaction. Please check your spam or junk folder in case the receipt was filtered.\n\nIf you are still unable to locate the confirmation, please contact Zeffy support directly at support@zeffy.com and reference your email address rhill@email.com — they will be able to look up your donation record.\n\nThank you again for your continued support!\n\nBest regards,\nRichard Rose\nCommunities United For Justice Fund`}
+};
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+function setFilter(btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function loadMsg(id){
+  const m=messages[id];
+  // Mark as read
+  const rows=document.querySelectorAll('.msg-row');
+  rows[id-1].classList.remove('unread');
+  rows[id-1].querySelector('div:first-child').className='read-indicator';
+  rows[id-1].classList.add('active');
+  rows.forEach((r,i)=>{if(i!==id-1)r.classList.remove('active');});
+
+  document.getElementById('panel-title').textContent=m.name;
+  document.getElementById('panel-sub').textContent=m.email+' · '+m.time;
+
+  document.getElementById('panel-body').innerHTML=`
+    <div class="msg-view-header">
+      <div class="mv-sender">${m.name}</div>
+      <div class="mv-meta">
+        <span>📧 ${m.email}</span>
+        <span>📞 ${m.phone}</span>
+        <span>🏷 ${m.tag}</span>
+        <span>🕐 ${m.time}</span>
+      </div>
+      <div class="mv-subject">${m.subject}</div>
+    </div>
+    <div class="msg-view-body">
+      <div class="msg-full-text">${m.body.replace(/\n/g,'<br>')}</div>
+    </div>
+    <div class="msg-view-actions">
+      <button class="act-btn reply" onclick="showToast('Opening reply...')">✉ Reply</button>
+      <button class="act-btn archive" onclick="showToast('Message archived')">Archive</button>
+      <button class="act-btn spam" onclick="showToast('Marked as spam')">🚫 Spam</button>
+      <button class="act-btn del" onclick="showToast('Message deleted')">🗑 Delete</button>
+    </div>
+    <div class="reply-section">
+      <label>Reply to ${m.name.split(' ')[0]}</label>
+      <textarea id="reply-txt">${m.reply}</textarea>
+      <div class="reply-footer">
+        <button class="cancel-btn" onclick="document.getElementById('reply-txt').value=''">Clear</button>
+        <button class="send-btn" onclick="sendReply('${m.name.split(' ')[0]}')">✉ Send Reply</button>
+      </div>
+    </div>
+  `;
+}
+
+function sendReply(name){
+  showToast('✓ Reply sent to '+name+'!');
+}
+</script>
+</body>
+</html>

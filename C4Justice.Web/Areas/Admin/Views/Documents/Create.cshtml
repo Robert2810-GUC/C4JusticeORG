@@ -1,42 +1,66 @@
 @model C4Justice.Web.Models.SiteDocument
-@{
-    ViewData["Title"] = "Upload Document";
-}
+@{ ViewData["Title"] = "Upload Document"; }
 
-<div class="admin-card" style="max-width:600px;">
-    <form method="post" enctype="multipart/form-data">
-        @Html.AntiForgeryToken()
-        <div class="mb-3">
-            <label class="admin-form-label">Document File * (PDF, DOC, DOCX, Images)</label>
-            <input type="file" name="docFile" class="admin-form-control" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp" required />
+<div style="max-width:620px">
+    <div class="page-header">
+        <div>
+            <div class="page-title">Upload Document</div>
+            <div class="page-sub">Upload a file and get a shareable public link</div>
         </div>
-        <div class="mb-3">
-            <label class="admin-form-label">Title *</label>
-            <input asp-for="Title" class="admin-form-control" placeholder="Document display title" required />
-        </div>
-        <div class="mb-3">
-            <label class="admin-form-label">Description</label>
-            <textarea asp-for="Description" class="admin-form-control" rows="3" placeholder="Brief description of the document"></textarea>
-        </div>
-        <div class="mb-4">
-            <label class="admin-form-label">Category</label>
-            <select asp-for="Category" class="admin-form-control">
-                <option value="General">General</option>
-                <option value="Policy">Policy</option>
-                <option value="Research">Research</option>
-                <option value="Political">Political</option>
-                <option value="Healthcare">Healthcare</option>
-                <option value="Economic">Economic</option>
-                <option value="Environmental">Environmental</option>
-            </select>
-        </div>
-        <div class="mb-4 d-flex align-items-center gap-2">
-            <input asp-for="IsPublished" type="checkbox" style="width:16px;height:16px;" checked />
-            <label class="admin-form-label mb-0">Publish immediately</label>
-        </div>
-        <div class="d-flex gap-3">
-            <button type="submit" class="btn-sm-admin btn-primary-admin" style="padding:10px 28px;"><i class="fas fa-upload me-1"></i>Upload</button>
-            <a href="/Admin/Documents" class="btn-sm-admin btn-ghost-admin" style="padding:10px 20px;">Cancel</a>
-        </div>
-    </form>
+        <a href="/Admin/Documents" style="background:#f0f4ff;color:#0d1f3c;border:1.5px solid #dde;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:700;font-family:Arial;text-decoration:none">← Back</a>
+    </div>
+
+    <div class="form-preview">
+        <form method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <div class="upload-zone" onclick="document.getElementById('doc-file').click()">
+                <div style="font-size:32px;margin-bottom:8px">📤</div>
+                <h4 style="font-size:14px;color:#0d1f3c;font-weight:700;margin-bottom:4px">Drag &amp; drop or click to select a file</h4>
+                <p>PDF, Word, Excel, PowerPoint, Images — up to 20MB</p>
+                <input type="file" id="doc-file" name="docFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg,.webp" style="display:none" onchange="updateFileName(this)" required />
+                <div id="file-name" style="font-size:12px;color:#0d1f3c;font-family:Arial;margin-top:8px;font-weight:700"></div>
+            </div>
+            <div class="form-group">
+                <label>Document Title *</label>
+                <input asp-for="Title" placeholder="e.g. 2026 Annual Report" required />
+                <span asp-validation-for="Title" style="color:#e74c3c;font-size:11px;font-family:Arial"></span>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select asp-for="Category">
+                    <option value="Annual Report">Annual Report</option>
+                    <option value="Press Release">Press Release</option>
+                    <option value="Policy">Policy</option>
+                    <option value="Research">Research</option>
+                    <option value="Voter Rights">Voter Rights</option>
+                    <option value="Environmental">Environmental</option>
+                    <option value="General">General</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description (optional)</label>
+                <textarea asp-for="Description" placeholder="Brief description of this document..."></textarea>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+                <input asp-for="IsPublished" type="checkbox" style="width:16px;height:16px;accent-color:#0d1f3c" checked />
+                <label style="font-size:12px;color:#555;font-family:Arial;font-weight:600;cursor:pointer">Publish immediately — make publicly accessible</label>
+            </div>
+            <div style="background:#e8f4fd;border:1px solid #b8d9f0;border-radius:4px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:#1a5276;font-family:Arial;line-height:1.5">
+                📢 After upload, your document will have a shareable public URL at <strong>/uploads/documents/filename</strong>
+            </div>
+            <div style="display:flex;gap:8px">
+                <a href="/Admin/Documents" class="submit-btn dark" style="flex:1;text-align:center;text-decoration:none;padding:9px;display:block">Cancel</a>
+                <button type="submit" class="submit-btn" style="flex:2">⬆ Upload &amp; Generate Link</button>
+            </div>
+        </form>
+    </div>
 </div>
+
+@section Scripts {
+<script>
+function updateFileName(input) {
+    var name = input.files[0] ? input.files[0].name : '';
+    document.getElementById('file-name').textContent = name ? '📎 ' + name : '';
+}
+</script>
+}

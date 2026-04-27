@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CU4J Admin — Speaker Requests</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Georgia',serif;background:#f0f2f7;color:#1a1a2e;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:240px;background:#0d1f3c;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100}
+.sidebar-logo{padding:20px 18px;border-bottom:1px solid rgba(232,200,74,.2);display:flex;align-items:center;gap:10px}
+.logo-box{width:42px;height:42px;border-radius:50%;border:2px solid #e8c84a;background:#0d1f3c;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#e8c84a;flex-shrink:0}
+.logo-text span{display:block;color:#fff;font-size:11px;font-weight:700}
+.logo-text small{color:#e8c84a;font-size:9px;letter-spacing:.8px;font-family:Arial,sans-serif}
+.sidebar-label{color:rgba(232,200,74,.5);font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:16px 18px 6px;font-family:Arial,sans-serif}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;border-left:3px solid transparent;transition:all .2s;font-family:Arial,sans-serif;font-size:13px;color:#a0b4cc}
+.nav-item:hover{background:rgba(232,200,74,.08);color:#fff;border-left-color:rgba(232,200,74,.3)}
+.nav-item.active{background:rgba(232,200,74,.12);color:#e8c84a;border-left-color:#e8c84a}
+.nav-icon{width:15px;height:15px;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon{opacity:1}
+.sidebar-footer{margin-top:auto;padding:16px 18px;border-top:1px solid rgba(255,255,255,.08)}
+.logout-btn{display:flex;align-items:center;gap:8px;color:#a0b4cc;font-size:12px;font-family:Arial,sans-serif;cursor:pointer}
+.logout-btn:hover{color:#e8c84a}
+
+/* MAIN */
+.main{margin-left:240px;flex:1}
+.topbar{background:#fff;padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e0e4ec;position:sticky;top:0;z-index:50}
+.breadcrumb{font-size:12px;color:#aaa;font-family:Arial,sans-serif}
+.breadcrumb span{color:#0d1f3c;font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.admin-badge{background:#0d1f3c;color:#e8c84a;font-size:11px;padding:4px 12px;border-radius:20px;font-family:Arial,sans-serif;font-weight:700}
+.view-site-btn{background:#e8c84a;color:#0d1f3c;font-size:12px;padding:6px 14px;border-radius:3px;border:none;cursor:pointer;font-weight:700;font-family:Arial,sans-serif}
+
+.content{padding:24px 28px}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.page-title{font-size:22px;color:#0d1f3c;font-weight:700}
+.page-sub{font-size:12px;color:#888;font-family:Arial,sans-serif;margin-top:3px}
+
+/* MINI STATS */
+.mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.mini-stat{background:#fff;border-radius:6px;padding:14px 16px;border-left:3px solid #e8c84a;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.mini-stat.blue{border-left-color:#0d1f3c}
+.mini-stat.green{border-left-color:#27ae60}
+.mini-stat.red{border-left-color:#e74c3c}
+.mini-stat .num{font-size:22px;font-weight:700;color:#0d1f3c}
+.mini-stat .lbl{font-size:10px;color:#999;font-family:Arial,sans-serif;letter-spacing:.8px;text-transform:uppercase;margin-top:2px}
+
+/* CAPTCHA NOTICE */
+.captcha-banner{background:#e8f4fd;border:1px solid #b8d9f0;border-radius:5px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:flex-start;gap:10px}
+.captcha-banner .icon{font-size:18px;flex-shrink:0}
+.captcha-banner p{font-size:12px;color:#1a5276;font-family:Arial,sans-serif;line-height:1.6}
+.captcha-banner strong{color:#154360}
+
+/* LAYOUT */
+.page-layout{display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.filter-btn{border:1.5px solid #dde;background:#fff;color:#555;padding:6px 16px;border-radius:20px;font-size:12px;font-family:Arial,sans-serif;cursor:pointer;font-weight:500}
+.filter-btn.active{border-color:#0d1f3c;background:#0d1f3c;color:#fff}
+.search-wrap{margin-left:auto;position:relative}
+.search-wrap input{border:1.5px solid #dde;border-radius:4px;padding:7px 12px 7px 32px;font-size:12px;font-family:Arial,sans-serif;color:#333;width:220px}
+.search-wrap input:focus{outline:none;border-color:#0d1f3c}
+.search-wrap .sicon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#aaa}
+
+/* REQUEST CARDS */
+.requests-list{display:flex;flex-direction:column;gap:12px}
+
+.req-card{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;transition:box-shadow .2s;cursor:pointer}
+.req-card:hover{box-shadow:0 3px 14px rgba(0,0,0,.1)}
+.req-card.new-card{border-left:4px solid #e8c84a}
+.req-card.confirmed-card{border-left:4px solid #27ae60}
+.req-card.declined-card{border-left:4px solid #e74c3c;opacity:.75}
+.req-card.pending-card{border-left:4px solid #3498db}
+
+.req-inner{padding:16px 18px}
+.req-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.req-left{flex:1}
+.req-name{font-size:14px;font-weight:700;color:#0d1f3c;margin-bottom:2px}
+.req-org{font-size:12px;color:#888;font-family:Arial,sans-serif;margin-bottom:6px}
+.req-meta{display:flex;gap:14px;flex-wrap:wrap}
+.req-meta span{font-size:11px;color:#aaa;font-family:Arial,sans-serif;display:flex;align-items:center;gap:4px}
+.req-meta strong{color:#555}
+
+.req-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.badge{display:inline-block;font-size:10px;padding:4px 10px;border-radius:3px;font-weight:700;font-family:Arial,sans-serif}
+.badge.new{background:#fff3cd;color:#856404}
+.badge.confirmed{background:#d4edda;color:#155724}
+.badge.declined{background:#f8d7da;color:#721c24}
+.badge.pending{background:#d1ecf1;color:#0c5460}
+.req-date{font-size:10px;color:#bbb;font-family:Arial,sans-serif}
+
+.req-message{font-size:12px;color:#666;font-family:Arial,sans-serif;line-height:1.6;padding:10px 12px;background:#f8faff;border-radius:4px;margin-bottom:10px;border-left:3px solid #dde}
+
+.req-actions{display:flex;gap:6px;flex-wrap:wrap}
+.act-btn{font-size:11px;padding:6px 12px;border-radius:3px;border:none;cursor:pointer;font-family:Arial,sans-serif;font-weight:600;display:flex;align-items:center;gap:4px}
+.act-btn.confirm{background:#d4edda;color:#155724}
+.act-btn.confirm:hover{background:#c3e6cb}
+.act-btn.decline{background:#ffeaea;color:#c0392b}
+.act-btn.decline:hover{background:#ffcdcd}
+.act-btn.reply{background:#e8f0ff;color:#0d1f3c}
+.act-btn.reply:hover{background:#d0e0ff}
+.act-btn.del{background:#f5f5f5;color:#888}
+.act-btn.del:hover{background:#ebebeb}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.page-info{font-size:12px;color:#888;font-family:Arial,sans-serif}
+.page-btns{display:flex;gap:4px}
+.page-btn{width:30px;height:30px;border:1.5px solid #dde;border-radius:4px;background:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#555;font-family:Arial,sans-serif}
+.page-btn.active{background:#0d1f3c;border-color:#0d1f3c;color:#e8c84a;font-weight:700}
+.page-btn:hover:not(.active){background:#f0f0f0}
+
+/* DETAIL / REPLY PANEL */
+.detail-panel{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;position:sticky;top:76px}
+.panel-header{background:#0d1f3c;padding:14px 18px}
+.panel-header h3{color:#e8c84a;font-size:14px}
+.panel-header p{color:rgba(255,255,255,.5);font-size:11px;font-family:Arial,sans-serif;margin-top:2px}
+.panel-body{padding:18px}
+
+.empty-state{text-align:center;padding:40px 20px;color:#bbb}
+.empty-state .es-icon{font-size:36px;margin-bottom:10px}
+.empty-state p{font-size:12px;font-family:Arial,sans-serif;line-height:1.6}
+
+.detail-section{margin-bottom:16px;padding-bottom:16px;border-bottom:.5px solid #f0f0f0}
+.detail-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.detail-label{font-size:10px;color:#aaa;font-family:Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.detail-value{font-size:13px;color:#0d1f3c;font-family:Arial,sans-serif;font-weight:600}
+.detail-sub{font-size:12px;color:#555;font-family:Arial,sans-serif;margin-top:2px}
+.detail-msg{font-size:12px;color:#555;font-family:Arial,sans-serif;line-height:1.7;padding:10px;background:#f8faff;border-radius:4px;border-left:3px solid #e8c84a;margin-top:4px}
+
+.reply-area{margin-top:14px}
+.reply-area label{display:block;font-size:11px;color:#555;font-family:Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.reply-area textarea{width:100%;border:1.5px solid #dde;border-radius:4px;padding:10px;font-size:12px;font-family:Arial,sans-serif;color:#333;height:110px;resize:vertical;line-height:1.6}
+.reply-area textarea:focus{outline:none;border-color:#0d1f3c}
+.reply-actions{display:flex;gap:8px;margin-top:10px}
+.send-btn{flex:1;background:#0d1f3c;color:#fff;border:none;padding:10px;font-size:12px;font-weight:700;border-radius:4px;cursor:pointer;font-family:Arial,sans-serif}
+.send-btn:hover{background:#1a3a6b}
+.confirm-send-btn{flex:1;background:#27ae60;color:#fff;border:none;padding:10px;font-size:12px;font-weight:700;border-radius:4px;cursor:pointer;font-family:Arial,sans-serif}
+.confirm-send-btn:hover{background:#219a52}
+.cancel-reply-btn{background:#f5f5f5;color:#555;border:1.5px solid #dde;padding:10px 12px;font-size:12px;border-radius:4px;cursor:pointer;font-family:Arial,sans-serif}
+
+/* STATUS TIMELINE */
+.timeline{margin-top:8px}
+.tl-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.tl-dot{width:8px;height:8px;border-radius:50%;background:#dde;flex-shrink:0;margin-top:4px}
+.tl-dot.done{background:#27ae60}
+.tl-dot.active{background:#e8c84a}
+.tl-text{font-size:11px;color:#888;font-family:Arial,sans-serif;line-height:1.5}
+.tl-text strong{color:#0d1f3c;font-size:12px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#0d1f3c;color:#fff;padding:12px 20px;border-radius:6px;font-size:13px;font-family:Arial,sans-serif;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.25);opacity:0;transform:translateY(10px);transition:all .3s;z-index:999}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast .dot{width:8px;height:8px;border-radius:50%;background:#e8c84a;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-box">CU4J</div>
+    <div class="logo-text">
+      <span>CU4J Admin</span>
+      <small>501(C)(3) PORTAL</small>
+    </div>
+  </div>
+
+  <div class="sidebar-label">Main</div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Events
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Documents
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    Opinion & Essays
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    Subscribers
+  </div>
+
+  <div class="sidebar-label">Manage</div>
+  <div class="nav-item active">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    Speaker Requests
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    Contact Messages
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    Photo Gallery
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+    Donations — Zeffy
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="logout-btn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="breadcrumb">Admin / <span>Speaker Requests</span></div>
+    <div class="topbar-right">
+      <span style="font-size:12px;color:#888;font-family:Arial,sans-serif">Richard Rose</span>
+      <div class="admin-badge">Admin</div>
+      <button class="view-site-btn">View Live Site ↗</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">Speaker Requests</div>
+        <div class="page-sub">Review incoming requests from organizations asking Richard Rose to speak at their events.</div>
+      </div>
+    </div>
+
+    <!-- MINI STATS -->
+    <div class="mini-stats">
+      <div class="mini-stat">
+        <div class="num">5</div>
+        <div class="lbl">New Requests</div>
+      </div>
+      <div class="mini-stat blue">
+        <div class="num">12</div>
+        <div class="lbl">Total This Year</div>
+      </div>
+      <div class="mini-stat green">
+        <div class="num">8</div>
+        <div class="lbl">Confirmed</div>
+      </div>
+      <div class="mini-stat red">
+        <div class="num">2</div>
+        <div class="lbl">Declined</div>
+      </div>
+    </div>
+
+    <!-- CAPTCHA NOTICE -->
+    <div class="captcha-banner">
+      <div class="icon">🛡️</div>
+      <p><strong>CAPTCHA Protection is ON:</strong> The public Speaker Request form is protected with human verification (CAPTCHA) to prevent spam submissions. All requests shown here have passed CAPTCHA verification and are from real people.</p>
+    </div>
+
+    <!-- LAYOUT -->
+    <div class="page-layout">
+
+      <!-- REQUESTS LIST -->
+      <div>
+        <div class="filter-bar">
+          <button class="filter-btn active" onclick="setFilter(this)">All Requests</button>
+          <button class="filter-btn" onclick="setFilter(this)">New</button>
+          <button class="filter-btn" onclick="setFilter(this)">Pending</button>
+          <button class="filter-btn" onclick="setFilter(this)">Confirmed</button>
+          <button class="filter-btn" onclick="setFilter(this)">Declined</button>
+          <div class="search-wrap">
+            <span class="sicon">🔍</span>
+            <input type="text" placeholder="Search name, org, event...">
+          </div>
+        </div>
+
+        <div class="requests-list">
+
+          <!-- REQUEST 1 — NEW -->
+          <div class="req-card new-card" onclick="loadDetail(1)">
+            <div class="req-inner">
+              <div class="req-top">
+                <div class="req-left">
+                  <div class="req-name">Dr. Angela Moore</div>
+                  <div class="req-org">Atlanta NAACP Chapter — Community Programs Director</div>
+                  <div class="req-meta">
+                    <span>📅 <strong>May 12, 2026</strong></span>
+                    <span>📍 <strong>Ebenezer Baptist Church, Atlanta</strong></span>
+                    <span>🎤 <strong>Town Hall</strong></span>
+                    <span>⏱ <strong>45 min keynote</strong></span>
+                  </div>
+                </div>
+                <div class="req-right">
+                  <span class="badge new">New</span>
+                  <div class="req-date">Received Apr 21, 2026</div>
+                </div>
+              </div>
+              <div class="req-message">"We would be honored to have Mr. Richard Rose speak at our upcoming community town hall on voter suppression in Georgia. Our audience will be approximately 200 community members from across the metro area..."</div>
+              <div class="req-actions">
+                <button class="act-btn confirm" onclick="event.stopPropagation();confirmReq(this)">✓ Confirm</button>
+                <button class="act-btn reply" onclick="event.stopPropagation();loadDetail(1)">✉ Reply</button>
+                <button class="act-btn decline" onclick="event.stopPropagation();declineReq(this)">✕ Decline</button>
+                <button class="act-btn del" onclick="event.stopPropagation();showToast('Request deleted')">🗑 Delete</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- REQUEST 2 — NEW -->
+          <div class="req-card new-card" onclick="loadDetail(2)">
+            <div class="req-inner">
+              <div class="req-top">
+                <div class="req-left">
+                  <div class="req-name">Rev. Michael Scott</div>
+                  <div class="req-org">First Baptist Church of East Point</div>
+                  <div class="req-meta">
+                    <span>📅 <strong>Jun 3, 2026</strong></span>
+                    <span>📍 <strong>First Baptist Church, East Point</strong></span>
+                    <span>🎤 <strong>Community Forum</strong></span>
+                    <span>⏱ <strong>30 min panel</strong></span>
+                  </div>
+                </div>
+                <div class="req-right">
+                  <span class="badge new">New</span>
+                  <div class="req-date">Received Apr 20, 2026</div>
+                </div>
+              </div>
+              <div class="req-message">"Our congregation is hosting a forum on economic justice and healthcare access in our community. We believe your perspective and leadership would be invaluable to our congregation of over 500 families..."</div>
+              <div class="req-actions">
+                <button class="act-btn confirm" onclick="event.stopPropagation();confirmReq(this)">✓ Confirm</button>
+                <button class="act-btn reply" onclick="event.stopPropagation();loadDetail(2)">✉ Reply</button>
+                <button class="act-btn decline" onclick="event.stopPropagation();declineReq(this)">✕ Decline</button>
+                <button class="act-btn del" onclick="event.stopPropagation();showToast('Request deleted')">🗑 Delete</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- REQUEST 3 — PENDING -->
+          <div class="req-card pending-card" onclick="loadDetail(3)">
+            <div class="req-inner">
+              <div class="req-top">
+                <div class="req-left">
+                  <div class="req-name">Prof. Karen Davis</div>
+                  <div class="req-org">Morehouse College — Political Science Department</div>
+                  <div class="req-meta">
+                    <span>📅 <strong>May 5, 2026</strong></span>
+                    <span>📍 <strong>Morehouse College Auditorium</strong></span>
+                    <span>🎤 <strong>Voter Registration Drive</strong></span>
+                    <span>⏱ <strong>60 min lecture</strong></span>
+                  </div>
+                </div>
+                <div class="req-right">
+                  <span class="badge pending">Pending Reply</span>
+                  <div class="req-date">Received Apr 15, 2026</div>
+                </div>
+              </div>
+              <div class="req-message">"We would like to invite you to speak to our students about civic engagement and the history of voter suppression in Georgia. This is part of our annual voter registration week program..."</div>
+              <div class="req-actions">
+                <button class="act-btn confirm" onclick="event.stopPropagation();confirmReq(this)">✓ Confirm</button>
+                <button class="act-btn reply" onclick="event.stopPropagation();loadDetail(3)">✉ Reply</button>
+                <button class="act-btn decline" onclick="event.stopPropagation();declineReq(this)">✕ Decline</button>
+                <button class="act-btn del" onclick="event.stopPropagation();showToast('Request deleted')">🗑 Delete</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- REQUEST 4 — CONFIRMED -->
+          <div class="req-card confirmed-card" onclick="loadDetail(4)">
+            <div class="req-inner">
+              <div class="req-top">
+                <div class="req-left">
+                  <div class="req-name">Ms. Sharon Williams</div>
+                  <div class="req-org">Georgia ACLU — Community Outreach</div>
+                  <div class="req-meta">
+                    <span>📅 <strong>Apr 28, 2026</strong></span>
+                    <span>📍 <strong>Decatur City Hall</strong></span>
+                    <span>🎤 <strong>Environmental Justice Panel</strong></span>
+                    <span>⏱ <strong>45 min panel</strong></span>
+                  </div>
+                </div>
+                <div class="req-right">
+                  <span class="badge confirmed">Confirmed ✓</span>
+                  <div class="req-date">Received Apr 8, 2026</div>
+                </div>
+              </div>
+              <div class="req-message">"We are hosting a panel on environmental justice and its impact on communities of color in DeKalb County. Your expertise on this issue would be a tremendous asset to our discussion..."</div>
+              <div class="req-actions">
+                <button class="act-btn reply" onclick="event.stopPropagation();loadDetail(4)">✉ Follow Up</button>
+                <button class="act-btn del" onclick="event.stopPropagation();showToast('Request archived')">Archive</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- REQUEST 5 — DECLINED -->
+          <div class="req-card declined-card" onclick="loadDetail(5)">
+            <div class="req-inner">
+              <div class="req-top">
+                <div class="req-left">
+                  <div class="req-name">Mr. James Foster</div>
+                  <div class="req-org">DeKalb County Democratic Committee</div>
+                  <div class="req-meta">
+                    <span>📅 <strong>Apr 5, 2026</strong></span>
+                    <span>📍 <strong>Stone Mountain Community Center</strong></span>
+                    <span>🎤 <strong>Political Rally</strong></span>
+                    <span>⏱ <strong>20 min speech</strong></span>
+                  </div>
+                </div>
+                <div class="req-right">
+                  <span class="badge declined">Declined</span>
+                  <div class="req-date">Received Mar 28, 2026</div>
+                </div>
+              </div>
+              <div class="req-message">"We would like to invite you to speak at our spring political rally in support of our candidates for the upcoming primary election..."</div>
+              <div class="req-actions">
+                <button class="act-btn del" onclick="event.stopPropagation();showToast('Request deleted')">🗑 Delete</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- PAGINATION -->
+        <div class="pagination">
+          <div class="page-info">Showing 5 of 12 requests</div>
+          <div class="page-btns">
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DETAIL / REPLY PANEL -->
+      <div class="detail-panel">
+        <div class="panel-header">
+          <h3 id="panel-title">Request Details</h3>
+          <p id="panel-sub">Click any request to view and reply</p>
+        </div>
+        <div class="panel-body" id="panel-body">
+          <div class="empty-state">
+            <div class="es-icon">🎤</div>
+            <p>Click on any request from the list to view full details and send a reply email directly from here.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="dot"></div>
+  <span id="toast-msg">Done!</span>
+</div>
+
+<script>
+const requests = {
+  1: {
+    name: 'Dr. Angela Moore',
+    org: 'Atlanta NAACP Chapter',
+    role: 'Community Programs Director',
+    email: 'a.moore@atlantanaacp.org',
+    phone: '404-555-0192',
+    event: 'Community Town Hall on Voter Suppression',
+    type: 'Town Hall',
+    date: 'May 12, 2026',
+    time: '6:00 PM – 8:00 PM',
+    location: 'Ebenezer Baptist Church, Atlanta',
+    audience: '~200 community members',
+    duration: '45 minute keynote',
+    message: 'We would be honored to have Mr. Richard Rose speak at our upcoming community town hall on voter suppression in Georgia. Our audience will be approximately 200 community members from across the metro area. This is a non-partisan event focused on educating residents about their voting rights and the current challenges facing our community.',
+    received: 'Apr 21, 2026',
+    status: 'new'
+  },
+  2: {
+    name: 'Rev. Michael Scott',
+    org: 'First Baptist Church of East Point',
+    role: 'Senior Pastor',
+    email: 'pastor.scott@firstbaptistep.org',
+    phone: '404-555-0167',
+    event: 'Economic Justice & Healthcare Community Forum',
+    type: 'Community Forum',
+    date: 'Jun 3, 2026',
+    time: '7:00 PM – 9:00 PM',
+    location: 'First Baptist Church, East Point',
+    audience: '~500 congregation members',
+    duration: '30 minute panel',
+    message: 'Our congregation is hosting a forum on economic justice and healthcare access in our community. We believe your perspective and leadership would be invaluable to our congregation of over 500 families. The event will also feature local elected officials and healthcare professionals.',
+    received: 'Apr 20, 2026',
+    status: 'new'
+  },
+  3: {
+    name: 'Prof. Karen Davis',
+    org: 'Morehouse College',
+    role: 'Political Science Department',
+    email: 'kdavis@morehouse.edu',
+    phone: '404-555-0201',
+    event: 'Voter Registration Week — Civic Engagement Lecture',
+    type: 'Voter Registration Drive',
+    date: 'May 5, 2026',
+    time: '2:00 PM – 4:00 PM',
+    location: 'Morehouse College Auditorium',
+    audience: '~350 students & faculty',
+    duration: '60 minute lecture',
+    message: 'We would like to invite you to speak to our students about civic engagement and the history of voter suppression in Georgia. This is part of our annual voter registration week program, and we are expecting approximately 350 students and faculty members to attend.',
+    received: 'Apr 15, 2026',
+    status: 'pending'
+  },
+  4: {
+    name: 'Ms. Sharon Williams',
+    org: 'Georgia ACLU',
+    role: 'Community Outreach Director',
+    email: 's.williams@gaaclu.org',
+    phone: '404-555-0178',
+    event: 'Environmental Justice Panel — DeKalb County',
+    type: 'Panel Discussion',
+    date: 'Apr 28, 2026',
+    time: '5:30 PM – 7:30 PM',
+    location: 'Decatur City Hall',
+    audience: '~120 attendees',
+    duration: '45 minute panel',
+    message: 'We are hosting a panel on environmental justice and its impact on communities of color in DeKalb County. Your expertise on this issue would be a tremendous asset to our discussion. This event has been confirmed and is being co-hosted with several environmental justice organizations.',
+    received: 'Apr 8, 2026',
+    status: 'confirmed'
+  },
+  5: {
+    name: 'Mr. James Foster',
+    org: 'DeKalb County Democratic Committee',
+    role: 'Events Coordinator',
+    email: 'jfoster@dekalbdems.org',
+    phone: '678-555-0144',
+    event: 'Spring Political Rally',
+    type: 'Political Rally',
+    date: 'Apr 5, 2026',
+    time: '4:00 PM – 6:00 PM',
+    location: 'Stone Mountain Community Center',
+    audience: '~300 attendees',
+    duration: '20 minute speech',
+    message: 'We would like to invite you to speak at our spring political rally in support of our candidates for the upcoming primary election. We believe your endorsement would be very meaningful to our supporters.',
+    received: 'Mar 28, 2026',
+    status: 'declined'
+  }
+};
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+function setFilter(btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function confirmReq(btn){
+  const card=btn.closest('.req-card');
+  card.className='req-card confirmed-card';
+  card.querySelector('.badge').className='badge confirmed';
+  card.querySelector('.badge').textContent='Confirmed ✓';
+  showToast('✓ Request confirmed — reply email sent!');
+}
+
+function declineReq(btn){
+  const card=btn.closest('.req-card');
+  card.className='req-card declined-card';
+  card.querySelector('.badge').className='badge declined';
+  card.querySelector('.badge').textContent='Declined';
+  showToast('Request declined');
+}
+
+function loadDetail(id){
+  const r=requests[id];
+  document.getElementById('panel-title').textContent=r.name;
+  document.getElementById('panel-sub').textContent=r.org;
+
+  const statusColor = r.status==='confirmed' ? '#27ae60' : r.status==='declined' ? '#e74c3c' : r.status==='new' ? '#e8c84a' : '#3498db';
+  const statusLabel = r.status==='confirmed' ? 'Confirmed ✓' : r.status==='declined' ? 'Declined' : r.status==='new' ? 'New Request' : 'Pending Reply';
+
+  const replyTemplate = r.status==='confirmed'
+    ? `Dear ${r.name.split(' ')[1]},\n\nThank you for confirming our speaking engagement on ${r.date}. I look forward to joining your event at ${r.location}.\n\nBest regards,\nRichard Rose\nCommunities United For Justice Fund`
+    : `Dear ${r.name.split(' ')[1]},\n\nThank you for your invitation to speak at your ${r.type} on ${r.date}. I would be honored to participate and share our work at Communities United For Justice Fund.\n\nPlease feel free to contact me to discuss the details further.\n\nBest regards,\nRichard Rose\nCommunities United For Justice Fund`;
+
+  document.getElementById('panel-body').innerHTML = `
+    <div class="detail-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="detail-label">Request Status</div>
+        <span style="font-size:11px;font-weight:700;font-family:Arial,sans-serif;color:${statusColor};background:${statusColor}18;padding:4px 10px;border-radius:3px">${statusLabel}</span>
+      </div>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot done"></div><div class="tl-text"><strong>Request Received</strong><br>${r.received}</div></div>
+        <div class="tl-item"><div class="tl-dot ${r.status!=='new'?'done':'active'}"></div><div class="tl-text"><strong>Under Review</strong><br>${r.status==='new'?'Currently reviewing':'Reviewed'}</div></div>
+        <div class="tl-item"><div class="tl-dot ${r.status==='confirmed'||r.status==='declined'?'done':''}"></div><div class="tl-text"><strong>Response Sent</strong><br>${r.status==='confirmed'?'Confirmed ✓':r.status==='declined'?'Declined':'Awaiting response'}</div></div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-label">Requester</div>
+      <div class="detail-value">${r.name}</div>
+      <div class="detail-sub">${r.role} — ${r.org}</div>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:11px;font-family:Arial,sans-serif;color:#555">📧 ${r.email}</div>
+        <div style="font-size:11px;font-family:Arial,sans-serif;color:#555">📞 ${r.phone}</div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-label">Event Details</div>
+      <div class="detail-value">${r.event}</div>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:5px">
+        <div style="font-size:11px;font-family:Arial,sans-serif;color:#555">📅 ${r.date} · ${r.time}</div>
+        <div style="font-size:11px;font-family:Arial,sans-serif;color:#555">📍 ${r.location}</div>
+        <div style="font-size:11px;font-family:Arial,sans-serif;color:#555">👥 Audience: ${r.audience}</div>
+        <div style="font-size:11px;font-family:Arial,sans-serif;color:#555">🎤 Format: ${r.type} · ${r.duration}</div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-label">Their Message</div>
+      <div class="detail-msg">"${r.message}"</div>
+    </div>
+
+    <div class="reply-area">
+      <label>Reply Email to ${r.name.split(' ')[0]}</label>
+      <textarea id="reply-text">${replyTemplate}</textarea>
+      <div class="reply-actions">
+        <button class="cancel-reply-btn" onclick="clearReply()">Clear</button>
+        <button class="send-btn" onclick="sendReply()">✉ Send Reply</button>
+        ${r.status==='new'||r.status==='pending' ? `<button class="confirm-send-btn" onclick="sendAndConfirm()">✓ Confirm & Send</button>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function clearReply(){
+  const t=document.getElementById('reply-text');
+  if(t) t.value='';
+}
+
+function sendReply(){
+  showToast('✓ Reply sent to requester!');
+}
+
+function sendAndConfirm(){
+  showToast('✓ Confirmed & reply sent!');
+}
+</script>
+</body>
+</html>

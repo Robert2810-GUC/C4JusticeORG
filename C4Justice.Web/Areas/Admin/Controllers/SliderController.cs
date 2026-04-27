@@ -11,12 +11,12 @@ namespace C4Justice.Web.Areas.Admin.Controllers
     public class SliderController : Controller
     {
         private readonly AppDbContext _db;
-        private readonly ICloudinaryService _cloudinary;
+        private readonly IStorageService _storage;
 
-        public SliderController(AppDbContext db, ICloudinaryService cloudinary)
+        public SliderController(AppDbContext db, IStorageService storage)
         {
             _db = db;
-            _cloudinary = cloudinary;
+            _storage = storage;
         }
 
         public IActionResult Index()
@@ -30,7 +30,7 @@ namespace C4Justice.Web.Areas.Admin.Controllers
         {
             if (imageFile != null && imageFile.Length > 0)
             {
-                var url = await _cloudinary.UploadImageAsync(imageFile, "c4justice/slider");
+                var url = await _storage.UploadImageAsync(imageFile, "c4justice/slider");
                 if (url != null) model.ImageUrl = url;
             }
 
@@ -61,10 +61,12 @@ namespace C4Justice.Web.Areas.Admin.Controllers
             var item = await _db.SliderImages.FindAsync(id);
             if (item == null) return NotFound();
 
-            // Replace image only if a new file was uploaded
             if (imageFile != null && imageFile.Length > 0)
             {
-                var url = await _cloudinary.UploadImageAsync(imageFile, "c4justice/slider");
+                if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                    await _storage.DeleteAsync(item.ImageUrl);
+
+                var url = await _storage.UploadImageAsync(imageFile, "c4justice/slider");
                 if (url != null) item.ImageUrl = url;
             }
 
@@ -92,9 +94,8 @@ namespace C4Justice.Web.Areas.Admin.Controllers
             var item = await _db.SliderImages.FindAsync(id);
             if (item != null)
             {
-                // Delete from Cloudinary too
                 if (!string.IsNullOrWhiteSpace(item.ImageUrl))
-                    await _cloudinary.DeleteAsync(item.ImageUrl);
+                    await _storage.DeleteAsync(item.ImageUrl);
 
                 _db.SliderImages.Remove(item);
                 await _db.SaveChangesAsync();

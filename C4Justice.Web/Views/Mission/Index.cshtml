@@ -1,3 +1,5 @@
+@inject C4Justice.Web.Data.AppDbContext _settingsDb
+@{ var _donateUrl = _settingsDb.SiteSettings.FirstOrDefault(s => s.Key == "zeffy_form_url")?.Value; if (string.IsNullOrWhiteSpace(_donateUrl)) _donateUrl = "@_donateUrl"; }
 @{
     ViewData["Title"] = "Our Mission";
     ViewData["ActivePage"] = "Mission";
@@ -193,7 +195,7 @@
     <div class="sb-card">
         <h4>&#10084; Donate Today</h4>
         <p>Support our fight for justice. Your 501(c)(3) donation is fully tax deductible.</p>
-        <a href="https://link.clover.com/urlshortener/TscDTq" target="_blank" rel="noopener" class="sb-btn gold">Donate Now</a>
+        <a href="@_donateUrl" target="_blank" rel="noopener" class="sb-btn gold">Donate Now</a>
     </div>
     <div class="sb-card">
         <h4>Get Involved</h4>

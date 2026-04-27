@@ -1,0 +1,171 @@
+@using C4Justice.Web.Models
+@model List<ContactSubmission>
+@{ ViewData["Title"] = "Contact Messages"; }
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div>
+        <div class="page-title">Contact Messages</div>
+        <div class="page-sub">Manage incoming contact form submissions</div>
+    </div>
+    <form asp-action="MarkAllRead" method="post">
+        @Html.AntiForgeryToken()
+        <button type="submit" style="background:#f0f4ff;color:#0d1f3c;border:1.5px solid #dde;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer">✓ Mark All as Read</button>
+    </form>
+</div>
+
+<!-- MINI STATS -->
+<div class="mini-stats">
+    <div class="mini-stat">
+        <div class="num">@Model.Count(s => !s.IsRead)</div>
+        <div class="lbl">Unread</div>
+    </div>
+    <div class="mini-stat blue">
+        <div class="num">@Model.Count</div>
+        <div class="lbl">Total Messages</div>
+    </div>
+    <div class="mini-stat green">
+        <div class="num">@Model.Count(s => s.IsRead)</div>
+        <div class="lbl">Read / Replied</div>
+    </div>
+    <div class="mini-stat red">
+        <div class="num">@Model.Count(s => s.SubmittedAt >= DateTime.UtcNow.AddDays(-30))</div>
+        <div class="lbl">This Month</div>
+    </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-filter="all" onclick="filterMessages('all',this)">All <span style="background:rgba(13,31,60,.1);color:#0d1f3c;font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700;margin-left:4px">@Model.Count</span></button>
+    <button class="filter-btn" data-filter="unread" onclick="filterMessages('unread',this)">Unread <span style="background:rgba(13,31,60,.1);color:#0d1f3c;font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700;margin-left:4px">@Model.Count(s => !s.IsRead)</span></button>
+    <button class="filter-btn" data-filter="read" onclick="filterMessages('read',this)">Read</button>
+</div>
+
+@if (!Model.Any())
+{
+    <div style="text-align:center;padding:60px 20px;color:#aaa;font-family:Arial">
+        <div style="font-size:48px;margin-bottom:12px">✉</div>
+        <p>No contact submissions yet.</p>
+    </div>
+}
+else
+{
+    <div style="display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start">
+        <!-- MESSAGE LIST -->
+        <div>
+            <div style="background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden">
+                @foreach (var s in Model.OrderByDescending(m => m.SubmittedAt))
+                {
+                    <div class="msg-row @(!s.IsRead ? "unread" : "")" data-status="@(s.IsRead ? "read" : "unread")" onclick="loadMsg(@s.Id)" id="msg-row-@s.Id">
+                        <div style="width:8px;height:8px;border-radius:50%;background:@(!s.IsRead ? "#e8c84a" : "transparent");flex-shrink:0;margin-top:6px"></div>
+                        <div style="flex:1;min-width:0">
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+                                <span style="font-size:13px;color:#0d1f3c;font-family:Arial;@(!s.IsRead ? "font-weight:700" : "")">@s.Name</span>
+                                <span style="font-size:10px;color:#bbb;font-family:Arial">@s.SubmittedAt.ToString("MMM d, h:mm tt")</span>
+                            </div>
+                            <div style="font-size:12px;color:#555;font-family:Arial;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">@(s.Subject ?? "General Inquiry")</div>
+                            <div style="font-size:11px;color:#aaa;font-family:Arial;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">@s.Message</div>
+                            <div style="margin-top:4px">
+                                <span style="font-size:9px;padding:2px 6px;border-radius:3px;background:#f3e5f5;color:#4a148c;font-family:Arial;font-weight:700">General</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- DETAIL PANEL -->
+        <div id="detail-panel" style="background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);position:sticky;top:76px">
+            <div id="detail-empty" style="padding:40px 20px;text-align:center;color:#aaa;font-family:Arial">
+                <div style="font-size:32px;margin-bottom:8px">✉</div>
+                <p style="font-size:13px">Select a message to view details</p>
+            </div>
+            <div id="detail-content" style="display:none">
+                <div style="background:#0d1f3c;padding:14px 18px;border-radius:6px 6px 0 0">
+                    <div id="d-name" style="color:#e8c84a;font-size:14px;font-weight:700;font-family:Arial"></div>
+                    <div id="d-email" style="color:rgba(255,255,255,.7);font-size:11px;font-family:Arial;margin-top:2px"></div>
+                </div>
+                <div style="padding:18px">
+                    <div style="margin-bottom:12px">
+                        <div style="font-size:10px;color:#aaa;font-family:Arial;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Subject</div>
+                        <div id="d-subject" style="font-size:13px;font-weight:700;color:#0d1f3c"></div>
+                    </div>
+                    <div style="margin-bottom:12px">
+                        <div style="font-size:10px;color:#aaa;font-family:Arial;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Phone</div>
+                        <div id="d-phone" style="font-size:13px;color:#333;font-family:Arial"></div>
+                    </div>
+                    <div style="margin-bottom:16px">
+                        <div style="font-size:10px;color:#aaa;font-family:Arial;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Message</div>
+                        <div id="d-message" style="font-size:13px;color:#333;font-family:Arial;line-height:1.7;background:#f8faff;padding:12px;border-radius:4px;border-left:3px solid #e8c84a"></div>
+                    </div>
+                    <div id="d-actions" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Styles {
+<style>
+.msg-row{padding:14px 18px;border-bottom:.5px solid #f0f0f0;cursor:pointer;transition:background .15s;display:flex;align-items:flex-start;gap:12px}
+.msg-row:last-child{border-bottom:none}
+.msg-row:hover{background:#f8faff}
+.msg-row.active{background:#f0f4ff;border-left:3px solid #0d1f3c}
+.msg-row.unread{background:#fffef8}
+</style>
+}
+
+@section Scripts {
+<script>
+var msgs = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(s => new {
+    id      = s.Id,
+    name    = s.Name,
+    email   = s.Email,
+    phone   = s.Phone,
+    subject = s.Subject,
+    message = s.Message,
+    isRead  = s.IsRead,
+    date    = s.SubmittedAt.ToString("MMM d, yyyy h:mm tt")
+})));
+
+function loadMsg(id) {
+    var m = msgs.find(function(x){ return x.id === id; });
+    if (!m) return;
+
+    document.querySelectorAll('.msg-row').forEach(function(r){ r.classList.remove('active'); });
+    document.getElementById('msg-row-'+id).classList.add('active');
+
+    document.getElementById('detail-empty').style.display = 'none';
+    document.getElementById('detail-content').style.display = 'block';
+    document.getElementById('d-name').textContent = m.name;
+    document.getElementById('d-email').textContent = m.email;
+    document.getElementById('d-subject').textContent = m.subject || 'General Inquiry';
+    document.getElementById('d-phone').textContent = m.phone || '—';
+    document.getElementById('d-message').textContent = m.message;
+
+    var actions = document.getElementById('d-actions');
+    actions.innerHTML = '';
+    if (!m.isRead) {
+        actions.innerHTML += '<form method="post" action="/Admin/Submissions/MarkRead" style="display:inline"><input type="hidden" name="id" value="'+id+'"><input type="hidden" name="__RequestVerificationToken" value="'+getToken()+'"><button type="submit" class="action-btn mark">✓ Mark Read</button></form>';
+    }
+    actions.innerHTML += '<a href="mailto:'+m.email+'" class="action-btn edit">Reply by Email</a>';
+    actions.innerHTML += '<form method="post" action="/Admin/Submissions/Delete" onsubmit="return confirm(\'Delete this message?\')" style="display:inline"><input type="hidden" name="id" value="'+id+'"><input type="hidden" name="__RequestVerificationToken" value="'+getToken()+'"><button type="submit" class="action-btn del">Delete</button></form>';
+}
+
+function getToken() {
+    var el = document.querySelector('input[name="__RequestVerificationToken"]');
+    return el ? el.value : '';
+}
+
+function filterMessages(type, btn) {
+    document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('.msg-row').forEach(function(row) {
+        var status = row.dataset.status;
+        if (type === 'all') row.style.display = '';
+        else if (type === 'unread') row.style.display = (status === 'unread') ? '' : 'none';
+        else if (type === 'read') row.style.display = (status === 'read') ? '' : 'none';
+    });
+}
+</script>
+}

@@ -1,175 +1,111 @@
 @model C4Justice.Web.Models.Article
-@{
-    ViewData["Title"] = "New Article";
-}
+@{ ViewData["Title"] = "New Article"; }
 
 @section Styles {
 <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
 <style>
-/* Dark Quill theme override */
-.ql-toolbar.ql-snow { background:#1c2a3a; border-color:rgba(255,255,255,0.1); border-radius:6px 6px 0 0; }
-.ql-container.ql-snow { background:#0d1b2e; border-color:rgba(255,255,255,0.1); border-radius:0 0 6px 6px; }
-.ql-editor { color:#e6edf3; font-size:14px; min-height:320px; }
-.ql-editor.ql-blank::before { color:rgba(255,255,255,0.3); font-style:normal; }
-.ql-snow .ql-stroke { stroke:#8b949e; }
-.ql-snow .ql-fill { fill:#8b949e; }
-.ql-snow .ql-picker { color:#8b949e; }
-.ql-snow .ql-picker-options { background:#1c2a3a; border-color:rgba(255,255,255,0.1); }
-.ql-snow.ql-toolbar button:hover .ql-stroke,
-.ql-snow .ql-toolbar button:hover .ql-stroke,
-.ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke:#c8a951; }
-.ql-snow.ql-toolbar button:hover .ql-fill,
-.ql-snow .ql-toolbar button:hover .ql-fill,
-.ql-snow.ql-toolbar button.ql-active .ql-fill { fill:#c8a951; }
+.ql-toolbar.ql-snow{background:#f8faff;border-color:#dde;border-radius:4px 4px 0 0;font-family:Arial,sans-serif}
+.ql-container.ql-snow{background:#fff;border-color:#dde;border-radius:0 0 4px 4px}
+.ql-editor{font-family:Georgia,serif;font-size:14px;min-height:280px;color:#333;line-height:1.7}
+.ql-editor.ql-blank::before{color:#bbb;font-style:normal}
 </style>
 }
 
-<div class="row g-4">
-<div class="col-lg-8">
-<div class="admin-card">
-    <form id="articleForm" method="post" enctype="multipart/form-data">
-        @Html.AntiForgeryToken()
-        <div class="mb-3">
-            <label class="admin-form-label">Title *</label>
-            <input asp-for="Title" class="admin-form-control" placeholder="Article title" required />
-        </div>
-        <div class="mb-3">
-            <label class="admin-form-label">Excerpt (short summary)</label>
-            <textarea asp-for="Excerpt" class="admin-form-control" rows="2" placeholder="One or two sentence summary shown in listings"></textarea>
-        </div>
-        <div class="mb-3">
-            <label class="admin-form-label">Content *</label>
-            <!-- Quill editor -->
-            <div id="quillEditor"></div>
-            <!-- Hidden textarea synced on submit -->
-            <textarea id="richContent" name="Content" style="display:none;" required></textarea>
-        </div>
-        <div style="margin-top:20px;display:flex;gap:10px;">
-            <button type="submit" class="btn-sm-admin btn-primary-admin" style="padding:10px 28px;">
-                <i class="fas fa-save me-1"></i> Save Article
-            </button>
-            <a href="/Admin/Articles" class="btn-sm-admin btn-ghost-admin" style="padding:10px 20px;">Cancel</a>
-        </div>
-    </form>
-</div>
-</div>
-
-<div class="col-lg-4">
-<div class="admin-card">
-    <h6 style="color:#e6edf3;font-weight:700;margin-bottom:16px;">Publish Settings</h6>
-    <div class="mb-3">
-        <label class="admin-form-label">Category</label>
-        <select asp-for="Category" class="admin-form-control" form="articleForm">
-            <option value="General">General</option>
-            <option value="Political">Political</option>
-            <option value="Racial">Racial</option>
-            <option value="Economic">Economic</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Environmental">Environmental</option>
-        </select>
+<div class="page-header">
+    <div>
+        <div class="page-title">New Article</div>
+        <div class="page-sub">Create and publish a new article</div>
     </div>
+    <a href="/Admin/Articles" style="background:#f0f4ff;color:#0d1f3c;border:1.5px solid #dde;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:700;font-family:Arial;text-decoration:none">← Back</a>
+</div>
 
-    <!-- Featured Image Upload -->
-    <div class="mb-3">
-        <label class="admin-form-label">Featured Image</label>
-        <div id="imgDropZone" style="border:2px dashed rgba(255,255,255,0.15);border-radius:6px;padding:16px;text-align:center;cursor:pointer;transition:border-color 0.2s;background:rgba(255,255,255,0.03);">
-            <div id="imgPlaceholder">
-                <i class="fas fa-cloud-upload-alt" style="font-size:1.8rem;color:#8b949e;margin-bottom:8px;display:block;"></i>
-                <span style="font-size:12px;color:#8b949e;">Click or drag &amp; drop an image</span><br>
-                <span style="font-size:11px;color:#6e7681;">JPG, PNG, GIF, WebP — max 5 MB</span>
+<div style="display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start">
+    <div class="form-preview">
+        <form id="articleForm" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label>Title *</label>
+                <input asp-for="Title" placeholder="Article title" required />
             </div>
-            <img id="imgPreview" src="" alt="Preview" style="display:none;max-width:100%;max-height:180px;border-radius:4px;object-fit:cover;" />
-        </div>
-        <input type="file" id="FeaturedImage" name="FeaturedImage" accept="image/*" style="display:none;" form="articleForm" />
-        <div style="margin-top:8px;display:flex;gap:8px;">
-            <button type="button" id="btnChangImg" class="btn-sm-admin btn-ghost-admin" style="font-size:11px;padding:5px 12px;display:none;">Change Image</button>
-            <button type="button" id="btnRemoveImg" class="btn-sm-admin" style="font-size:11px;padding:5px 12px;background:rgba(220,38,38,0.15);color:#fca5a5;border:1px solid rgba(220,38,38,0.3);border-radius:4px;display:none;">Remove</button>
-        </div>
+            <div class="form-group">
+                <label>Excerpt (short summary)</label>
+                <textarea asp-for="Excerpt" placeholder="One or two sentence summary shown in listings..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Content *</label>
+                <div id="quillEditor"></div>
+                <textarea id="richContent" name="Content" style="display:none" required></textarea>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:8px">
+                <a href="/Admin/Articles" class="submit-btn dark" style="flex:1;text-align:center;text-decoration:none;padding:9px;display:block">Cancel</a>
+                <button type="submit" class="submit-btn" style="flex:2">Save Article</button>
+            </div>
+        </form>
     </div>
 
-    <div class="d-flex align-items-center gap-2 mt-3">
-        <input asp-for="IsPublished" type="checkbox" form="articleForm" style="width:16px;height:16px;" />
-        <label class="admin-form-label mb-0">Publish immediately</label>
+    <div style="position:sticky;top:76px">
+        <div class="section-title">Publish Settings</div>
+        <div class="form-preview">
+            <div class="form-group">
+                <label>Category</label>
+                <select asp-for="Category" form="articleForm">
+                    <option value="General">General</option>
+                    <option value="Political">Political</option>
+                    <option value="Racial">Racial</option>
+                    <option value="Economic">Economic</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Environmental">Environmental</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Featured Image</label>
+                <div id="imgDropZone" style="border:2px dashed #c0cce0;border-radius:4px;padding:16px;text-align:center;cursor:pointer;background:#f8faff;transition:border-color .2s" onclick="document.getElementById('FeaturedImage').click()">
+                    <div id="imgPlaceholder" style="font-size:11px;color:#aaa;font-family:Arial">
+                        <div style="font-size:24px;margin-bottom:6px">📷</div>
+                        Click to upload image
+                    </div>
+                    <img id="imgPreview" src="" style="display:none;max-width:100%;max-height:140px;border-radius:4px;object-fit:cover" />
+                </div>
+                <input type="file" id="FeaturedImage" name="FeaturedImage" accept="image/*" style="display:none" form="articleForm" />
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:0">
+                <input asp-for="IsPublished" type="checkbox" style="width:16px;height:16px;accent-color:#0d1f3c" form="articleForm" />
+                <label style="font-size:12px;color:#555;font-family:Arial;font-weight:600;cursor:pointer">Publish immediately</label>
+            </div>
+        </div>
     </div>
-</div>
-</div>
 </div>
 
 @section Scripts {
 <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <script>
-// ── Quill Editor ─────────────────────────────────────────────
 const quill = new Quill('#quillEditor', {
     theme: 'snow',
     placeholder: 'Write article content here...',
-    modules: {
-        toolbar: [
-            [{ header: [1, 2, 3, false] }],
-            ['bold', 'italic', 'underline'],
-            [{ list: 'ordered' }, { list: 'bullet' }],
-            ['blockquote', 'code-block'],
-            ['link'],
-            ['clean']
-        ]
-    }
+    modules: { toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['blockquote', 'link'], ['clean']
+    ]}
 });
 
-// Sync Quill → hidden textarea on submit
-document.getElementById('articleForm').addEventListener('submit', function (e) {
-    const content = quill.root.innerHTML;
-    if (!content || content === '<p><br></p>') {
-        e.preventDefault();
-        quill.root.focus();
-        return;
-    }
+document.getElementById('articleForm').addEventListener('submit', function(e) {
+    var content = quill.root.innerHTML;
+    if (!content || content === '<p><br></p>') { e.preventDefault(); return; }
     document.getElementById('richContent').value = content;
 });
 
-// ── Image Upload UI ──────────────────────────────────────────
-const dropZone       = document.getElementById('imgDropZone');
-const fileInput      = document.getElementById('FeaturedImage');
-const imgPreview     = document.getElementById('imgPreview');
-const imgPlaceholder = document.getElementById('imgPlaceholder');
-const btnChange      = document.getElementById('btnChangImg');
-const btnRemove      = document.getElementById('btnRemoveImg');
-
-function showPreview(file) {
-    const reader = new FileReader();
-    reader.onload = e => {
-        imgPreview.src = e.target.result;
-        imgPreview.style.display = 'block';
-        imgPlaceholder.style.display = 'none';
-        btnChange.style.display = 'inline-block';
-        btnRemove.style.display = 'inline-block';
-        dropZone.style.borderColor = 'rgba(200,169,81,0.5)';
-        dropZone.style.padding = '0';
-    };
-    reader.readAsDataURL(file);
-}
-
-dropZone.addEventListener('click', () => fileInput.click());
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.borderColor = 'rgba(200,169,81,0.7)'; });
-dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = 'rgba(255,255,255,0.15)'; });
-dropZone.addEventListener('drop', e => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-        const dt = new DataTransfer(); dt.items.add(file);
-        fileInput.files = dt.files;
-        showPreview(file);
+document.getElementById('FeaturedImage').addEventListener('change', function() {
+    if (this.files.length) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('imgPreview').src = e.target.result;
+            document.getElementById('imgPreview').style.display = 'block';
+            document.getElementById('imgPlaceholder').style.display = 'none';
+        };
+        reader.readAsDataURL(this.files[0]);
     }
-    dropZone.style.borderColor = 'rgba(255,255,255,0.15)';
-});
-fileInput.addEventListener('change', () => { if (fileInput.files.length) showPreview(fileInput.files[0]); });
-btnChange.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
-btnRemove.addEventListener('click', e => {
-    e.stopPropagation();
-    fileInput.value = '';
-    imgPreview.src = ''; imgPreview.style.display = 'none';
-    imgPlaceholder.style.display = 'block';
-    btnChange.style.display = 'none'; btnRemove.style.display = 'none';
-    dropZone.style.borderColor = 'rgba(255,255,255,0.15)';
-    dropZone.style.padding = '16px';
 });
 </script>
 }

@@ -12,16 +12,16 @@ namespace C4Justice.Web.Controllers
         {
             try
             {
-                var query = _db.Articles.Where(a => a.IsPublished);
+                var query = _db.OpinionPosts.Where(o => o.IsPublished);
                 if (!string.IsNullOrWhiteSpace(category))
-                    query = query.Where(a => a.Category == category);
+                    query = query.Where(o => o.Category == category);
 
-                ViewBag.Articles = query.OrderByDescending(a => a.PublishedAt).ToList();
+                ViewBag.Posts = query.OrderByDescending(o => o.PublishedAt).ToList();
                 ViewBag.ActiveCategory = category;
             }
             catch
             {
-                ViewBag.Articles = new List<object>();
+                ViewBag.Posts = new List<object>();
             }
             return View();
         }
@@ -30,9 +30,9 @@ namespace C4Justice.Web.Controllers
         {
             try
             {
-                var article = _db.Articles.FirstOrDefault(a => a.Slug == slug && a.IsPublished);
-                if (article == null) return NotFound();
-                return View(article);
+                var post = _db.OpinionPosts.FirstOrDefault(o => o.Slug == slug && o.IsPublished);
+                if (post == null) return NotFound();
+                return View(post);
             }
             catch { return NotFound(); }
         }

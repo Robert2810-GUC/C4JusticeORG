@@ -1,0 +1,201 @@
+@using C4Justice.Web.Models
+@model List<OpinionPost>
+@{
+    ViewData["Title"] = "Opinion & Essays";
+    var published = Model.Count(p => p.IsPublished);
+    var drafts = Model.Count(p => !p.IsPublished);
+    var totalViews = Model.Sum(p => p.ViewCount);
+}
+
+@section TopbarActions {
+    <a href="/Admin/Opinion/Create" class="view-site-btn" style="background:#e8c84a;color:#0d1f3c">+ Write New Post</a>
+}
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div>
+        <div class="page-title">Opinion &amp; Essays</div>
+        <div class="page-sub">Write and manage opinion pieces, essays, and editorial content</div>
+    </div>
+</div>
+
+<!-- MINI STATS -->
+<div class="mini-stats">
+    <div class="mini-stat blue">
+        <div class="num">@Model.Count</div>
+        <div class="lbl">Total Posts</div>
+    </div>
+    <div class="mini-stat green">
+        <div class="num">@published</div>
+        <div class="lbl">Published</div>
+    </div>
+    <div class="mini-stat">
+        <div class="num">@totalViews</div>
+        <div class="lbl">Total Views</div>
+    </div>
+    <div class="mini-stat red">
+        <div class="num">@drafts</div>
+        <div class="lbl">Drafts</div>
+    </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 400px;gap:20px;align-items:start">
+    <!-- POSTS LIST -->
+    <div>
+        <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterPosts('all',this)">All Posts</button>
+            <button class="filter-btn" onclick="filterPosts('published',this)">Published <span style="background:rgba(13,31,60,.1);color:#0d1f3c;font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700;margin-left:4px">@published</span></button>
+            <button class="filter-btn" onclick="filterPosts('draft',this)">Drafts <span style="background:rgba(13,31,60,.1);color:#0d1f3c;font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700;margin-left:4px">@drafts</span></button>
+            <input type="text" placeholder="Search posts..." onkeyup="searchPosts(this.value)" style="margin-left:auto;border:1.5px solid #dde;border-radius:4px;padding:6px 12px;font-size:12px;font-family:Arial;color:#333;width:200px" />
+        </div>
+
+        <div id="posts-list" style="display:flex;flex-direction:column;gap:12px">
+            @if (!Model.Any())
+            {
+                <div style="text-align:center;padding:60px 20px;color:#aaa;font-family:Arial;background:#fff;border-radius:6px">
+                    <div style="font-size:48px;margin-bottom:12px">✍</div>
+                    <p>No posts yet. Click "+ Write New Post" to get started.</p>
+                </div>
+            }
+            @foreach (var post in Model)
+            {
+                var catClass = post.Category switch {
+                    "Political" => "cat-political",
+                    "Racial" => "cat-racial",
+                    "Economic" => "cat-economic",
+                    "Healthcare" => "cat-healthcare",
+                    "Environmental" => "cat-environmental",
+                    _ => "cat-general"
+                };
+                var baseUrl = $"{ViewContext.HttpContext.Request.Scheme}://{ViewContext.HttpContext.Request.Host}";
+                <div class="post-card @(post.IsPublished ? "published-card" : "draft-card")"
+                     data-status="@(post.IsPublished ? "published" : "draft")"
+                     data-search="@($"{post.Title} {post.Category} {post.Author}".ToLower())">
+                    <div class="post-card-inner">
+                        <div class="post-top">
+                            <div class="post-left">
+                                <span class="post-category @catClass">@(post.Category ?? "General")</span>
+                                <div class="post-title">@post.Title</div>
+                                @if (!string.IsNullOrEmpty(post.Excerpt))
+                                {
+                                    <div class="post-excerpt">@post.Excerpt</div>
+                                }
+                                <div class="post-meta">
+                                    <span class="author">@post.Author</span>
+                                    <span>@(post.IsPublished ? post.PublishedAt?.ToString("MMM d, yyyy") : post.CreatedAt.ToString("MMM d, yyyy"))</span>
+                                    <span>@post.ViewCount views</span>
+                                </div>
+                                @if (post.IsPublished)
+                                {
+                                    <div style="display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:8px;border-top:.5px solid #f0f0f0">
+                                        <input type="text" value="@baseUrl/Opinion/@post.Slug" readonly id="url-@post.Id"
+                                               style="flex:1;border:1px solid #eee;border-radius:3px;padding:5px 8px;font-size:10px;font-family:'Courier New',monospace;color:#555;background:#fafbff;min-width:0" />
+                                        <button class="copy-btn" onclick="copyPostUrl(@post.Id)" id="copy-@post.Id">Copy</button>
+                                    </div>
+                                }
+                            </div>
+                            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
+                                <span class="badge @(post.IsPublished ? "published" : "draft")">@(post.IsPublished ? "Published" : "Draft")</span>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:.5px solid #f0f0f0">
+                            <a href="/Admin/Opinion/Edit/@post.Id" class="action-btn edit">✏ Edit</a>
+                            <form asp-action="TogglePublish" method="post" style="display:inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@post.Id" />
+                                <button type="submit" class="action-btn mark">@(post.IsPublished ? "Unpublish" : "Publish")</button>
+                            </form>
+                            <form asp-action="Delete" method="post" style="display:inline" onsubmit="return confirm('Delete this post?')">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@post.Id" />
+                                <button type="submit" class="action-btn del">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- WRITE PANEL HINT -->
+    <div style="position:sticky;top:76px">
+        <div class="section-title">Quick Actions</div>
+        <div class="form-preview">
+            <p style="font-size:13px;color:#555;font-family:Arial;line-height:1.7;margin-bottom:16px">Use this section to create and publish opinion pieces, editorial essays, and community voice articles that appear on the public Opinion page.</p>
+            <a href="/Admin/Opinion/Create" class="submit-btn" style="display:block;text-align:center;text-decoration:none;margin-bottom:10px">+ Write New Post</a>
+            <div style="font-size:11px;color:#aaa;font-family:Arial;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px;font-weight:700">Post Categories</div>
+            @foreach (var cat in new[] { "Political", "Racial", "Economic", "Healthcare", "Environmental", "General" })
+            {
+                var catClass = cat switch {
+                    "Political" => "cat-political",
+                    "Racial" => "cat-racial",
+                    "Economic" => "cat-economic",
+                    "Healthcare" => "cat-healthcare",
+                    "Environmental" => "cat-environmental",
+                    _ => "cat-general"
+                };
+                var count = Model.Count(p => p.Category == cat);
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:.5px solid #f0f0f0">
+                    <span class="post-category @catClass" style="margin-bottom:0">@cat</span>
+                    <span style="font-size:12px;color:#aaa;font-family:Arial">@count posts</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+<style>
+.post-card{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;transition:box-shadow .2s}
+.post-card:hover{box-shadow:0 3px 14px rgba(0,0,0,.1)}
+.post-card.draft-card{border-left:4px solid #f39c12;opacity:.88}
+.post-card.published-card{border-left:4px solid #27ae60}
+.post-card-inner{padding:16px 18px}
+.post-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.post-left{flex:1;min-width:0}
+.post-category{display:inline-block;font-size:10px;padding:2px 8px;border-radius:3px;font-family:Arial;font-weight:700;margin-bottom:6px}
+.cat-political{background:#e8f0ff;color:#0d1f3c}
+.cat-racial{background:#fde8e8;color:#7b241c}
+.cat-economic{background:#e8f5e9;color:#1b5e20}
+.cat-healthcare{background:#fce4ec;color:#880e4f}
+.cat-environmental{background:#e0f7fa;color:#006064}
+.cat-general{background:#f3e5f5;color:#4a148c}
+.post-title{font-size:15px;font-weight:700;color:#0d1f3c;line-height:1.3;margin-bottom:6px}
+.post-excerpt{font-size:12px;color:#777;font-family:Arial;line-height:1.6;margin-bottom:8px}
+.post-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.post-meta span{font-size:11px;color:#aaa;font-family:Arial}
+.post-meta .author{color:#0d1f3c;font-weight:600}
+.copy-btn{background:#0d1f3c;color:#e8c84a;border:none;padding:5px 10px;border-radius:3px;font-size:10px;font-weight:700;font-family:Arial;cursor:pointer;white-space:nowrap}
+.copy-btn:hover{background:#1a3a6b}
+.copy-btn.copied{background:#27ae60;color:#fff}
+</style>
+}
+
+@section Scripts {
+<script>
+function filterPosts(type, btn) {
+    document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('.post-card').forEach(function(card) {
+        if (type === 'all') card.style.display = '';
+        else card.style.display = card.dataset.status === type ? '' : 'none';
+    });
+}
+function searchPosts(q) {
+    var lower = q.toLowerCase();
+    document.querySelectorAll('.post-card').forEach(function(card) {
+        card.style.display = card.dataset.search.indexOf(lower) !== -1 ? '' : 'none';
+    });
+}
+function copyPostUrl(id) {
+    var input = document.getElementById('url-'+id);
+    var btn = document.getElementById('copy-'+id);
+    if (!input) return;
+    navigator.clipboard.writeText(input.value).then(function() {
+        btn.textContent = '✓ Copied';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+}
+</script>
+}

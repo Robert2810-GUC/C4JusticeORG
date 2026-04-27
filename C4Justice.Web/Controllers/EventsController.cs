@@ -12,13 +12,19 @@ public class EventsController : Controller
     {
         try
         {
+            var today = DateTime.UtcNow.Date;
+
+            // Upcoming: active, not completed, end date (or start date if no end) is today or future
             var upcoming = _db.Events
-                .Where(e => e.IsActive && e.EventDate >= DateTime.UtcNow)
+                .Where(e => e.IsActive && !e.IsCompleted)
+                .Where(e => e.EndDate.HasValue ? e.EndDate.Value >= today : e.EventDate >= today)
                 .OrderBy(e => e.EventDate)
                 .ToList();
 
+            // Past: completed OR end date (or start date) already passed
             var past = _db.Events
-                .Where(e => e.IsActive && e.EventDate < DateTime.UtcNow)
+                .Where(e => e.IsActive && (e.IsCompleted ||
+                    (e.EndDate.HasValue ? e.EndDate.Value < today : e.EventDate < today)))
                 .OrderByDescending(e => e.EventDate)
                 .Take(4)
                 .ToList();

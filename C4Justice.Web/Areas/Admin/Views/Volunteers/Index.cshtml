@@ -1,0 +1,137 @@
+@using C4Justice.Web.Models
+@model List<VolunteerSignup>
+@{ ViewData["Title"] = "Volunteers"; }
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div>
+        <div class="page-title">Volunteer Sign-Ups</div>
+        <div class="page-sub">Review and manage community volunteer applications</div>
+    </div>
+</div>
+
+<!-- MINI STATS -->
+<div class="mini-stats">
+    <div class="mini-stat">
+        <div class="num">@Model.Count</div>
+        <div class="lbl">Total Volunteers</div>
+    </div>
+    <div class="mini-stat blue">
+        <div class="num">@Model.Count(v => !v.IsRead)</div>
+        <div class="lbl">New / Unread</div>
+    </div>
+    <div class="mini-stat green">
+        <div class="num">@Model.Count(v => v.SubmittedAt >= DateTime.UtcNow.AddDays(-30))</div>
+        <div class="lbl">This Month</div>
+    </div>
+    <div class="mini-stat purple">
+        <div class="num">@Model.Where(v => !string.IsNullOrEmpty(v.ZipCode)).Select(v => v.ZipCode).Distinct().Count()</div>
+        <div class="lbl">Zip Codes</div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div style="text-align:center;padding:60px 20px;color:#aaa;font-family:Arial">
+        <div style="font-size:48px;margin-bottom:12px">🤝</div>
+        <p>No volunteer sign-ups yet.</p>
+    </div>
+}
+else
+{
+    <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterVols('all',this)">All</button>
+        <button class="filter-btn" onclick="filterVols('new',this)">New <span style="background:rgba(13,31,60,.1);color:#0d1f3c;font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700;margin-left:4px">@Model.Count(v => !v.IsRead)</span></button>
+        <button class="filter-btn" onclick="filterVols('read',this)">Reviewed</button>
+        <input type="text" placeholder="Search..." onkeyup="searchVols(this.value)" style="margin-left:auto;border:1.5px solid #dde;border-radius:4px;padding:6px 12px;font-size:12px;font-family:Arial;color:#333;width:200px" />
+    </div>
+
+    <div class="table-card">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email / Phone</th>
+                        <th>Zip</th>
+                        <th>Availability</th>
+                        <th>Interests</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var v in Model.OrderByDescending(v => v.SubmittedAt))
+                {
+                    <tr class="vol-row"
+                        data-status="@(v.IsRead ? "read" : "new")"
+                        data-search="@($"{v.FirstName} {v.LastName} {v.Email} {v.ZipCode}".ToLower())">
+                        <td><strong style="color:#0d1f3c">@v.FirstName @v.LastName</strong></td>
+                        <td>
+                            <a href="mailto:@v.Email" style="color:#0d1f3c;font-size:12px;text-decoration:none">@v.Email</a>
+                            @if (!string.IsNullOrEmpty(v.Phone)) { <br/><span style="color:#999;font-size:11px">@v.Phone</span> }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(v.ZipCode))
+                            { <span style="background:#e8f0ff;color:#0d1f3c;padding:2px 7px;border-radius:3px;font-size:11px;font-family:Arial;font-weight:600">@v.ZipCode</span> }
+                            else { <span style="color:#aaa">—</span> }
+                        </td>
+                        <td style="font-size:12px">@(v.Availability ?? "—")</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(v.Interests))
+                            {
+                                foreach (var area in v.Interests.Split(','))
+                                {
+                                    <span style="display:inline-block;background:#e8f0ff;color:#0d1f3c;font-size:10px;padding:2px 7px;border-radius:10px;margin:1px;font-family:Arial;font-weight:600">@area.Trim()</span>
+                                }
+                            }
+                        </td>
+                        <td style="font-size:11px;color:#aaa">@v.SubmittedAt.ToString("MMM d, yyyy")</td>
+                        <td>
+                            @if (!v.IsRead) { <span class="badge new-badge">New</span> }
+                            else { <span class="badge upcoming">Reviewed</span> }
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:5px;flex-wrap:wrap">
+                                @if (!v.IsRead)
+                                {
+                                    <form asp-action="MarkRead" method="post" style="display:inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@v.Id" />
+                                        <button type="submit" class="action-btn mark">✓</button>
+                                    </form>
+                                }
+                                <form asp-action="Delete" method="post" style="display:inline" onsubmit="return confirm('Delete this record?')">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@v.Id" />
+                                    <button type="submit" class="action-btn del">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@section Scripts {
+<script>
+function filterVols(type, btn) {
+    document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('.vol-row').forEach(function(row) {
+        if (type === 'all') row.style.display = '';
+        else row.style.display = row.dataset.status === type ? '' : 'none';
+    });
+}
+function searchVols(q) {
+    var lower = q.toLowerCase();
+    document.querySelectorAll('.vol-row').forEach(function(row) {
+        row.style.display = row.dataset.search.indexOf(lower) !== -1 ? '' : 'none';
+    });
+}
+</script>
+}

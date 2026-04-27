@@ -294,7 +294,6 @@
                 if (!href || href.startsWith('http') || href.startsWith('//')) return;
 
                 e.preventDefault();
-                document.body.style.opacity = '0';
                 document.body.style.transition = 'opacity 0.3s ease';
 
                 setTimeout(function () {

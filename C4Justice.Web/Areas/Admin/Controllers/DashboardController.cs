@@ -13,14 +13,16 @@ namespace C4Justice.Web.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.ArticleCount   = _db.Articles.Count();
-            ViewBag.EventCount     = _db.Events.Count();
-            ViewBag.DocumentCount  = _db.Documents.Count();
-            ViewBag.SliderCount    = _db.SliderImages.Count();
-            ViewBag.UpcomingEvents = _db.Events.Count(e => e.EventDate >= DateTime.UtcNow && e.IsActive);
-            ViewBag.PublishedArticles = _db.Articles.Count(a => a.IsPublished);
-            ViewBag.RecentArticles = _db.Articles.OrderByDescending(a => a.CreatedAt).Take(5).ToList();
-            ViewBag.RecentEvents   = _db.Events.OrderByDescending(e => e.CreatedAt).Take(5).ToList();
+            ViewBag.SubscriberCount  = _db.NewsletterSubscriptions.Count(s => s.IsActive);
+            ViewBag.UpcomingEvents   = _db.Events.Count(e => e.EventDate >= DateTime.UtcNow && e.IsActive);
+            ViewBag.DocumentCount    = _db.Documents.Count();
+            ViewBag.PendingRequests  = _db.ContactSubmissions.Count(c => !c.IsRead);
+
+            ViewBag.RecentEvents     = _db.Events.OrderByDescending(e => e.CreatedAt).Take(5).ToList();
+            ViewBag.RecentDocuments  = _db.Documents.OrderByDescending(d => d.CreatedAt).Take(4).ToList();
+            ViewBag.RecentSubscribers = _db.NewsletterSubscriptions.OrderByDescending(s => s.SubscribedAt).Take(4).ToList();
+            ViewBag.RecentMessages   = _db.ContactSubmissions.OrderByDescending(s => s.SubmittedAt).Take(4).ToList();
+
             return View();
         }
     }

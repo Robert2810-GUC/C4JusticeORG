@@ -1,0 +1,75 @@
+@{
+    ViewData["Title"] = "Donations — Zeffy";
+    var zeffyUrl = ViewBag.ZeffyUrl?.ToString() ?? "";
+}
+
+@section TopbarActions {
+    @if (!string.IsNullOrEmpty(zeffyUrl))
+    {
+        <a href="@zeffyUrl" target="_blank" class="view-site-btn" style="background:#27ae60;color:#fff">Open Donation Page ↗</a>
+    }
+}
+
+<div class="page-header">
+    <div>
+        <div class="page-title">Donations — Zeffy</div>
+        <div class="page-sub">Set the Zeffy donation link. All donate buttons across the site use this URL.</div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div style="background:#d4edda;border:1px solid #c3e6cb;border-radius:5px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#155724;font-family:Arial">
+        ✓ @TempData["Success"]
+    </div>
+}
+
+<div style="max-width:640px">
+    <div class="form-preview">
+        <div style="margin-bottom:18px">
+            <div style="font-size:12px;color:#555;font-family:Arial;line-height:1.7">
+                Paste your Zeffy donation form URL below. Every "Donate" button on the public site — the header, footer, home page, contact page, mission page, and all inner pages — will automatically use this link. No code changes needed.
+            </div>
+        </div>
+
+        <form method="post" asp-action="Save">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label>Zeffy Donation Form URL</label>
+                <input type="url" name="zeffyUrl" value="@zeffyUrl"
+                       placeholder="https://www.zeffy.com/en-US/donation-form/your-form-id"
+                       style="font-family:'Courier New',monospace;font-size:13px" />
+                <div style="font-size:11px;color:#aaa;font-family:Arial;margin-top:4px">
+                    Copy this from your Zeffy dashboard → Forms → Share → Copy Link
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(zeffyUrl))
+            {
+                <div style="background:#f8faff;border:1.5px solid #dde;border-radius:4px;padding:12px 14px;margin-bottom:16px">
+                    <div style="font-size:10px;color:#888;font-family:Arial;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Current URL</div>
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <code style="font-size:11px;color:#0d1f3c;word-break:break-all;flex:1">@zeffyUrl</code>
+                        <a href="@zeffyUrl" target="_blank" style="background:#e8f0ff;color:#0d1f3c;border:1.5px solid #dde;padding:5px 12px;border-radius:3px;font-size:11px;font-family:Arial;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0">Test Link ↗</a>
+                    </div>
+                </div>
+            }
+
+            <div style="display:flex;gap:8px">
+                <button type="submit" class="submit-btn" style="flex:1">💾 Save URL</button>
+            </div>
+        </form>
+    </div>
+
+    <div style="background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);padding:18px;margin-top:20px">
+        <div style="font-size:12px;font-weight:700;color:#0d1f3c;font-family:Arial;margin-bottom:12px">Pages where this URL is used</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+            @foreach (var loc in new[] { "Header — Donate button (desktop & mobile)", "Footer — Donate button", "Footer — Donate bar", "Home page — Quick Links sidebar", "Contact page — sidebar Donate card", "Mission page — sidebar Donate card", "Issues page — Donate CTA card", "Get Involved page — Donate button" })
+            {
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-family:Arial;color:#555;padding:5px 0;border-bottom:.5px solid #f0f0f0">
+                    <span style="color:#27ae60;font-size:14px">✓</span> @loc
+                </div>
+            }
+        </div>
+    </div>
+</div>

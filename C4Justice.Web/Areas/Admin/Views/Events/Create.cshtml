@@ -1,55 +1,88 @@
 @model C4Justice.Web.Models.SiteEvent
-@{
-    ViewData["Title"] = "New Event";
-}
+@{ ViewData["Title"] = "Add New Event"; }
 
-<div class="admin-card" style="max-width:700px;">
-    <form method="post">
-        @Html.AntiForgeryToken()
-        <div class="row g-3">
-            <div class="col-12">
-                <label class="admin-form-label">Event Title *</label>
-                <input asp-for="Title" class="admin-form-control" placeholder="e.g. Community Town Hall" required />
-            </div>
-            <div class="col-md-6">
-                <label class="admin-form-label">Event Date & Time *</label>
-                <input asp-for="EventDate" type="datetime-local" class="admin-form-control" step="any" required />
-            </div>
-            <div class="col-md-6">
-                <label class="admin-form-label">Category</label>
-                <select asp-for="Category" class="admin-form-control">
-                    <option value="General">General</option>
-                    <option value="Political">Political</option>
-                    <option value="Racial">Racial</option>
-                    <option value="Economic">Economic</option>
-                    <option value="Healthcare">Healthcare</option>
-                    <option value="Environmental">Environmental</option>
-                </select>
-            </div>
-            <div class="col-12">
-                <label class="admin-form-label">Location</label>
-                <input asp-for="Location" class="admin-form-control" placeholder="e.g. Community Center, Main Hall" />
-            </div>
-            <div class="col-12">
-                <label class="admin-form-label">Description *</label>
-                <textarea asp-for="Description" class="admin-form-control" rows="4" required></textarea>
-            </div>
-            <div class="col-md-6">
-                <label class="admin-form-label">Image URL (optional)</label>
-                <input asp-for="ImageUrl" class="admin-form-control" placeholder="/uploads/..." />
-            </div>
-            <div class="col-md-6">
-                <label class="admin-form-label">Registration URL (optional)</label>
-                <input asp-for="RegisterUrl" class="admin-form-control" placeholder="https://..." />
-            </div>
-            <div class="col-12 d-flex align-items-center gap-2">
-                <input asp-for="IsActive" type="checkbox" style="width:16px;height:16px;" checked />
-                <label class="admin-form-label mb-0">Active (show on site)</label>
-            </div>
-            <div class="col-12 d-flex gap-3 mt-2">
-                <button type="submit" class="btn-sm-admin btn-primary-admin" style="padding:10px 28px;"><i class="fas fa-save me-1"></i>Create Event</button>
-                <a href="/Admin/Events" class="btn-sm-admin btn-ghost-admin" style="padding:10px 20px;">Cancel</a>
-            </div>
+<div style="max-width:680px">
+    <div class="page-header">
+        <div>
+            <div class="page-title">Add New Event</div>
+            <div class="page-sub">Create a new community event for the website</div>
         </div>
-    </form>
+        <a href="/Admin/Events" style="background:#f0f4ff;color:#0d1f3c;border:1.5px solid #dde;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:700;font-family:Arial;text-decoration:none">← Back to Events</a>
+    </div>
+
+    <div class="form-preview">
+        <form method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label>Event Title *</label>
+                <input asp-for="Title" placeholder="e.g. Community Town Hall Meeting" required />
+                <span asp-validation-for="Title" style="color:#e74c3c;font-size:11px;font-family:Arial"></span>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Start Date *</label>
+                    <input asp-for="EventDate" type="date" required />
+                    <span asp-validation-for="EventDate" style="color:#e74c3c;font-size:11px;font-family:Arial"></span>
+                </div>
+                <div class="form-group">
+                    <label>End Date <span style="color:#aaa;font-weight:400">(optional)</span></label>
+                    <input asp-for="EndDate" type="date" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Location</label>
+                    <input asp-for="Location" placeholder="Venue name and address" />
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select asp-for="Category">
+                        <option value="Town Halls">Town Halls</option>
+                        <option value="Voter Registration">Voter Registration</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Environmental">Environmental</option>
+                        <option value="Election Cycles">Election Cycles</option>
+                        <option value="Political">Political</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description * <span id="desc-count" style="float:right;color:#aaa;font-weight:400">0 / 300</span></label>
+                <textarea asp-for="Description" maxlength="300" oninput="updateCount(this)" placeholder="Describe this event..." required></textarea>
+                <span asp-validation-for="Description" style="color:#e74c3c;font-size:11px;font-family:Arial"></span>
+            </div>
+            <div class="form-group">
+                <label>Registration URL <span style="color:#aaa;font-weight:400">(optional)</span></label>
+                <input asp-for="RegisterUrl" type="url" placeholder="https://..." />
+            </div>
+            <div style="display:flex;gap:20px;margin-bottom:16px;padding:12px;background:#f8faff;border-radius:4px;border:1px solid #eef">
+                <div style="display:flex;align-items:center;gap:8px">
+                    <input asp-for="IsActive" type="checkbox" style="width:16px;height:16px;accent-color:#0d1f3c" />
+                    <label style="font-size:12px;color:#555;font-family:Arial;font-weight:600;cursor:pointer">Active — visible on the public site</label>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                    <input asp-for="IsCompleted" type="checkbox" style="width:16px;height:16px;accent-color:#c0392b" />
+                    <label style="font-size:12px;color:#c0392b;font-family:Arial;font-weight:600;cursor:pointer">Mark as Completed — removes from public site</label>
+                </div>
+            </div>
+            <div style="display:flex;gap:8px">
+                <a href="/Admin/Events" class="submit-btn dark" style="flex:1;text-align:center;text-decoration:none;padding:9px;display:block">Cancel</a>
+                <button type="submit" class="submit-btn" style="flex:2">Publish Event</button>
+            </div>
+        </form>
+    </div>
 </div>
+
+@section Scripts {
+<script>
+function updateCount(el) {
+    document.getElementById('desc-count').textContent = el.value.length + ' / ' + el.maxLength;
+}
+// Auto-set end date min to start date
+document.querySelector('input[type="date"]').addEventListener('change', function() {
+    var endInput = document.querySelectorAll('input[type="date"]')[1];
+    if (endInput && (!endInput.value || endInput.value < this.value)) endInput.min = this.value;
+});
+</script>
+}

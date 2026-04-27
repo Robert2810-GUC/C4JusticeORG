@@ -1,7 +1,7 @@
 @{
     ViewData["Title"] = "Opinion &amp; Essays";
     ViewData["ActivePage"] = "Opinion";
-    var articles = ViewBag.Articles as List<C4Justice.Web.Models.Article> ?? new();
+    var articles = ViewBag.Posts as List<C4Justice.Web.Models.OpinionPost> ?? new();
     var activeCategory = ViewBag.ActiveCategory as string;
     var categories = new[] { "Political", "Racial", "Economic", "Healthcare", "Environmental" };
 }
@@ -41,8 +41,8 @@
                 <div class="col-lg-4 col-md-6">
                     <a href="/Opinion/@a.Slug" class="article-card-link">
                         <div class="article-card h-100">
-                            @if (!string.IsNullOrWhiteSpace(a.FeaturedImageUrl))
-                            { <div class="article-card-img"><img src="@a.FeaturedImageUrl" alt="@a.Title" loading="lazy" /></div> }
+                            @if (!string.IsNullOrWhiteSpace(a.CoverImageUrl))
+                            { <div class="article-card-img"><img src="@a.CoverImageUrl" alt="@a.Title" loading="lazy" /></div> }
                             else
                             { <div class="article-card-img-placeholder"><i class="fas fa-pen-nib"></i></div> }
                             <div class="article-card-body">

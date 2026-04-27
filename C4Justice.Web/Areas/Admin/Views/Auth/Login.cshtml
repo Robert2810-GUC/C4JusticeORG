@@ -7,49 +7,61 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Admin Login — C4Justice</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <title>Admin Login — CU4J</title>
     <style>
-        body { background: #0d1117; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 48px 40px; width: 100%; max-width: 420px; }
-        .login-logo { color: #b91c1c; font-size: 2rem; font-weight: 900; letter-spacing: -1px; text-align: center; margin-bottom: 8px; }
-        .login-sub { color: #8b949e; text-align: center; font-size: 0.85rem; margin-bottom: 32px; }
-        .form-control { background: #0d1117; border-color: #30363d; color: #e6edf3; border-radius: 8px; }
-        .form-control:focus { background: #0d1117; border-color: #b91c1c; color: #e6edf3; box-shadow: 0 0 0 3px rgba(185,28,28,.2); }
-        .form-label { color: #8b949e; font-size: 0.85rem; font-weight: 600; }
-        .btn-login { background: #b91c1c; border: none; border-radius: 8px; font-weight: 700; padding: 12px; transition: all .2s; }
-        .btn-login:hover { background: #991b1b; transform: translateY(-1px); }
-        .alert-danger { background: rgba(185,28,28,.1); border-color: rgba(185,28,28,.3); color: #fca5a5; border-radius: 8px; }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Georgia',serif;background:#f0f2f7;min-height:100vh;display:flex;align-items:center;justify-content:center}
+        .login-wrap{width:100%;max-width:420px;padding:20px}
+        .login-card{background:#fff;border-radius:8px;padding:40px 36px;box-shadow:0 4px 24px rgba(13,31,60,.12)}
+        .login-logo-wrap{text-align:center;margin-bottom:28px}
+        .login-logo-circle{width:64px;height:64px;border-radius:50%;border:2px solid #e8c84a;overflow:hidden;display:inline-block;margin-bottom:12px;background:#0d1f3c}
+        .login-logo-circle img{width:100%;height:100%;object-fit:cover;display:block}
+        .login-title{font-size:20px;font-weight:700;color:#0d1f3c}
+        .login-sub{font-size:12px;color:#888;font-family:Arial,sans-serif;margin-top:4px}
+        .form-group{margin-bottom:16px}
+        label{display:block;font-size:11px;color:#666;font-family:Arial,sans-serif;margin-bottom:4px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+        input[type=text],input[type=password]{width:100%;border:1.5px solid #dde;border-radius:4px;padding:10px 12px;font-size:13px;font-family:Arial,sans-serif;color:#333;transition:border-color .15s}
+        input:focus{outline:none;border-color:#0d1f3c}
+        .error-msg{background:#fde8e8;border:1px solid #f5b8b8;color:#7b241c;padding:10px 14px;border-radius:4px;font-size:12px;font-family:Arial,sans-serif;margin-bottom:16px}
+        .login-btn{width:100%;background:#e8c84a;color:#0d1f3c;border:none;padding:12px;font-size:14px;font-weight:700;border-radius:4px;cursor:pointer;font-family:Arial,sans-serif;transition:background .15s}
+        .login-btn:hover{background:#f5d55a}
+        .back-link{text-align:center;margin-top:18px}
+        .back-link a{color:#aaa;font-size:12px;font-family:Arial,sans-serif;text-decoration:none}
+        .back-link a:hover{color:#0d1f3c}
     </style>
 </head>
 <body>
-    <div class="login-card">
-        <div class="login-logo">C4J Admin</div>
-        <div class="login-sub">Communities United for Justice — Admin Panel</div>
-
-        @if (ViewBag.Error != null)
-        {
-            <div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>@ViewBag.Error</div>
-        }
-
-        <form method="post" asp-action="Login" asp-controller="Auth" asp-area="Admin">
-            @Html.AntiForgeryToken()
-            <div class="mb-3">
-                <label class="form-label">Username</label>
-                <input type="text" name="username" class="form-control" placeholder="admin" autocomplete="username" required />
+    <div class="login-wrap">
+        <div class="login-card">
+            <div class="login-logo-wrap">
+                <div class="login-logo-circle">
+                    <img src="/images/c4comlogo.jpg" alt="CU4J Logo" />
+                </div>
+                <div class="login-title">CU4J Admin Portal</div>
+                <div class="login-sub">501(c)(3) • Communities United for Justice</div>
             </div>
-            <div class="mb-4">
-                <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="••••••••" autocomplete="current-password" required />
-            </div>
-            <button type="submit" class="btn btn-login btn-primary w-100">
-                <i class="fas fa-sign-in-alt me-2"></i>Sign In
-            </button>
-        </form>
 
-        <div class="text-center mt-4">
-            <a href="/" style="color:#8b949e;font-size:.8rem;"><i class="fas fa-arrow-left me-1"></i>Back to site</a>
+            @if (ViewBag.Error != null)
+            {
+                <div class="error-msg">⚠ @ViewBag.Error</div>
+            }
+
+            <form method="post" asp-action="Login" asp-controller="Auth" asp-area="Admin">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="admin" autocomplete="username" required />
+                </div>
+                <div class="form-group" style="margin-bottom:24px">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="••••••••" autocomplete="current-password" required />
+                </div>
+                <button type="submit" class="login-btn">Sign In →</button>
+            </form>
+
+            <div class="back-link">
+                <a href="/">← Back to live site</a>
+            </div>
         </div>
     </div>
 </body>

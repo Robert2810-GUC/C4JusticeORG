@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CU4J Admin — Documents</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Georgia',serif;background:#f0f2f7;color:#1a1a2e;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:240px;background:#0d1f3c;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100}
+.sidebar-logo{padding:20px 18px;border-bottom:1px solid rgba(232,200,74,.2);display:flex;align-items:center;gap:10px}
+.logo-box{width:42px;height:42px;border-radius:50%;border:2px solid #e8c84a;background:#0d1f3c;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#e8c84a;flex-shrink:0}
+.logo-text span{display:block;color:#fff;font-size:11px;font-weight:700}
+.logo-text small{color:#e8c84a;font-size:9px;letter-spacing:.8px;font-family:Arial,sans-serif}
+.sidebar-label{color:rgba(232,200,74,.5);font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:16px 18px 6px;font-family:Arial,sans-serif}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;border-left:3px solid transparent;transition:all .2s;font-family:Arial,sans-serif;font-size:13px;color:#a0b4cc}
+.nav-item:hover{background:rgba(232,200,74,.08);color:#fff;border-left-color:rgba(232,200,74,.3)}
+.nav-item.active{background:rgba(232,200,74,.12);color:#e8c84a;border-left-color:#e8c84a}
+.nav-icon{width:15px;height:15px;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon{opacity:1}
+.sidebar-footer{margin-top:auto;padding:16px 18px;border-top:1px solid rgba(255,255,255,.08)}
+.logout-btn{display:flex;align-items:center;gap:8px;color:#a0b4cc;font-size:12px;font-family:Arial,sans-serif;cursor:pointer}
+.logout-btn:hover{color:#e8c84a}
+
+/* MAIN */
+.main{margin-left:240px;flex:1}
+.topbar{background:#fff;padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e0e4ec;position:sticky;top:0;z-index:50}
+.breadcrumb{font-size:12px;color:#aaa;font-family:Arial,sans-serif}
+.breadcrumb span{color:#0d1f3c;font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.admin-badge{background:#0d1f3c;color:#e8c84a;font-size:11px;padding:4px 12px;border-radius:20px;font-family:Arial,sans-serif;font-weight:700}
+.view-site-btn{background:#e8c84a;color:#0d1f3c;font-size:12px;padding:6px 14px;border-radius:3px;border:none;cursor:pointer;font-weight:700;font-family:Arial,sans-serif}
+
+.content{padding:24px 28px}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.page-title{font-size:22px;color:#0d1f3c;font-weight:700}
+.page-sub{font-size:12px;color:#888;font-family:Arial,sans-serif;margin-top:3px}
+.upload-btn{background:#e8c84a;color:#0d1f3c;border:none;padding:10px 20px;border-radius:4px;font-size:13px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px}
+.upload-btn:hover{background:#f5d55a}
+
+/* MINI STATS */
+.mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.mini-stat{background:#fff;border-radius:6px;padding:14px 16px;border-left:3px solid #e8c84a;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.mini-stat.blue{border-left-color:#0d1f3c}
+.mini-stat.green{border-left-color:#27ae60}
+.mini-stat.purple{border-left-color:#8e44ad}
+.mini-stat .num{font-size:22px;font-weight:700;color:#0d1f3c}
+.mini-stat .lbl{font-size:10px;color:#999;font-family:Arial,sans-serif;letter-spacing:.8px;text-transform:uppercase;margin-top:2px}
+
+/* LAYOUT */
+.docs-layout{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
+
+/* INFO BANNER */
+.info-banner{background:#e8f4fd;border:1px solid #b8d9f0;border-radius:5px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:flex-start;gap:10px}
+.info-banner .icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.info-banner p{font-size:12px;color:#1a5276;font-family:Arial,sans-serif;line-height:1.6}
+.info-banner strong{color:#154360}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.filter-btn{border:1.5px solid #dde;background:#fff;color:#555;padding:6px 16px;border-radius:20px;font-size:12px;font-family:Arial,sans-serif;cursor:pointer;font-weight:500}
+.filter-btn.active{border-color:#0d1f3c;background:#0d1f3c;color:#fff}
+.search-input{margin-left:auto;border:1.5px solid #dde;border-radius:4px;padding:6px 12px;font-size:12px;font-family:Arial,sans-serif;color:#333;width:220px}
+.search-input:focus{outline:none;border-color:#0d1f3c}
+
+/* DOCUMENT CARDS */
+.docs-grid{display:flex;flex-direction:column;gap:10px}
+
+.doc-card{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);padding:16px 18px;display:flex;align-items:center;gap:14px;transition:box-shadow .2s}
+.doc-card:hover{box-shadow:0 3px 12px rgba(0,0,0,.1)}
+
+.doc-icon{width:44px;height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.doc-icon.pdf{background:#fde8e8}
+.doc-icon.docx{background:#e8f0ff}
+.doc-icon.xlsx{background:#e8f5e9}
+.doc-icon.pptx{background:#fff3e0}
+.doc-icon.img{background:#f3e5f5}
+
+.doc-info{flex:1;min-width:0}
+.doc-name{font-size:13px;font-weight:700;color:#0d1f3c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.doc-meta{display:flex;align-items:center;gap:12px;margin-top:4px;flex-wrap:wrap}
+.doc-meta span{font-size:11px;color:#999;font-family:Arial,sans-serif}
+.doc-meta .category-tag{background:#e8f0ff;color:#0d1f3c;padding:2px 7px;border-radius:3px;font-weight:600}
+.doc-url{margin-top:6px;display:flex;align-items:center;gap:6px}
+.doc-url input{flex:1;border:1px solid #eee;border-radius:3px;padding:5px 8px;font-size:11px;font-family:'Courier New',monospace;color:#555;background:#fafbff;min-width:0}
+.copy-url-btn{background:#0d1f3c;color:#e8c84a;border:none;padding:5px 10px;border-radius:3px;font-size:10px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;white-space:nowrap}
+.copy-url-btn:hover{background:#1a3a6b}
+.copy-url-btn.copied{background:#27ae60;color:#fff}
+
+.doc-actions{display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex-shrink:0}
+.act-btn{font-size:10px;padding:5px 10px;border-radius:3px;border:none;cursor:pointer;font-family:Arial,sans-serif;font-weight:600;white-space:nowrap}
+.act-btn.share{background:#e8f0ff;color:#0d1f3c}
+.act-btn.share:hover{background:#d0e0ff}
+.act-btn.del{background:#ffeaea;color:#c0392b}
+.act-btn.del:hover{background:#ffcdcd}
+.act-btn.download{background:#e8f5e9;color:#1b5e20}
+
+.doc-size{font-size:10px;color:#bbb;font-family:Arial,sans-serif;margin-top:4px;text-align:right}
+
+/* UPLOAD FORM PANEL */
+.form-panel{background:#fff;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;position:sticky;top:76px}
+.form-panel-header{background:#0d1f3c;padding:14px 18px}
+.form-panel-header h3{color:#e8c84a;font-size:14px}
+.form-panel-header p{color:rgba(255,255,255,.5);font-size:11px;font-family:Arial,sans-serif;margin-top:2px}
+.form-body{padding:18px}
+
+.form-group{margin-bottom:13px}
+.form-group label{display:block;font-size:11px;color:#555;font-family:Arial,sans-serif;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.form-group input,.form-group select,.form-group textarea{width:100%;border:1.5px solid #dde;border-radius:4px;padding:8px 10px;font-size:12px;font-family:Arial,sans-serif;color:#333;transition:border .15s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#0d1f3c}
+.form-group textarea{height:70px;resize:vertical}
+
+.required-star{color:#e74c3c}
+
+/* DRAG DROP ZONE */
+.drop-zone{border:2px dashed #c0cce0;border-radius:6px;padding:28px 20px;text-align:center;cursor:pointer;background:#f8faff;transition:all .2s;margin-bottom:14px}
+.drop-zone:hover,.drop-zone.dragover{border-color:#0d1f3c;background:#eef3ff}
+.drop-zone .dz-icon{font-size:32px;margin-bottom:8px}
+.drop-zone h4{font-size:13px;color:#0d1f3c;font-weight:700;margin-bottom:4px}
+.drop-zone p{font-size:11px;color:#aaa;font-family:Arial,sans-serif}
+.drop-zone .file-types{display:flex;gap:6px;justify-content:center;margin-top:8px;flex-wrap:wrap}
+.file-type-badge{background:#e8f0ff;color:#0d1f3c;font-size:10px;padding:2px 7px;border-radius:3px;font-family:Arial,sans-serif;font-weight:600}
+
+/* URL PREVIEW */
+.url-preview{background:#f8faff;border:1px solid #dde;border-radius:4px;padding:10px 12px;margin-top:8px}
+.url-preview label{font-size:10px;color:#888;font-family:Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+.url-preview .url-text{font-size:11px;font-family:'Courier New',monospace;color:#0d1f3c;word-break:break-all}
+.url-preview .url-note{font-size:10px;color:#aaa;font-family:Arial,sans-serif;margin-top:4px}
+
+.form-actions{display:flex;gap:8px;margin-top:14px}
+.publish-btn{flex:1;background:#e8c84a;color:#0d1f3c;border:none;padding:10px;font-size:13px;font-weight:700;border-radius:4px;cursor:pointer;font-family:Arial,sans-serif}
+.publish-btn:hover{background:#f5d55a}
+.cancel-btn{background:#f5f5f5;color:#555;border:1.5px solid #dde;padding:10px 14px;font-size:12px;border-radius:4px;cursor:pointer;font-family:Arial,sans-serif;font-weight:600}
+
+/* SHARING NOTE */
+.sharing-note{background:#fff8e1;border:1px solid #ffe082;border-radius:4px;padding:10px 12px;margin-top:12px}
+.sharing-note p{font-size:11px;color:#795548;font-family:Arial,sans-serif;line-height:1.5}
+.sharing-note strong{color:#5d4037}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 0;margin-top:4px}
+.page-info{font-size:12px;color:#888;font-family:Arial,sans-serif}
+.page-btns{display:flex;gap:4px}
+.page-btn{width:30px;height:30px;border:1.5px solid #dde;border-radius:4px;background:#fff;font-size:12px;font-family:Arial,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#555}
+.page-btn.active{background:#0d1f3c;border-color:#0d1f3c;color:#e8c84a;font-weight:700}
+.page-btn:hover:not(.active){background:#f0f0f0}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#0d1f3c;color:#fff;padding:12px 20px;border-radius:6px;font-size:13px;font-family:Arial,sans-serif;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.25);opacity:0;transform:translateY(10px);transition:all .3s;z-index:999}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast .dot{width:8px;height:8px;border-radius:50%;background:#e8c84a;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-box">CU4J</div>
+    <div class="logo-text">
+      <span>CU4J Admin</span>
+      <small>501(C)(3) PORTAL</small>
+    </div>
+  </div>
+
+  <div class="sidebar-label">Main</div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Events
+  </div>
+  <div class="nav-item active">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Documents
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    Opinion & Essays
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    Subscribers
+  </div>
+
+  <div class="sidebar-label">Manage</div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2"/></svg>
+    Speaker Requests
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    Contact Messages
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    Photo Gallery
+  </div>
+  <div class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+    Donations — Zeffy
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="logout-btn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="breadcrumb">Admin / <span>Documents & Files</span></div>
+    <div class="topbar-right">
+      <span style="font-size:12px;color:#888;font-family:Arial,sans-serif">Richard Rose</span>
+      <div class="admin-badge">Admin</div>
+      <button class="view-site-btn">View Live Site ↗</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">Documents & Files</div>
+        <div class="page-sub">Upload documents and share them via direct URL on social media and email.</div>
+      </div>
+      <button class="upload-btn" onclick="showToast('Drag a file into the upload zone on the right')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Upload Document
+      </button>
+    </div>
+
+    <!-- MINI STATS -->
+    <div class="mini-stats">
+      <div class="mini-stat">
+        <div class="num">17</div>
+        <div class="lbl">Total Documents</div>
+      </div>
+      <div class="mini-stat blue">
+        <div class="num">1,248</div>
+        <div class="lbl">Total Views</div>
+      </div>
+      <div class="mini-stat green">
+        <div class="num">342</div>
+        <div class="lbl">Downloads</div>
+      </div>
+      <div class="mini-stat purple">
+        <div class="num">5</div>
+        <div class="lbl">Shared This Month</div>
+      </div>
+    </div>
+
+    <!-- INFO BANNER -->
+    <div class="info-banner">
+      <div class="icon">🔗</div>
+      <p><strong>How shareable links work:</strong> Every document you upload gets a unique URL like <em>cu4justice.org/docs/voter-rights-guide</em>. You can copy this link and post it directly to Facebook, email it to supporters, or share it anywhere — no login required to view.</p>
+    </div>
+
+    <!-- LAYOUT -->
+    <div class="docs-layout">
+
+      <!-- DOCUMENTS LIST -->
+      <div>
+        <div class="filter-bar">
+          <button class="filter-btn active" onclick="setFilter(this)">All Files</button>
+          <button class="filter-btn" onclick="setFilter(this)">PDF</button>
+          <button class="filter-btn" onclick="setFilter(this)">Word</button>
+          <button class="filter-btn" onclick="setFilter(this)">Reports</button>
+          <button class="filter-btn" onclick="setFilter(this)">Press</button>
+          <input class="search-input" type="text" placeholder="🔍  Search documents...">
+        </div>
+
+        <div class="docs-grid">
+
+          <!-- DOC 1 -->
+          <div class="doc-card">
+            <div class="doc-icon pdf">📄</div>
+            <div class="doc-info">
+              <div class="doc-name">2026 Annual Report — Communities United for Justice Fund.pdf</div>
+              <div class="doc-meta">
+                <span>Uploaded Apr 10, 2026</span>
+                <span>•</span>
+                <span>2.4 MB</span>
+                <span class="category-tag">Annual Report</span>
+              </div>
+              <div class="doc-url">
+                <input type="text" value="cu4justice.org/docs/2026-annual-report" readonly>
+                <button class="copy-url-btn" onclick="copyLink(this,'cu4justice.org/docs/2026-annual-report')">Copy Link</button>
+              </div>
+            </div>
+            <div class="doc-actions">
+              <button class="act-btn share" onclick="showToast('Link copied — ready to share!')">📤 Share</button>
+              <button class="act-btn download" onclick="showToast('Downloading...')">⬇ Download</button>
+              <button class="act-btn del" onclick="showToast('Document deleted')">🗑 Delete</button>
+              <div class="doc-size">156 views · 48 downloads</div>
+            </div>
+          </div>
+
+          <!-- DOC 2 -->
+          <div class="doc-card">
+            <div class="doc-icon docx">📝</div>
+            <div class="doc-info">
+              <div class="doc-name">Voter Rights Guide — Know Your Rights at the Polls.pdf</div>
+              <div class="doc-meta">
+                <span>Uploaded Mar 28, 2026</span>
+                <span>•</span>
+                <span>1.1 MB</span>
+                <span class="category-tag">Political Justice</span>
+              </div>
+              <div class="doc-url">
+                <input type="text" value="cu4justice.org/docs/voter-rights-guide" readonly>
+                <button class="copy-url-btn" onclick="copyLink(this,'cu4justice.org/docs/voter-rights-guide')">Copy Link</button>
+              </div>
+            </div>
+            <div class="doc-actions">
+              <button class="act-btn share" onclick="showToast('Link copied — ready to share!')">📤 Share</button>
+              <button class="act-btn download" onclick="showToast('Downloading...')">⬇ Download</button>
+              <button class="act-btn del" onclick="showToast('Document deleted')">🗑 Delete</button>
+              <div class="doc-size">489 views · 201 downloads</div>
+            </div>
+          </div>
+
+          <!-- DOC 3 -->
+          <div class="doc-card">
+            <div class="doc-icon docx">📋</div>
+            <div class="doc-info">
+              <div class="doc-name">Community Action Plan 2026 — Strategic Priorities.docx</div>
+              <div class="doc-meta">
+                <span>Uploaded Mar 15, 2026</span>
+                <span>•</span>
+                <span>890 KB</span>
+                <span class="category-tag">Strategy</span>
+              </div>
+              <div class="doc-url">
+                <input type="text" value="cu4justice.org/docs/community-action-plan-2026" readonly>
+                <button class="copy-url-btn" onclick="copyLink(this,'cu4justice.org/docs/community-action-plan-2026')">Copy Link</button>
+              </div>
+            </div>
+            <div class="doc-actions">
+              <button class="act-btn share" onclick="showToast('Link copied — ready to share!')">📤 Share</button>
+              <button class="act-btn download" onclick="showToast('Downloading...')">⬇ Download</button>
+              <button class="act-btn del" onclick="showToast('Document deleted')">🗑 Delete</button>
+              <div class="doc-size">98 views · 32 downloads</div>
+            </div>
+          </div>
+
+          <!-- DOC 4 -->
+          <div class="doc-card">
+            <div class="doc-icon pdf">📰</div>
+            <div class="doc-info">
+              <div class="doc-name">Press Release — Healthcare Access Forum May 2026.pdf</div>
+              <div class="doc-meta">
+                <span>Uploaded Mar 8, 2026</span>
+                <span>•</span>
+                <span>540 KB</span>
+                <span class="category-tag">Press Release</span>
+              </div>
+              <div class="doc-url">
+                <input type="text" value="cu4justice.org/docs/press-healthcare-forum-2026" readonly>
+                <button class="copy-url-btn" onclick="copyLink(this,'cu4justice.org/docs/press-healthcare-forum-2026')">Copy Link</button>
+              </div>
+            </div>
+            <div class="doc-actions">
+              <button class="act-btn share" onclick="showToast('Link copied — ready to share!')">📤 Share</button>
+              <button class="act-btn download" onclick="showToast('Downloading...')">⬇ Download</button>
+              <button class="act-btn del" onclick="showToast('Document deleted')">🗑 Delete</button>
+              <div class="doc-size">312 views · 44 downloads</div>
+            </div>
+          </div>
+
+          <!-- DOC 5 -->
+          <div class="doc-card">
+            <div class="doc-icon xlsx">📊</div>
+            <div class="doc-info">
+              <div class="doc-name">Environmental Justice Impact Report — Georgia 2025.pdf</div>
+              <div class="doc-meta">
+                <span>Uploaded Feb 20, 2026</span>
+                <span>•</span>
+                <span>3.8 MB</span>
+                <span class="category-tag">Environmental</span>
+              </div>
+              <div class="doc-url">
+                <input type="text" value="cu4justice.org/docs/env-justice-georgia-2025" readonly>
+                <button class="copy-url-btn" onclick="copyLink(this,'cu4justice.org/docs/env-justice-georgia-2025')">Copy Link</button>
+              </div>
+            </div>
+            <div class="doc-actions">
+              <button class="act-btn share" onclick="showToast('Link copied — ready to share!')">📤 Share</button>
+              <button class="act-btn download" onclick="showToast('Downloading...')">⬇ Download</button>
+              <button class="act-btn del" onclick="showToast('Document deleted')">🗑 Delete</button>
+              <div class="doc-size">193 views · 17 downloads</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- PAGINATION -->
+        <div class="pagination">
+          <div class="page-info">Showing 5 of 17 documents</div>
+          <div class="page-btns">
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">4</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- UPLOAD FORM PANEL -->
+      <div class="form-panel">
+        <div class="form-panel-header">
+          <h3>Upload New Document</h3>
+          <p>A shareable link is generated automatically</p>
+        </div>
+        <div class="form-body">
+
+          <!-- DROP ZONE -->
+          <div class="drop-zone" onclick="showToast('File browser opened')" id="dropZone"
+               ondragover="this.classList.add('dragover');event.preventDefault()"
+               ondragleave="this.classList.remove('dragover')"
+               ondrop="this.classList.remove('dragover');showToast('File ready to upload!')">
+            <div class="dz-icon">📁</div>
+            <h4>Drag & Drop your file here</h4>
+            <p>or click to browse files</p>
+            <div class="file-types">
+              <span class="file-type-badge">PDF</span>
+              <span class="file-type-badge">DOCX</span>
+              <span class="file-type-badge">XLSX</span>
+              <span class="file-type-badge">PPTX</span>
+              <span class="file-type-badge">JPG/PNG</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Document Title <span class="required-star">*</span></label>
+            <input type="text" id="f-title" placeholder="e.g. Voter Rights Guide 2026" oninput="updateSlug(this)">
+          </div>
+
+          <div class="form-group">
+            <label>Category <span class="required-star">*</span></label>
+            <select id="f-cat">
+              <option value="">Select category...</option>
+              <option>Annual Report</option>
+              <option>Press Release</option>
+              <option>Political Justice</option>
+              <option>Racial Justice</option>
+              <option>Economic Justice</option>
+              <option>Healthcare Justice</option>
+              <option>Environmental Justice</option>
+              <option>Strategy</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Description <small style="color:#aaa;font-weight:400">(optional)</small></label>
+            <textarea placeholder="Brief description of this document..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Custom URL Slug</label>
+            <input type="text" id="f-slug" placeholder="voter-rights-guide-2026">
+            <div class="url-preview">
+              <label>Generated Shareable URL</label>
+              <div class="url-text" id="url-preview-text">cu4justice.org/docs/</div>
+              <div class="url-note">This link will be active immediately after upload</div>
+            </div>
+          </div>
+
+          <div class="sharing-note">
+            <p><strong>📤 Ready to share:</strong> Once uploaded, copy the link above and post it directly on Facebook, email it to your mailing list, or include it in any press release. No login required for viewers.</p>
+          </div>
+
+          <div class="form-actions">
+            <button class="cancel-btn" onclick="showToast('Upload cancelled')">Cancel</button>
+            <button class="publish-btn" onclick="uploadDoc()">Upload & Generate Link ✓</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="dot"></div>
+  <span id="toast-msg">Done!</span>
+</div>
+
+<script>
+function setFilter(btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function copyLink(btn, url) {
+  navigator.clipboard.writeText('https://' + url).catch(() => {});
+  const orig = btn.textContent;
+  btn.textContent = '✓ Copied!';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+  showToast('Link copied to clipboard!');
+}
+
+function updateSlug(input) {
+  const slug = input.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  document.getElementById('f-slug').value = slug;
+  document.getElementById('url-preview-text').textContent = 'cu4justice.org/docs/' + (slug || '');
+}
+
+function uploadDoc() {
+  const title = document.getElementById('f-title').value;
+  if(!title) { showToast('Please enter a document title'); return; }
+  showToast('✓ Document uploaded! Shareable link is live.');
+  document.getElementById('f-title').value = '';
+  document.getElementById('f-slug').value = '';
+  document.getElementById('f-cat').value = '';
+  document.getElementById('url-preview-text').textContent = 'cu4justice.org/docs/';
+}
+</script>
+</body>
+</html>

@@ -11,12 +11,12 @@ namespace C4Justice.Web.Areas.Admin.Controllers
     public class DocumentsController : Controller
     {
         private readonly AppDbContext _db;
-        private readonly ICloudinaryService _cloudinary;
+        private readonly IStorageService _storage;
 
-        public DocumentsController(AppDbContext db, ICloudinaryService cloudinary)
+        public DocumentsController(AppDbContext db, IStorageService storage)
         {
             _db = db;
-            _cloudinary = cloudinary;
+            _storage = storage;
         }
 
         public IActionResult Index()
@@ -35,7 +35,7 @@ namespace C4Justice.Web.Areas.Admin.Controllers
             }
 
             var ext = Path.GetExtension(docFile.FileName).ToLower();
-            var url = await _cloudinary.UploadRawAsync(docFile, "c4justice/documents");
+            var url = await _storage.UploadRawAsync(docFile, "c4justice/documents");
 
             if (url == null)
             {
@@ -61,6 +61,30 @@ namespace C4Justice.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var item = await _db.Documents.FindAsync(id);
+            if (item == null) return NotFound();
+            return View(item);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, string title, string? description, string category, bool isPublished)
+        {
+            var item = await _db.Documents.FindAsync(id);
+            if (item == null) return NotFound();
+            item.Title = title;
+            item.Description = description;
+            item.Category = category;
+            if (isPublished && !item.IsPublished && item.PublishedAt == null)
+                item.PublishedAt = DateTime.UtcNow;
+            item.IsPublished = isPublished;
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "Document updated.";
+            return RedirectToAction(nameof(Index));
+        }
+
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> TogglePublish(int id)
         {
@@ -81,11 +105,9 @@ namespace C4Justice.Web.Areas.Admin.Controllers
             var item = await _db.Documents.FindAsync(id);
             if (item != null)
             {
-                if (!string.IsNullOrWhiteSpace(item.FileUrl)
-                    && item.FileUrl.Contains("cloudinary.com"))
-                {
-                    await _cloudinary.DeleteAsync(item.FileUrl, isRaw: true);
-                }
+                if (!string.IsNullOrWhiteSpace(item.FileUrl))
+                    await _storage.DeleteAsync(item.FileUrl, isRaw: true);
+
                 _db.Documents.Remove(item);
                 await _db.SaveChangesAsync();
             }

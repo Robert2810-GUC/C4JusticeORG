@@ -8,11 +8,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
-// Cloudinary — persistent cloud storage for all uploaded files
-builder.Services.AddSingleton<ICloudinaryService, CloudinaryService>();
+// Local file storage — saves uploads to wwwroot/uploads/
+builder.Services.AddSingleton<IStorageService, LocalStorageService>();
+
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new MySqlServerVersion(new Version(8, 0, 36))
+    )
+);
 
 builder.Services.AddSession(options =>
 {
@@ -21,73 +28,78 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddHttpClient<RecaptchaService>();
+
 var app = builder.Build();
 
 // Ensure DB and seed admin
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    try
-    {
-        db.Database.EnsureCreated();
+//using (var scope = app.Services.CreateScope())
+//{
+//    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//    try
+//    {
+//        db.Database.EnsureCreated();
 
-        // Ensure SiteSettings table exists (handles DB created before this table was added)
-        db.Database.ExecuteSqlRaw(@"
-            IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='SiteSettings' AND xtype='U')
-            CREATE TABLE SiteSettings (
-                Id INT IDENTITY(1,1) PRIMARY KEY,
-                [Key] NVARCHAR(100) NOT NULL,
-                [Value] NVARCHAR(MAX) NULL,
-                Label NVARCHAR(200) NULL,
-                [Group] NVARCHAR(50) NULL,
-                CONSTRAINT UQ_SiteSettings_Key UNIQUE ([Key])
-            )");
+//        // Ensure SiteSettings table exists (handles DB created before this table was added)
+//        db.Database.ExecuteSqlRaw(@"
+//            IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='SiteSettings' AND xtype='U')
+//            CREATE TABLE SiteSettings (
+//                Id INT IDENTITY(1,1) PRIMARY KEY,
+//                [Key] NVARCHAR(100) NOT NULL,
+//                [Value] longtext NULL,
+//                Label NVARCHAR(200) NULL,
+//                [Group] NVARCHAR(50) NULL,
+//                CONSTRAINT UQ_SiteSettings_Key UNIQUE ([Key])
+//            )");
 
-        if (!db.AdminUsers.Any())
-        {
-            db.AdminUsers.Add(new AdminUser
-            {
-                Username = "admin",
-                PasswordHash = AuthHelper.HashPassword("Admin@123"),
-                Email = "admin@cu4justice.com",
-                CreatedAt = DateTime.UtcNow
-            });
-            db.SaveChanges();
-        }
+//        if (!db.AdminUsers.Any())
+//        {
+//            db.AdminUsers.Add(new AdminUser
+//            {
+//                Username = "admin",
+//                PasswordHash = AuthHelper.HashPassword("Admin@123"),
+//                Email = "admin@cu4justice.com",
+//                CreatedAt = DateTime.UtcNow
+//            });
+//            db.SaveChanges();
+//        }
 
-        // Seed default site settings
-        var defaultSettings = new[]
-        {
-            // Hero
-            new SiteSetting { Key="hero_tagline",  Value="\"United We Stand. Divided We Fall.\"", Label="Hero Tagline", Group="Hero" },
-            new SiteSetting { Key="hero_title_1",  Value="Communities",       Label="Hero Title Line 1", Group="Hero" },
-            new SiteSetting { Key="hero_title_2",  Value="United for",        Label="Hero Title Line 2", Group="Hero" },
-            new SiteSetting { Key="hero_title_3",  Value="Justice",           Label="Hero Title Line 3", Group="Hero" },
-            new SiteSetting { Key="hero_desc",     Value="Fighting for Political, Racial, Economic and Environmental Justice. We believe that all individuals deserve to be treated with fairness and equity.", Label="Hero Description", Group="Hero" },
-            // Stats
-            new SiteSetting { Key="stat_members",  Value="5000", Label="Community Members Count", Group="Stats" },
-            new SiteSetting { Key="stat_events",   Value="48",   Label="Events Hosted Count",     Group="Stats" },
-            new SiteSetting { Key="stat_cycles",   Value="3",    Label="Election Cycles Count",   Group="Stats" },
-            new SiteSetting { Key="stat_partners", Value="20",   Label="Partner Organizations",   Group="Stats" },
-            // About Teaser
-            new SiteSetting { Key="about_heading", Value="United We Stand.<br>Divided We Fall.", Label="About Section Heading", Group="About" },
-            new SiteSetting { Key="about_lead",    Value="For too long, grassroots organizations have advocated in silos on behalf of marginalized communities when all our social justice issues have a common thread: that all individuals be treated with fairness and equity.", Label="About Lead Text", Group="About" },
-            // Mission Quote
-            new SiteSetting { Key="quote_text",    Value="A collaboration of grassroots organizations came together over the last three election cycles to improve the efficiency and effectiveness of their collective voter education and mobilization strategies.", Label="Mission Quote", Group="Quote" },
-            new SiteSetting { Key="quote_author",  Value="Richard Rose", Label="Quote Author", Group="Quote" },
-            new SiteSetting { Key="quote_role",    Value="Founder & Architect, Communities United for Justice", Label="Quote Author Role", Group="Quote" },
-        };
-        foreach (var s in defaultSettings)
-        {
-            if (!db.SiteSettings.Any(x => x.Key == s.Key))
-                db.SiteSettings.Add(s);
-        }
-        db.SaveChanges();
+//        // Seed default site settings
+//        var defaultSettings = new[]
+//        {
+//            // Hero
+//            new SiteSetting { Key="hero_tagline",  Value="\"United We Stand. Divided We Fall.\"", Label="Hero Tagline", Group="Hero" },
+//            new SiteSetting { Key="hero_title_1",  Value="Communities",       Label="Hero Title Line 1", Group="Hero" },
+//            new SiteSetting { Key="hero_title_2",  Value="United for",        Label="Hero Title Line 2", Group="Hero" },
+//            new SiteSetting { Key="hero_title_3",  Value="Justice",           Label="Hero Title Line 3", Group="Hero" },
+//            new SiteSetting { Key="hero_desc",     Value="Fighting for Political, Racial, Economic and Environmental Justice. We believe that all individuals deserve to be treated with fairness and equity.", Label="Hero Description", Group="Hero" },
+//            // Stats
+//            new SiteSetting { Key="stat_members",  Value="5000", Label="Community Members Count", Group="Stats" },
+//            new SiteSetting { Key="stat_events",   Value="48",   Label="Events Hosted Count",     Group="Stats" },
+//            new SiteSetting { Key="stat_cycles",   Value="3",    Label="Election Cycles Count",   Group="Stats" },
+//            new SiteSetting { Key="stat_partners", Value="20",   Label="Partner Organizations",   Group="Stats" },
+//            // About Teaser
+//            new SiteSetting { Key="about_heading", Value="United We Stand.<br>Divided We Fall.", Label="About Section Heading", Group="About" },
+//            new SiteSetting { Key="about_lead",    Value="For too long, grassroots organizations have advocated in silos on behalf of marginalized communities when all our social justice issues have a common thread: that all individuals be treated with fairness and equity.", Label="About Lead Text", Group="About" },
+//            // Mission Quote
+//            new SiteSetting { Key="quote_text",    Value="A collaboration of grassroots organizations came together over the last three election cycles to improve the efficiency and effectiveness of their collective voter education and mobilization strategies.", Label="Mission Quote", Group="Quote" },
+//            new SiteSetting { Key="quote_author",  Value="Richard Rose", Label="Quote Author", Group="Quote" },
+//            new SiteSetting { Key="quote_role",    Value="Founder & Architect, Communities United for Justice", Label="Quote Author Role", Group="Quote" },
+//        };
+//        foreach (var s in defaultSettings)
+//        {
+//            if (!db.SiteSettings.Any(x => x.Key == s.Key))
+//                db.SiteSettings.Add(s);
+//        }
+//        db.SaveChanges();
 
-        // Upload directories no longer needed — files go to Cloudinary
-    }
-    catch { /* DB not yet available - will fail gracefully */ }
-}
+//        // Ensure upload directories exist under wwwroot
+//        var wwwroot = app.Environment.WebRootPath;
+//        foreach (var sub in new[] { "articles", "slider", "documents" })
+//            Directory.CreateDirectory(Path.Combine(wwwroot, "uploads", sub));
+//    }
+//    catch { /* DB not yet available - will fail gracefully */ }
+//}
 
 if (!app.Environment.IsDevelopment())
 {
