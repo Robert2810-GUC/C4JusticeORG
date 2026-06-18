@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using C4Justice.Web.Areas.Admin.Filters;
 using C4Justice.Web.Data;
-using C4Justice.Web.Models;
 
 namespace C4Justice.Web.Areas.Admin.Controllers;
 

@@ -8,7 +8,7 @@ public class ContactSubmission
     [MaxLength(100)] public string Name    { get; set; } = "";
     [MaxLength(200)] public string Email   { get; set; } = "";
     [MaxLength(20)]  public string? Phone  { get; set; }
-    [MaxLength(200)] public string Subject { get; set; } = "";
+    [MaxLength(200)] public string? Subject { get; set; } = "";
     public string Message { get; set; } = "";
     public bool IsRead { get; set; } = false;
     public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;

@@ -109,7 +109,9 @@ a:hover { text-decoration: underline; }
 .site-header {
     background: #ffffff;
     border-bottom: 1px solid #e0e4ec;
-    display: none; /* mobile: hidden */
+    position: sticky;
+    top: 0;
+    z-index: 400;
 }
 @media (min-width: 992px) {
     .site-header { display: block; }
@@ -260,14 +262,16 @@ a:hover { text-decoration: underline; }
     flex: 1; margin-bottom: 20px;
 }
 .mega-ov-link {
-    display: inline-block; font-size: .8rem; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: .8rem; font-weight: 700;
     color: var(--navy); text-decoration: none;
     background: var(--gold);
     padding: 9px 18px;
     border-radius: 3px;
     letter-spacing: .03em;
-    border-top: 1px solid rgba(255,255,255,0.12); padding-top: 14px;
     margin-top: auto;
+    align-self: flex-start;
+    white-space: nowrap;
 }
 .mega-ov-link:hover { background: #f5d55a; color: var(--navy); text-decoration: none; }
 
@@ -349,16 +353,21 @@ a:hover { text-decoration: underline; }
 .nav-toggler {
     display: none;
     flex-direction: column;
+    justify-content: center;
     gap: 5px;
     background: none; border: none;
-    cursor: pointer; padding: 10px 0;
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 6px;
+    transition: background 0.15s;
 }
+.nav-toggler:hover { background: rgba(13,31,60,0.07); }
 .nav-toggler span {
     display: block;
-    width: 24px; height: 2px;
-    background: #ffffff;
+    width: 22px; height: 2px;
+    background: #0d1f3c;
     border-radius: 2px;
-    transition: var(--transition);
+    transition: transform 0.25s ease, opacity 0.25s ease;
 }
 /* Animate to X when open */
 .nav-toggler.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
@@ -368,15 +377,16 @@ a:hover { text-decoration: underline; }
 /* ── Mobile responsive ───────────────────────────────────────── */
 @media (max-width: 991px) {
     .nav-toggler { display: flex; }
-    .nav-right { gap: 6px; }
-    .nav-logo-name { font-size: 11px; }
+    .nav-right { gap: 4px; align-items: center; }
+    .nav-logo-name { font-size: 12px; }
     .nav-logo-sub { display: none; }
     .nav-donate { display: none; }
+    .nav-fb-icon { display: none; }
 
     /* Full-screen slide-down nav panel */
     .nav-links {
         position: fixed;
-        top: 62px; left: 0; right: 0; bottom: 0;
+        top: 70px; left: 0; right: 0; bottom: 0;
         background: #0d1f3c;
         border-top: 2px solid var(--gold);
         padding: 0 0 48px;
@@ -2333,4 +2343,8 @@ body .sb-card h4 {
     /* Nav logo smaller on narrow screens */
     .nav-logo-name-lg { font-size: 13px !important; }
     .nav-logo-circle-lg { width: 48px !important; height: 48px !important; }
+}
+
+.font-11px {
+    font-size: 11px;    
 }

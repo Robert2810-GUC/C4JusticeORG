@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using C4Justice.Web.Data;
-using C4Justice.Web.Models;
-using C4Justice.Web.Helpers;
 using C4Justice.Web.Services;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +10,15 @@ builder.Services.AddControllersWithViews();
 // Local file storage — saves uploads to wwwroot/uploads/
 builder.Services.AddSingleton<IStorageService, LocalStorageService>();
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("abc", m =>
+    {
+        m.Window = TimeSpan.FromSeconds(10);
+        m.PermitLimit = 5;
+        m.QueueLimit = 0;
+    });
+});
 //builder.Services.AddDbContext<AppDbContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -28,7 +36,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-builder.Services.AddHttpClient<RecaptchaService>();
+builder.Services.AddHttpClient<RecaptchaService>(c => c.Timeout = TimeSpan.FromSeconds(5));
 
 var app = builder.Build();
 
@@ -112,6 +120,8 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
+
+app.UseRateLimiter();
 
 app.MapControllerRoute(
     name: "areas",

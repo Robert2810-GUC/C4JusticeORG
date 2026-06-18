@@ -3,7 +3,6 @@ using C4Justice.Web.Data;
 using C4Justice.Web.Models;
 using C4Justice.Web.Services;
 using C4Justice.Web.Areas.Admin.Filters;
-using Microsoft.EntityFrameworkCore;
 
 namespace C4Justice.Web.Areas.Admin.Controllers
 {

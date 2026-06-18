@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using C4Justice.Web.Data;
 using C4Justice.Web.Helpers;
+using C4Justice.Web.Services;
 
 namespace C4Justice.Web.Areas.Admin.Controllers
 {
@@ -8,20 +9,35 @@ namespace C4Justice.Web.Areas.Admin.Controllers
     public class AuthController : Controller
     {
         private readonly AppDbContext _db;
-        public AuthController(AppDbContext db) => _db = db;
+        private readonly RecaptchaService _recaptcha;
+        private readonly IConfiguration _config;
+
+        public AuthController(AppDbContext db, RecaptchaService recaptcha, IConfiguration config)
+        {
+            _db = db;
+            _recaptcha = recaptcha;
+            _config = config;
+        }
 
         [HttpGet]
         public IActionResult Login()
         {
             if (HttpContext.Session.GetInt32("AdminUserId") != null)
                 return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            ViewBag.RecaptchaSiteKey = _config["Recaptcha:SiteKey"] ?? "";
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(string username, string password)
+        public async Task<IActionResult> Login(string username, string password, string recaptchaToken)
         {
+            ViewBag.RecaptchaSiteKey = _config["Recaptcha:SiteKey"] ?? "";
+            if (!await _recaptcha.VerifyAsync(recaptchaToken))
+            {
+                ViewBag.Error = "reCAPTCHA verification failed. Please try again.";
+                return View();
+            }
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
                 ViewBag.Error = "Please enter username and password.";

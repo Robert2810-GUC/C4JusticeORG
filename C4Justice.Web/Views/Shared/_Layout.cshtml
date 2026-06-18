@@ -12,6 +12,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Communities United for Justice Fund - Fighting for Political, Racial, Economic, Healthcare &amp; Environmental Justice" />
+    <link rel="icon" type="image/x-icon" href="~/images/c4TitleLOGO.png">
     <title>@ViewData["Title"] - Communities United for Justice</title>
 
     <!-- Fonts -->
@@ -47,11 +48,6 @@
             </div>
         </a>
 
-        <!-- Mobile toggle -->
-        <button class="nav-toggler" id="navToggler" aria-label="Toggle navigation" aria-expanded="false">
-            <span></span><span></span><span></span>
-        </button>
-
         <!-- Nav links (desktop: right-aligned inline; mobile: full-screen overlay) -->
         <ul class="nav-links" id="navLinks">
 
@@ -81,7 +77,7 @@
                             </a>
                             <a href="/About#founder" class="mega-item">
                                 <div class="mega-icon" style="background:rgba(27,79,145,.12);color:var(--navy)"><i class="fas fa-user-tie"></i></div>
-                                <div class="mega-item-body"><span class="mega-item-title">Our Founder</span><span class="mega-item-desc">Meet Richard Rose &amp; the team.</span></div>
+                                <div class="mega-item-body"><span class="mega-item-title">Our Founders</span><span class="mega-item-desc">Meet Richard Rose &amp; the team.</span></div>
                             </a>
                             <a href="/Mission" class="mega-item">
                                 <div class="mega-icon" style="background:rgba(27,79,145,.12);color:var(--navy)"><i class="fas fa-bullseye"></i></div>
@@ -89,7 +85,7 @@
                             </a>
                             <a href="/About#what-we-do" class="mega-item">
                                 <div class="mega-icon" style="background:rgba(27,79,145,.12);color:var(--navy)"><i class="fas fa-handshake"></i></div>
-                                <div class="mega-item-body"><span class="mega-item-title">What We Do</span><span class="mega-item-desc">Our programs &amp; actions.</span></div>
+                                <div class="mega-item-body"><span class="mega-item-title">Issues in the News</span><span class="mega-item-desc">Our programs &amp; actions.</span></div>
                             </a>
                         </div>
                         <!-- Col 3: Quick Actions -->
@@ -149,9 +145,9 @@
                         </div>
                         <div class="mega-col mega-col-alt">
                             <div class="mega-col-label">Archive</div>
-                            <a href="/Events" class="mega-alt-item">
-                                <div class="mega-alt-icon"><i class="fas fa-clock-rotate-left"></i></div>
-                                <div class="mega-alt-body"><span class="mega-alt-title">Past Events</span><span class="mega-alt-desc">Explore highlights from previous events.</span></div>
+                            <a href="/Opinion" class="mega-alt-item">
+                                <div class="mega-alt-icon"><i class="fas fa-newspaper"></i></div>
+                                <div class="mega-alt-body"><span class="mega-alt-title">Partners In The News</span><span class="mega-alt-desc">News coverage from our partners.</span></div>
                             </a>
                             <a href="/Events" class="mega-alt-item">
                                 <div class="mega-alt-icon"><i class="fas fa-images"></i></div>
@@ -204,6 +200,10 @@
                                 <div class="mega-alt-icon"><i class="fas fa-share-nodes"></i></div>
                                 <div class="mega-alt-body"><span class="mega-alt-title">Share Our Mission</span><span class="mega-alt-desc">Spread the word on social media.</span></div>
                             </a>
+                            <a href="/Opinion" class="mega-alt-item">
+                                <div class="mega-alt-icon"><i class="fas fa-newspaper"></i></div>
+                                <div class="mega-alt-body"><span class="mega-alt-title">Partners In The News</span><span class="mega-alt-desc">News coverage from our partners.</span></div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -220,7 +220,7 @@
                             <span class="mega-ov-label">Resources</span>
                             <h3 class="mega-ov-title">Stay Informed</h3>
                             <p class="mega-ov-text">Access documents, opinion pieces, links and press releases — all shareable via direct URL to social media and email.</p>
-                            <a href="/Documents" class="mega-ov-link">Browse All Resources &rarr;</a>
+                            <a href="/Documents" class="mega-ov-link font-11px">Browse All Resources &rarr;</a>
                         </div>
                         <div class="mega-col">
                             <div class="mega-col-label">Documents &amp; Media</div>
@@ -265,10 +265,18 @@
                     <i class="fas fa-heart me-1"></i> Donate
                 </a>
             </li>
+            <li class="d-lg-none">
+                <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" style="color:#1877F2 !important;">
+                    <i class="fab fa-facebook-f me-1"></i> Follow us on Facebook
+                </a>
+            </li>
         </ul>
 
-        <!-- Right: Facebook icon (beside nav links on desktop) -->
+        <!-- Right: hamburger (mobile only) + Facebook + Donate -->
         <div class="nav-right">
+            <button class="nav-toggler" id="navToggler" aria-label="Toggle navigation" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
             <a href="https://www.facebook.com/profile.php?id=61550088064673" target="_blank" rel="noopener" class="nav-fb-icon" title="Follow us on Facebook">
                 <i class="fab fa-facebook-f"></i>
             </a>
@@ -278,7 +286,7 @@
         </div>
 
     </div><!-- /.nav-inner -->
-</nav>
+</div>
 
 <!-- ── DONATE BAR ── -->
 <div class="donate-bar">
@@ -509,23 +517,53 @@
 @await RenderSectionAsync("Scripts", required: false)
 @if (_rcEnabled && !string.IsNullOrWhiteSpace(_rcSiteKey) && !_rcSiteKey.StartsWith("YOUR_"))
 {
-<script src="https://www.google.com/recaptcha/api.js?render=@_rcSiteKey"></script>
+<script src="https://www.google.com/recaptcha/api.js?render=@_rcSiteKey" async defer></script>
 <script>
 (function(){
-    function attachRecaptcha(form) {
+    var RC_KEY = '@_rcSiteKey';
+    // Token pre-fetched on page load so submit is instant.
+    var _readyToken = null;
+
+    function getToken(cb) {
+        if (_readyToken) { var t = _readyToken; _readyToken = null; cb(t); return; }
+        if (typeof grecaptcha !== 'undefined') {
+            grecaptcha.execute(RC_KEY, { action: 'submit' })
+                .then(cb).catch(function() { cb(''); });
+        } else {
+            cb('');
+        }
+    }
+
+    // Pre-fetch as soon as the reCAPTCHA library is ready.
+    (function prefetch() {
+        if (typeof grecaptcha !== 'undefined') {
+            grecaptcha.ready(function() {
+                grecaptcha.execute(RC_KEY, { action: 'submit' })
+                    .then(function(t) { _readyToken = t; })
+                    .catch(function() {});
+            });
+        } else {
+            setTimeout(prefetch, 100);
+        }
+    })();
+
+    document.querySelectorAll('form[data-recaptcha]').forEach(function(form) {
         form.addEventListener('submit', function(e) {
             var tokenInput = form.querySelector('input[name="recaptchaToken"]');
             if (!tokenInput) return;
+            if (tokenInput.value) return; // already set, let it through
+
             e.preventDefault();
-            grecaptcha.ready(function() {
-                grecaptcha.execute('@_rcSiteKey', {action: 'submit'}).then(function(token) {
-                    tokenInput.value = token;
-                    form.submit();
-                });
-            });
+            var done = false;
+            function finish(token) {
+                if (done) return; done = true;
+                tokenInput.value = token;
+                form.submit();
+            }
+            var fallback = setTimeout(function() { finish(''); }, 6000);
+            getToken(function(t) { clearTimeout(fallback); finish(t); });
         });
-    }
-    document.querySelectorAll('form[data-recaptcha]').forEach(attachRecaptcha);
+    });
 })();
 </script>
 }

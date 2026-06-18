@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using C4Justice.Web.Models;
 using C4Justice.Web.Data;
 using C4Justice.Web.Helpers;
@@ -8,48 +7,39 @@ using C4Justice.Web.Services;
 
 namespace C4Justice.Web.Controllers;
 
-public class HomeController : Controller
+public class HomeController(AppDbContext db, RecaptchaService recaptcha) : Controller
 {
-    private readonly AppDbContext _db;
-    private readonly RecaptchaService _recaptcha;
-
-    public HomeController(AppDbContext db, RecaptchaService recaptcha)
-    {
-        _db = db;
-        _recaptcha = recaptcha;
-    }
-
     public IActionResult Index()
     {
         try
         {
-            ViewBag.SliderImages = _db.SliderImages
+            ViewBag.SliderImages = db.SliderImages
                 .Where(s => s.IsActive)
                 .OrderBy(s => s.SortOrder)
                 .ToList();
 
-            var _today = DateTime.UtcNow.Date;
-            ViewBag.UpcomingEvents = _db.Events
+            var today = DateTime.UtcNow.Date;
+            ViewBag.UpcomingEvents = db.Events
                 .Where(e => e.IsActive && !e.IsCompleted)
-                .Where(e => e.EndDate.HasValue ? e.EndDate.Value >= _today : e.EventDate >= _today)
+                .Where(e => e.EndDate.HasValue ? e.EndDate.Value >= today : e.EventDate >= today)
                 .OrderBy(e => e.EventDate)
                 .Take(3)
                 .ToList();
 
-            ViewBag.LatestArticles = _db.Articles
+            ViewBag.LatestArticles = db.Articles
                 .Where(a => a.IsPublished)
                 .OrderByDescending(a => a.PublishedAt)
                 .Take(3)
                 .ToList();
 
-            ViewBag.CollagePhotos = _db.GalleryPhotos
+            ViewBag.CollagePhotos = db.GalleryPhotos
                 .Where(p => p.GalleryType == "collage" && p.IsActive)
                 .OrderBy(p => p.SortOrder)
                 .Take(3)
                 .ToList();
 
             // Load site settings as dictionary for easy access in view
-            ViewBag.Settings = _db.SiteSettings
+            ViewBag.Settings = db.SiteSettings
                 .ToDictionary(s => s.Key, s => s.Value ?? "");
         }
         catch
@@ -77,25 +67,25 @@ public class HomeController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        if (!await _recaptcha.VerifyAsync(recaptchaToken))
+        if (!await recaptcha.VerifyAsync(recaptchaToken))
         {
             TempData["SubscribeError"] = "Security check failed. Please try again.";
             return RedirectToAction(nameof(Index));
         }
 
-        var existing = _db.NewsletterSubscriptions
+        var existing = db.NewsletterSubscriptions
             .FirstOrDefault(n => n.Email == model.Email.Trim());
         if (existing == null)
         {
-            _db.NewsletterSubscriptions.Add(new Models.NewsletterSubscription
+            db.NewsletterSubscriptions.Add(new NewsletterSubscription
             {
                 FullName     = model.Name.Trim(),
                 Email        = model.Email.Trim(),
-                Phone        = model.Phone?.Trim(),
-                ZipCode      = model.ZipCode?.Trim(),
+                Phone        = model.Phone.Trim(),
+                ZipCode      = model.ZipCode.Trim(),
                 SubscribedAt = DateTime.UtcNow
             });
-            _db.SaveChanges();
+            await db.SaveChangesAsync();
         }
         TempData["SubscribeSuccess"] = $"Thank you, {model.Name}! You've been added to our mailing list.";
         return RedirectToAction(nameof(Index));

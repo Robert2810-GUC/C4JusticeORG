@@ -1,12 +1,14 @@
 @{
     Layout = null;
     ViewData["Title"] = "Admin Login";
+    var _rcSiteKey = (ViewBag.RecaptchaSiteKey as string) ?? "";
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="~/images/c4TitleLOGO.png">
     <title>Admin Login — CU4J</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
@@ -46,8 +48,9 @@
                 <div class="error-msg">⚠ @ViewBag.Error</div>
             }
 
-            <form method="post" asp-action="Login" asp-controller="Auth" asp-area="Admin">
+            <form method="post" asp-action="Login" asp-controller="Auth" asp-area="Admin" data-recaptcha>
                 @Html.AntiForgeryToken()
+                <input type="hidden" name="recaptchaToken" />
                 <div class="form-group">
                     <label>Username</label>
                     <input type="text" name="username" placeholder="admin" autocomplete="username" required />
@@ -64,5 +67,55 @@
             </div>
         </div>
     </div>
+@if (!string.IsNullOrWhiteSpace(_rcSiteKey))
+{
+<script src="https://www.google.com/recaptcha/api.js?render=@_rcSiteKey" async defer></script>
+<script>
+(function(){
+    var RC_KEY = '@_rcSiteKey';
+    var _readyToken = null;
+
+    function getToken(cb) {
+        if (_readyToken) { var t = _readyToken; _readyToken = null; cb(t); return; }
+        if (typeof grecaptcha !== 'undefined') {
+            grecaptcha.execute(RC_KEY, { action: 'submit' })
+                .then(cb).catch(function() { cb(''); });
+        } else {
+            cb('');
+        }
+    }
+
+    (function prefetch() {
+        if (typeof grecaptcha !== 'undefined') {
+            grecaptcha.ready(function() {
+                grecaptcha.execute(RC_KEY, { action: 'submit' })
+                    .then(function(t) { _readyToken = t; })
+                    .catch(function() {});
+            });
+        } else {
+            setTimeout(prefetch, 100);
+        }
+    })();
+
+    var form = document.querySelector('form[data-recaptcha]');
+    if (!form) return;
+    form.addEventListener('submit', function(e) {
+        var tokenInput = form.querySelector('input[name="recaptchaToken"]');
+        if (!tokenInput) return;
+        if (tokenInput.value) return;
+
+        e.preventDefault();
+        var done = false;
+        function finish(token) {
+            if (done) return; done = true;
+            tokenInput.value = token;
+            form.submit();
+        }
+        var fallback = setTimeout(function() { finish(''); }, 6000);
+        getToken(function(t) { clearTimeout(fallback); finish(t); });
+    });
+})();
+</script>
+}
 </body>
 </html>
