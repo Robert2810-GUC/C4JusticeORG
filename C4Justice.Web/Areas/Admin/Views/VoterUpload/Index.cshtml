@@ -1,0 +1,156 @@
+@{
+    ViewData["Title"] = "Voter Data Upload";
+    var months = ViewBag.UploadedMonths as List<DateTime> ?? new List<DateTime>();
+}
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div>
+        <div class="page-title">Voter Data Upload</div>
+        <div class="page-sub">Upload the monthly Georgia Secretary of State Excel file to update the voter registration database</div>
+    </div>
+    <a href="/Voters" target="_blank" class="add-btn gold">View Public Dashboard ↗</a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert-success">✓ @TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div style="background:#f8d7da;border:1px solid #f5c6cb;color:#721c24;padding:12px 18px;border-radius:5px;font-size:13px;margin-bottom:20px;font-family:Arial,sans-serif;font-weight:600">
+        ✗ @TempData["Error"]
+    </div>
+}
+@if (TempData["Info"] != null)
+{
+    <div style="background:#d1ecf1;border:1px solid #bee5eb;color:#0c5460;padding:12px 18px;border-radius:5px;font-size:13px;margin-bottom:20px;font-family:Arial,sans-serif;font-weight:600">
+        ℹ @TempData["Info"]
+    </div>
+}
+
+<div class="two-col-form" style="align-items:start">
+
+    <!-- LEFT: Upload form -->
+    <div>
+        <div class="info-banner" style="margin-bottom:18px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a5276" stroke-width="2" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <p>
+                Download the monthly Excel file from the <strong>Georgia Secretary of State</strong> website, then upload it here.
+                The system reads <strong>Sheet1</strong> with headers on <strong>row 3</strong>.
+                Each upload is saved under its own date — historical data is never overwritten unless you confirm a replacement.
+            </p>
+        </div>
+
+        <div class="form-preview">
+            <form asp-action="Upload" method="post" enctype="multipart/form-data" id="uploadForm">
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    <label>Excel File (.xlsx or .xls)</label>
+                    <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0d1f3c" stroke-width="1.5" style="opacity:.4"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <p id="dropLabel">Drag &amp; drop your Excel file here, or click to browse</p>
+                        <input type="file" name="ExcelFile" id="fileInput" accept=".xlsx,.xls" style="display:none" required />
+                    </div>
+                </div>
+
+                <div style="background:#f8faff;border:1px solid #e0e8f0;border-radius:4px;padding:12px 14px;margin-bottom:16px;font-size:12px;font-family:Arial,sans-serif;color:#555">
+                    <strong style="color:#0d1f3c">Expected file structure:</strong><br>
+                    <span style="color:#888">Rows 1–2:</span> Ignored (pre-header content)<br>
+                    <span style="color:#888">Row 3:</span> Column headers — As Of Date · County · Voter Status · Age Group · Gender · Race · Voter Count<br>
+                    <span style="color:#888">Row 4+:</span> Data (~47,000 rows)
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    ⬆ Upload &amp; Import
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- RIGHT: Uploaded months summary -->
+    <div>
+        <div class="table-card">
+            <div style="padding:14px 16px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between">
+                <span style="font-size:13px;font-weight:700;color:#0d1f3c">Months in Database</span>
+                <span class="badge @(months.Any() ? "active" : "pending")">@months.Count month@(months.Count == 1 ? "" : "s")</span>
+            </div>
+            @if (months.Any())
+            {
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Month</th>
+                                <th>As Of Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < months.Count; i++)
+                            {
+                                <tr>
+                                    <td style="color:#aaa">@(i + 1)</td>
+                                    <td style="font-weight:600">@months[i].ToString("MMMM yyyy")</td>
+                                    <td style="color:#888">@months[i].ToString("yyyy-MM-dd")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div style="padding:24px;text-align:center;color:#aaa;font-size:12px;font-family:Arial,sans-serif">
+                    No data uploaded yet. Upload the first Excel file to get started.
+                </div>
+            }
+        </div>
+
+        <div class="info-banner">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a5276" stroke-width="2" style="flex-shrink:0;margin-top:2px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <p>
+                To <strong>protect the public dashboard</strong> with admin login, go to
+                <a href="/Admin/Settings" style="color:#1a5276;font-weight:700">Site Settings</a>
+                and set <em>Voter Dashboard — Require Admin Login to Access</em> to <code>true</code>.
+            </p>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+<script>
+    // Show selected filename in drop zone
+    document.getElementById('fileInput').addEventListener('change', function() {
+        var name = this.files[0] ? this.files[0].name : 'Drag & drop your Excel file here, or click to browse';
+        document.getElementById('dropLabel').textContent = name;
+        document.getElementById('dropZone').style.borderColor = '#0d1f3c';
+    });
+
+    // Drag & drop
+    var zone = document.getElementById('dropZone');
+    zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.style.borderColor = '#0d1f3c'; });
+    zone.addEventListener('dragleave', function() { zone.style.borderColor = '#c0cce0'; });
+    zone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        var file = e.dataTransfer.files[0];
+        if (file) {
+            var input = document.getElementById('fileInput');
+            var dt = new DataTransfer();
+            dt.items.add(file);
+            input.files = dt.files;
+            document.getElementById('dropLabel').textContent = file.name;
+            zone.style.borderColor = '#0d1f3c';
+        }
+    });
+
+    // Show loading state on submit
+    document.getElementById('uploadForm').addEventListener('submit', function() {
+        var btn = document.getElementById('submitBtn');
+        btn.textContent = '⏳ Importing… this may take a moment for large files';
+        btn.disabled = true;
+    });
+</script>
+}

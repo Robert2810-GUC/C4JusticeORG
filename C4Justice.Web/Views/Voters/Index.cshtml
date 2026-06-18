@@ -1,0 +1,423 @@
+@model C4Justice.Web.Models.VoterReportViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Voter Registration Dashboard";
+    ViewData["ActivePage"] = "Voters";
+
+    // Build export URL with current filters
+    var exportParams = new System.Text.StringBuilder("/Voters/Export?");
+    if (!string.IsNullOrEmpty(Model.Month)) exportParams.Append($"month={Uri.EscapeDataString(Model.Month)}&");
+    foreach (var c in Model.Counties) exportParams.Append($"counties={Uri.EscapeDataString(c)}&");
+    if (!string.IsNullOrEmpty(Model.Status) && Model.Status != "All") exportParams.Append($"status={Uri.EscapeDataString(Model.Status)}&");
+    if (!string.IsNullOrEmpty(Model.Gender) && Model.Gender != "All") exportParams.Append($"gender={Uri.EscapeDataString(Model.Gender)}&");
+    foreach (var a in Model.AgeGroups) exportParams.Append($"ages={Uri.EscapeDataString(a)}&");
+    foreach (var r in Model.Races) exportParams.Append($"races={Uri.EscapeDataString(r)}&");
+    var exportUrl = exportParams.ToString().TrimEnd('&', '?');
+
+    // Serialize filter state for JS
+    var jsMonth     = JsonSerializer.Serialize(Model.Month ?? "");
+    var jsStatus    = JsonSerializer.Serialize(Model.Status ?? "All");
+    var jsGender    = JsonSerializer.Serialize(Model.Gender ?? "All");
+    var jsCounties  = JsonSerializer.Serialize(Model.Counties);
+    var jsAgeGroups = JsonSerializer.Serialize(Model.AgeGroups);
+    var jsRaces     = JsonSerializer.Serialize(Model.Races);
+}
+
+@section Styles {
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+<style>
+    /* ── Page hero ─────────────────────────────── */
+    .voters-hero {
+        background: #0d1f3c;
+        padding: 52px 0 40px;
+        border-bottom: 3px solid #b91c1c;
+    }
+    .voters-hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .voters-eyebrow {
+        font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+        color: #e8c84a; font-family: Arial, sans-serif; margin-bottom: 10px;
+    }
+    .voters-hero h1 {
+        font-size: clamp(26px, 4vw, 40px); color: #fff; font-family: 'Merriweather', serif;
+        font-weight: 900; line-height: 1.2; margin: 0 0 12px;
+    }
+    .voters-hero h1 span { color: #b91c1c; }
+    .voters-hero p { color: rgba(255,255,255,.7); font-size: 15px; margin: 0; max-width: 560px; }
+
+    /* ── Stat pills ────────────────────────────── */
+    .voters-stats { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 28px; }
+    .voters-stat {
+        background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+        border-radius: 6px; padding: 14px 20px; min-width: 140px;
+    }
+    .voters-stat .num { font-size: 26px; font-weight: 700; color: #fff; }
+    .voters-stat .lbl { font-size: 10px; color: rgba(255,255,255,.55); font-family: Arial, sans-serif;
+        letter-spacing: 1px; text-transform: uppercase; margin-top: 3px; }
+    .voters-stat.gold .num { color: #e8c84a; }
+    .voters-stat.red  .num { color: #b91c1c; }
+
+    /* ── Main content ──────────────────────────── */
+    .voters-body { max-width: 1200px; margin: 0 auto; padding: 32px 24px 60px; }
+
+    /* ── Filter card ───────────────────────────── */
+    .filter-card {
+        background: #fff; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,.08);
+        overflow: hidden; margin-bottom: 28px;
+    }
+    .filter-card-head {
+        background: #0d1f3c; padding: 14px 20px;
+        display: flex; align-items: center; justify-content: space-between;
+    }
+    .filter-card-head h3 { color: #e8c84a; font-size: 13px; font-family: Arial, sans-serif; font-weight: 700; margin: 0; }
+    .filter-card-body { padding: 20px; }
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+    .filter-field label {
+        display: block; font-size: 10px; font-weight: 700; letter-spacing: 1px;
+        text-transform: uppercase; color: #555; font-family: Arial, sans-serif; margin-bottom: 5px;
+    }
+    .filter-field select, .filter-field .ts-wrapper { width: 100%; }
+    .filter-field select {
+        width: 100%; padding: 8px 10px; border: 1.5px solid #dde; border-radius: 4px;
+        font-size: 13px; font-family: Arial, sans-serif; color: #333; background: #fff;
+        appearance: auto;
+    }
+    .filter-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btn-generate {
+        background: #b91c1c; color: #fff; border: none; padding: 10px 28px;
+        border-radius: 4px; font-size: 13px; font-weight: 700; font-family: Arial, sans-serif;
+        cursor: pointer; transition: background .2s;
+    }
+    .btn-generate:hover { background: #991b1b; }
+    .btn-reset {
+        background: #f0f2f7; color: #555; border: none; padding: 10px 18px;
+        border-radius: 4px; font-size: 13px; font-family: Arial, sans-serif; cursor: pointer;
+        text-decoration: none; display: inline-block;
+    }
+    .btn-reset:hover { background: #e0e4ec; color: #333; }
+    .btn-export {
+        background: #d97706; color: #fff; border: none; padding: 10px 18px;
+        border-radius: 4px; font-size: 13px; font-weight: 700; font-family: Arial, sans-serif;
+        cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+        transition: background .2s;
+    }
+    .btn-export:hover { background: #b45309; color: #fff; }
+
+    /* ── Results card ──────────────────────────── */
+    .results-card {
+        background: #fff; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,.08);
+        overflow: hidden;
+    }
+    .results-head {
+        background: #0d1f3c; padding: 14px 20px;
+        display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+    .results-head h3 { color: #e8c84a; font-size: 13px; font-family: Arial, sans-serif; font-weight: 700; margin: 0; }
+    .results-total {
+        color: #fff; font-size: 12px; font-family: Arial, sans-serif;
+        background: rgba(255,255,255,.1); border-radius: 20px; padding: 4px 14px;
+    }
+    .results-total strong { color: #e8c84a; }
+    .results-table-wrap { overflow-x: auto; }
+    .results-table { width: 100%; border-collapse: collapse; }
+    .results-table thead th {
+        background: #f8f9fb; color: #0d1f3c; font-size: 10px; letter-spacing: 1.2px;
+        text-transform: uppercase; padding: 10px 14px; text-align: left;
+        font-family: Arial, sans-serif; font-weight: 700; border-bottom: 2px solid #e0e4ec;
+        white-space: nowrap;
+    }
+    .results-table tbody tr { border-bottom: 1px solid #f0f2f7; transition: background .1s; }
+    .results-table tbody tr:last-child { border-bottom: none; }
+    .results-table tbody tr:hover { background: #fafbff; }
+    .results-table tbody td { padding: 10px 14px; font-size: 13px; font-family: Arial, sans-serif; }
+    .results-table tfoot td {
+        background: #0d1f3c; color: #e8c84a; font-weight: 700;
+        font-family: Arial, sans-serif; font-size: 13px; padding: 12px 14px;
+    }
+    .count-cell { font-weight: 600; color: #0d1f3c; text-align: right; }
+    .badge-status-active   { background: #d4edda; color: #155724; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-family: Arial, sans-serif; font-weight: 700; }
+    .badge-status-inactive { background: #f8d7da; color: #721c24; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-family: Arial, sans-serif; font-weight: 700; }
+    .empty-state { padding: 48px; text-align: center; color: #aaa; }
+    .empty-state svg { opacity: .3; margin-bottom: 16px; display: block; margin-left: auto; margin-right: auto; }
+    .empty-state p { font-size: 14px; font-family: Arial, sans-serif; }
+    .empty-state small { font-size: 12px; }
+    .row-limit-note {
+        padding: 10px 16px; font-size: 11px; font-family: Arial, sans-serif; color: #888;
+        background: #fffbec; border-top: 1px solid #f0e8c8; text-align: center;
+    }
+</style>
+}
+
+<!-- ── HERO ─────────────────────────────────────────────── -->
+<section class="voters-hero">
+    <div class="voters-hero-inner">
+        <p class="voters-eyebrow"><i class="fas fa-check-to-slot" style="margin-right:6px"></i>Voter Data</p>
+        <h1>Georgia Voter<br><span>Registration</span> Dashboard</h1>
+        <p>Explore and filter voter registration data from the Georgia Secretary of State. Use the filters below to generate reports by county, status, age, gender, or race.</p>
+
+        @if (Model.HasSearched)
+        {
+            <div class="voters-stats">
+                <div class="voters-stat gold">
+                    <div class="num">@Model.TotalVoterCount.ToString("N0")</div>
+                    <div class="lbl">Total Voters</div>
+                </div>
+                <div class="voters-stat">
+                    <div class="num">@Model.Results.Select(r => r.County).Distinct().Count()</div>
+                    <div class="lbl">Counties</div>
+                </div>
+                <div class="voters-stat red">
+                    <div class="num">@Model.Results.Count.ToString("N0")</div>
+                    <div class="lbl">Result Rows</div>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.Month) && DateTime.TryParseExact(Model.Month + "-01", "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out var heroDate))
+                {
+                    <div class="voters-stat">
+                        <div class="num" style="font-size:18px">@heroDate.ToString("MMM yyyy")</div>
+                        <div class="lbl">Report Month</div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+<!-- ── BODY ──────────────────────────────────────────────── -->
+<div class="voters-body">
+
+    <!-- FILTER CARD -->
+    <div class="filter-card">
+        <div class="filter-card-head">
+            <h3><i class="fas fa-filter" style="margin-right:8px;opacity:.7"></i>Filter Options</h3>
+            <span style="font-size:11px;color:rgba(255,255,255,.5);font-family:Arial,sans-serif">All filters are optional — combine any number</span>
+        </div>
+        <div class="filter-card-body">
+            <form method="get" action="/Voters" id="filterForm">
+                <div class="filter-grid">
+
+                    <!-- Report Month -->
+                    <div class="filter-field">
+                        <label><i class="fas fa-calendar-alt" style="margin-right:4px;color:#b91c1c"></i> Report Month</label>
+                        <select name="month" id="monthSelect">
+                            <option value="">— All Months —</option>
+                            @foreach (var m in Model.AvailableMonths)
+                            {
+                                if (DateTime.TryParseExact(m + "-01", "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out var mDate))
+                                {
+                                    <option value="@m">@mDate.ToString("MMMM yyyy")</option>
+                                }
+                                else
+                                {
+                                    <option value="@m">@m</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Voter Status -->
+                    <div class="filter-field">
+                        <label><i class="fas fa-circle-check" style="margin-right:4px;color:#b91c1c"></i> Voter Status</label>
+                        <select name="status" id="statusSelect">
+                            <option value="All">All Statuses</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+
+                    <!-- Gender -->
+                    <div class="filter-field">
+                        <label><i class="fas fa-venus-mars" style="margin-right:4px;color:#b91c1c"></i> Gender</label>
+                        <select name="gender" id="genderSelect">
+                            <option value="All">All Genders</option>
+                            <option value="Female">Female</option>
+                            <option value="Male">Male</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- County multi-select -->
+                    <div class="filter-field">
+                        <label><i class="fas fa-map-marker-alt" style="margin-right:4px;color:#b91c1c"></i> County</label>
+                        <select name="counties" multiple id="countySelect" placeholder="All counties…">
+                            @foreach (var c in Model.AllCounties)
+                            {
+                                <option value="@c">@c</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Age Group multi-select -->
+                    <div class="filter-field">
+                        <label><i class="fas fa-users" style="margin-right:4px;color:#b91c1c"></i> Age Group</label>
+                        <select name="ages" multiple id="ageSelect" placeholder="All age groups…">
+                            @{
+                                var allAges = new[] { "18-24","25-29","30-34","35-40","40-45","45-50","50-55","55-60","60-65","65-70","70-75","75-80","80-85","85-90","90-95","95-100","100+" };
+                            }
+                            @foreach (var a in allAges)
+                            {
+                                <option value="@a">@a</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Race multi-select -->
+                    <div class="filter-field">
+                        <label><i class="fas fa-globe" style="margin-right:4px;color:#b91c1c"></i> Race</label>
+                        <select name="races" multiple id="raceSelect" placeholder="All races…">
+                            @{
+                                var allRaces = new[] { "Black","White","Hispanic/Latino","Asian/Pacific Islander","American Indian or Alaskan Native","Other/Unknown" };
+                            }
+                            @foreach (var r in allRaces)
+                            {
+                                <option value="@r">@r</option>
+                            }
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="btn-generate">
+                        <i class="fas fa-chart-bar" style="margin-right:6px"></i>Generate Report
+                    </button>
+                    <a href="/Voters" class="btn-reset">Reset Filters</a>
+                    @if (Model.HasSearched && Model.Results.Any())
+                    {
+                        <a href="@exportUrl" class="btn-export">
+                            <i class="fas fa-file-csv"></i> Export to CSV
+                        </a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- RESULTS -->
+    @if (Model.HasSearched)
+    {
+        <div class="results-card">
+            <div class="results-head">
+                <h3><i class="fas fa-table" style="margin-right:8px;opacity:.7"></i>Report Results</h3>
+                @if (Model.Results.Any())
+                {
+                    <span class="results-total">
+                        Total Voters: <strong>@Model.TotalVoterCount.ToString("N0")</strong>
+                        &nbsp;·&nbsp; @Model.Results.Count.ToString("N0") row@(Model.Results.Count == 1 ? "" : "s")
+                    </span>
+                }
+            </div>
+
+            @if (!Model.Results.Any())
+            {
+                <div class="empty-state">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <p>No records match the selected filters.</p>
+                    <small>Try removing some filters or selecting a different month.</small>
+                </div>
+            }
+            else
+            {
+                <div class="results-table-wrap">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>County</th>
+                                <th>Voter Status</th>
+                                <th>Age Group</th>
+                                <th>Gender</th>
+                                <th>Race</th>
+                                <th style="text-align:right">Voter Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model.Results.Take(1000))
+                            {
+                                <tr>
+                                    <td>@row.County</td>
+                                    <td>
+                                        @if (row.VoterStatus == "Active")
+                                        {
+                                            <span class="badge-status-active">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge-status-inactive">@row.VoterStatus</span>
+                                        }
+                                    </td>
+                                    <td>@row.AgeGroup</td>
+                                    <td>@row.Gender</td>
+                                    <td>@row.Race</td>
+                                    <td class="count-cell">@row.VoterCount.ToString("N0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5">Total</td>
+                                <td style="text-align:right">@Model.TotalVoterCount.ToString("N0")</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                @if (Model.Results.Count > 1000)
+                {
+                    <div class="row-limit-note">
+                        Showing first 1,000 of @Model.Results.Count.ToString("N0") rows.
+                        Use <strong>Export to CSV</strong> above to download all results.
+                    </div>
+                }
+            }
+        </div>
+    }
+    else
+    {
+        <div class="results-card">
+            <div class="empty-state" style="padding:64px">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                <p style="font-size:16px;font-weight:600;color:#555">Select filters and click Generate Report</p>
+                <small>Use the filters above to build your voter registration report.</small>
+            </div>
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script>
+(function() {
+    // Restore filter state from server model
+    var selMonth    = @Html.Raw(jsMonth);
+    var selStatus   = @Html.Raw(jsStatus);
+    var selGender   = @Html.Raw(jsGender);
+    var selCounties = @Html.Raw(jsCounties);
+    var selAges     = @Html.Raw(jsAgeGroups);
+    var selRaces    = @Html.Raw(jsRaces);
+
+    // Plain selects
+    if (selMonth)   { var el = document.getElementById('monthSelect');  if (el) el.value = selMonth; }
+    if (selStatus)  { var el = document.getElementById('statusSelect'); if (el) el.value = selStatus; }
+    if (selGender)  { var el = document.getElementById('genderSelect'); if (el) el.value = selGender; }
+
+    // Multi-selects via Tom Select
+    function initTs(id, selected) {
+        var ts = new TomSelect('#' + id, {
+            plugins: ['remove_button'],
+            maxOptions: 200,
+            placeholder: document.getElementById(id).getAttribute('placeholder') || 'Select…',
+            onInitialize: function() { if (selected && selected.length) this.setValue(selected, true); }
+        });
+    }
+
+    initTs('countySelect', selCounties);
+    initTs('ageSelect', selAges);
+    initTs('raceSelect', selRaces);
+})();
+</script>
+}

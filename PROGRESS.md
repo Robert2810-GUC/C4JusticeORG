@@ -76,6 +76,28 @@ Animations: preloader, AOS scroll reveal, counter animation, card tilt, particle
 
 ---
 
+## Voter Registration Module (added 2026-06-18)
+
+| File | Purpose |
+|------|---------|
+| `Requirement/voters_data.sql` | Run once on MySQL — creates `voters_data` table + protection setting |
+| `Models/VoterData.cs` | EF Core model for voter rows |
+| `Models/VoterReportViewModel.cs` | ViewModel for public dashboard |
+| `Data/AppDbContext.cs` | Added `VoterData` DbSet + table mapping |
+| `Areas/Admin/Controllers/VoterUploadController.cs` | Upload, parse, confirm-replace, cancel |
+| `Areas/Admin/Views/VoterUpload/Index.cshtml` | Admin upload page with drag-and-drop |
+| `Areas/Admin/Views/VoterUpload/ConfirmReplace.cshtml` | Duplicate month warning + confirm |
+| `Areas/Admin/Views/Shared/_AdminLayout.cshtml` | Added "Voter Data" sidebar section |
+| `Controllers/VotersController.cs` | Public dashboard + CSV export |
+| `Views/Voters/Index.cshtml` | Public dashboard (hero, filters, results table) |
+| NuGet | ExcelDataReader 3.9.0 + ExcelDataReader.DataSet 3.9.0 |
+
+**Before first use:** run `Requirement/voters_data.sql` on the live MySQL database.
+
+**Dashboard protection:** Admin → Site Settings → set `Voter Dashboard — Require Admin Login to Access` to `true`.
+
+---
+
 ## Uncommitted Changes (as of 2026-06-18)
 
 These files have been modified but **not yet committed**:

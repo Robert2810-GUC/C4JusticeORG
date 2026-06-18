@@ -1,0 +1,40 @@
+name: Deploy .NET Core to Server
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Get Code from Repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x' # (Change to 6.x or 7.x if needed)
+
+    - name: Build and Publish App
+      run: dotnet publish -c Release -o ./publish_output
+
+    - name: Copy files via SSH
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: "./publish_output/*"
+        target: "/var/www/app" # Change this if your app is in a different folder
+        strip_components: 1
+
+    - name: Restart Systemd Service
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          sudo systemctl restart app1.service

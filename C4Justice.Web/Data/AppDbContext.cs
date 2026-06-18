@@ -19,6 +19,7 @@ namespace C4Justice.Web.Data
         public DbSet<SpeakerRequest>         SpeakerRequests         => Set<SpeakerRequest>();
         public DbSet<OpinionPost>            OpinionPosts            => Set<OpinionPost>();
         public DbSet<GalleryPhoto>           GalleryPhotos           => Set<GalleryPhoto>();
+        public DbSet<VoterData>              VoterData               => Set<VoterData>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,6 +51,7 @@ namespace C4Justice.Web.Data
             modelBuilder.Entity<SpeakerRequest>().ToTable("speakerrequests");
             modelBuilder.Entity<OpinionPost>().ToTable("opinionposts");
             modelBuilder.Entity<GalleryPhoto>().ToTable("galleryphotos");
+            modelBuilder.Entity<VoterData>().ToTable("voters_data");
         }
     }
 }
