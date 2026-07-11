@@ -47,6 +47,8 @@ public class VoterUploadController : Controller
     }
 
     [HttpPost, ValidateAntiForgeryToken]
+    [RequestSizeLimit(52_428_800)]         // 50 MB
+    [RequestFormLimits(MultipartBodyLengthLimit = 52_428_800)]
     public async Task<IActionResult> Upload(IFormFile ExcelFile)
     {
         if (ExcelFile == null || ExcelFile.Length == 0)
