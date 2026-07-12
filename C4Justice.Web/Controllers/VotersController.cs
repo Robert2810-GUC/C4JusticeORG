@@ -18,7 +18,8 @@ public class VotersController : Controller
         string? gender,
         [FromQuery(Name = "ages")] List<string>? ages,
         [FromQuery(Name = "races")] List<string>? races,
-        int page = 1)
+        int page = 1,
+        int pageSize = 50)
     {
         // Check dashboard protection setting
         var protectedSetting = _db.SiteSettings.FirstOrDefault(s => s.Key == "voters_dashboard_protected");
@@ -73,16 +74,17 @@ public class VotersController : Controller
         if (hasAnyFilter)
         {
             var allResults = RunQuery(vm);
-            vm.TotalVoterCount = allResults.Sum(r => r.VoterCount);
-            vm.TotalResultCount = allResults.Count;
-            vm.CountyTotals = allResults
+            vm.TotalVoterCount    = allResults.Sum(r => r.VoterCount);
+            vm.TotalResultCount   = allResults.Count;
+            vm.TotalCountyCount   = allResults.Select(r => r.County).Distinct().Count();
+            vm.CountyTotals       = allResults
                 .GroupBy(r => r.County)
                 .ToDictionary(g => g.Key, g => g.Sum(r => r.VoterCount));
-            vm.Page = Math.Max(1, page);
-            vm.Results = allResults
-                .Skip((vm.Page - 1) * vm.PageSize)
-                .Take(vm.PageSize)
-                .ToList();
+            vm.Page     = Math.Max(1, page);
+            vm.PageSize = pageSize;
+            vm.Results  = pageSize == 0
+                ? allResults
+                : allResults.Skip((vm.Page - 1) * pageSize).Take(pageSize).ToList();
             vm.HasSearched = true;
         }
 

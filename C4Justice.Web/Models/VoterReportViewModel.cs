@@ -24,7 +24,8 @@ public class VoterReportViewModel
     // Pagination
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 50;
-    public int TotalPages => TotalResultCount == 0 ? 1 : (int)Math.Ceiling((double)TotalResultCount / PageSize);
+    public int TotalCountyCount { get; set; }
+    public int TotalPages => (PageSize == 0 || TotalResultCount == 0) ? 1 : (int)Math.Ceiling((double)TotalResultCount / PageSize);
 }
 
 public class VoterResultRow
