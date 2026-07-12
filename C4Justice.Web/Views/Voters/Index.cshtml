@@ -4,15 +4,18 @@
     ViewData["Title"] = "Voter Registration Dashboard";
     ViewData["ActivePage"] = "Voters";
 
-    // Build export URL with current filters
-    var exportParams = new System.Text.StringBuilder("/Voters/Export?");
-    if (!string.IsNullOrEmpty(Model.Month)) exportParams.Append($"month={Uri.EscapeDataString(Model.Month)}&");
-    foreach (var c in Model.Counties) exportParams.Append($"counties={Uri.EscapeDataString(c)}&");
-    if (!string.IsNullOrEmpty(Model.Status) && Model.Status != "All") exportParams.Append($"status={Uri.EscapeDataString(Model.Status)}&");
-    if (!string.IsNullOrEmpty(Model.Gender) && Model.Gender != "All") exportParams.Append($"gender={Uri.EscapeDataString(Model.Gender)}&");
-    foreach (var a in Model.AgeGroups) exportParams.Append($"ages={Uri.EscapeDataString(a)}&");
-    foreach (var r in Model.Races) exportParams.Append($"races={Uri.EscapeDataString(r)}&");
-    var exportUrl = exportParams.ToString().TrimEnd('&', '?');
+    // Build base filter URL (shared by export and pagination)
+    var baseParams = new System.Text.StringBuilder();
+    if (!string.IsNullOrEmpty(Model.Month)) baseParams.Append($"month={Uri.EscapeDataString(Model.Month)}&");
+    foreach (var c in Model.Counties) baseParams.Append($"counties={Uri.EscapeDataString(c)}&");
+    if (!string.IsNullOrEmpty(Model.Status) && Model.Status != "All") baseParams.Append($"status={Uri.EscapeDataString(Model.Status)}&");
+    if (!string.IsNullOrEmpty(Model.Gender) && Model.Gender != "All") baseParams.Append($"gender={Uri.EscapeDataString(Model.Gender)}&");
+    foreach (var a in Model.AgeGroups) baseParams.Append($"ages={Uri.EscapeDataString(a)}&");
+    foreach (var r in Model.Races) baseParams.Append($"races={Uri.EscapeDataString(r)}&");
+    var baseQuery = baseParams.ToString().TrimEnd('&');
+
+    var exportUrl = "/Voters/Export?" + baseQuery;
+    string PageUrl(int p) => "/Voters?" + (baseQuery.Length > 0 ? baseQuery + "&" : "") + $"page={p}";
 
     // Serialize filter state for JS
     var jsMonth     = JsonSerializer.Serialize(Model.Month ?? "");
@@ -145,10 +148,27 @@
     .empty-state svg { opacity: .3; margin-bottom: 16px; display: block; margin-left: auto; margin-right: auto; }
     .empty-state p { font-size: 14px; font-family: Arial, sans-serif; }
     .empty-state small { font-size: 12px; }
-    .row-limit-note {
-        padding: 10px 16px; font-size: 11px; font-family: Arial, sans-serif; color: #888;
-        background: #fffbec; border-top: 1px solid #f0e8c8; text-align: center;
+    /* ── Pagination ────────────────────────────── */
+    .pagination-wrap {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 14px 20px; border-top: 1px solid #f0f2f7;
+        flex-wrap: wrap; gap: 10px;
     }
+    .pagination-info { font-size: 12px; font-family: Arial, sans-serif; color: #888; }
+    .pagination-info strong { color: #0d1f3c; }
+    .pagination-controls { display: flex; align-items: center; gap: 4px; }
+    .page-btn {
+        display: inline-flex; align-items: center; justify-content: center;
+        min-width: 34px; height: 34px; padding: 0 8px;
+        border: 1.5px solid #e0e4ec; border-radius: 4px;
+        font-size: 12px; font-family: Arial, sans-serif; font-weight: 600;
+        color: #0d1f3c; background: #fff; text-decoration: none;
+        transition: all .15s;
+    }
+    .page-btn:hover { background: #f0f2f7; color: #0d1f3c; border-color: #c0c8d8; }
+    .page-btn.active { background: #0d1f3c; color: #e8c84a; border-color: #0d1f3c; }
+    .page-btn.disabled { opacity: .35; pointer-events: none; }
+    .page-ellipsis { font-size: 12px; color: #aaa; padding: 0 4px; }
 </style>
 }
 
@@ -306,7 +326,7 @@
                 {
                     <span class="results-total">
                         Total Voters: <strong>@Model.TotalVoterCount.ToString("N0")</strong>
-                        &nbsp;·&nbsp; @Model.Results.Count.ToString("N0") row@(Model.Results.Count == 1 ? "" : "s")
+                        &nbsp;·&nbsp; @Model.TotalResultCount.ToString("N0") row@(Model.TotalResultCount == 1 ? "" : "s")
                     </span>
                 }
             </div>
@@ -335,7 +355,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var row in Model.Results.Take(1000))
+                            @foreach (var row in Model.Results)
                             {
                                 var countyTotal = Model.CountyTotals.TryGetValue(row.County, out var ct) ? ct : 0;
                                 <tr>
@@ -360,20 +380,53 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="5">Total</td>
+                                <td colspan="5">Grand Total</td>
                                 <td style="text-align:right">@Model.TotalVoterCount.ToString("N0")</td>
                                 <td></td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
-                @if (Model.Results.Count > 1000)
-                {
-                    <div class="row-limit-note">
-                        Showing first 1,000 of @Model.Results.Count.ToString("N0") rows.
-                        Use <strong>Export to CSV</strong> above to download all results.
-                    </div>
+
+                @{
+                    var firstRow = (Model.Page - 1) * Model.PageSize + 1;
+                    var lastRow  = Math.Min(Model.Page * Model.PageSize, Model.TotalResultCount);
                 }
+                <div class="pagination-wrap">
+                    <div class="pagination-info">
+                        Showing <strong>@firstRow.ToString("N0")–@lastRow.ToString("N0")</strong>
+                        of <strong>@Model.TotalResultCount.ToString("N0")</strong> rows
+                    </div>
+                    @if (Model.TotalPages > 1)
+                    {
+                        <div class="pagination-controls">
+                            <a href="@PageUrl(1)" class="page-btn @(Model.Page == 1 ? "disabled" : "")">«</a>
+                            <a href="@PageUrl(Model.Page - 1)" class="page-btn @(Model.Page == 1 ? "disabled" : "")">‹</a>
+
+                            @{
+                                int startP = Math.Max(1, Model.Page - 2);
+                                int endP   = Math.Min(Model.TotalPages, Model.Page + 2);
+                            }
+                            @if (startP > 1)
+                            {
+                                <a href="@PageUrl(1)" class="page-btn">1</a>
+                                @if (startP > 2) { <span class="page-ellipsis">…</span> }
+                            }
+                            @for (int p = startP; p <= endP; p++)
+                            {
+                                <a href="@PageUrl(p)" class="page-btn @(p == Model.Page ? "active" : "")">@p</a>
+                            }
+                            @if (endP < Model.TotalPages)
+                            {
+                                @if (endP < Model.TotalPages - 1) { <span class="page-ellipsis">…</span> }
+                                <a href="@PageUrl(Model.TotalPages)" class="page-btn">@Model.TotalPages</a>
+                            }
+
+                            <a href="@PageUrl(Model.Page + 1)" class="page-btn @(Model.Page == Model.TotalPages ? "disabled" : "")">›</a>
+                            <a href="@PageUrl(Model.TotalPages)" class="page-btn @(Model.Page == Model.TotalPages ? "disabled" : "")">»</a>
+                        </div>
+                    }
+                </div>
             }
         </div>
     }

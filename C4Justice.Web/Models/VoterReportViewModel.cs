@@ -17,8 +17,14 @@ public class VoterReportViewModel
     // Query results
     public List<VoterResultRow> Results { get; set; } = new();
     public int TotalVoterCount { get; set; }
+    public int TotalResultCount { get; set; }
     public bool HasSearched { get; set; }
     public Dictionary<string, int> CountyTotals { get; set; } = new();
+
+    // Pagination
+    public int Page { get; set; } = 1;
+    public int PageSize { get; set; } = 50;
+    public int TotalPages => TotalResultCount == 0 ? 1 : (int)Math.Ceiling((double)TotalResultCount / PageSize);
 }
 
 public class VoterResultRow
