@@ -331,20 +331,14 @@
                         </span>
                         <div style="display:flex;align-items:center;gap:6px">
                             <span style="font-size:11px;color:rgba(255,255,255,.55);font-family:Arial,sans-serif">Show</span>
-                            <select id="pageSizeSelect" style="padding:4px 8px;border-radius:4px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:12px;font-family:Arial,sans-serif;cursor:pointer">
-                                @foreach (var sz in new[] { (10,"10"),(25,"25"),(50,"50"),(100,"100"),(0,"All") })
-                                {
-                                    if (Model.PageSize == sz.Item1)
-                                    {
-                                        <option value="@sz.Item1" selected>@sz.Item2</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@sz.Item1">@sz.Item2</option>
-                                    }
-                                }
-                            </select>
-                            <span style="font-size:11px;color:rgba(255,255,255,.55);font-family:Arial,sans-serif">rows</span>
+                            @foreach (var sz in new[] { (10,"10"),(25,"25"),(50,"50"),(100,"100"),(0,"All") })
+                            {
+                                var isActive = Model.PageSize == sz.Item1;
+                                var btnStyle = isActive
+                                    ? "display:inline-block;padding:3px 10px;border-radius:3px;font-size:11px;font-family:Arial,sans-serif;font-weight:700;text-decoration:none;background:#e8c84a;color:#0d1f3c;cursor:pointer"
+                                    : "display:inline-block;padding:3px 10px;border-radius:3px;font-size:11px;font-family:Arial,sans-serif;font-weight:600;text-decoration:none;background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);cursor:pointer";
+                                <a href="#" data-pagesize="@sz.Item1" class="ps-btn" style="@btnStyle">@sz.Item2</a>
+                            }
                         </div>
                     </div>
                 }
@@ -493,16 +487,16 @@
     initTs('ageSelect', selAges);
     initTs('raceSelect', selRaces);
 
-    // Page size dropdown — reload page 1 with new size
-    var psSelect = document.getElementById('pageSizeSelect');
-    if (psSelect) {
-        psSelect.addEventListener('change', function() {
+    // Page size pill buttons
+    document.querySelectorAll('.ps-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
             var url = new URL(window.location.href);
-            url.searchParams.set('pageSize', this.value);
+            url.searchParams.set('pageSize', this.dataset.pagesize);
             url.searchParams.set('page', '1');
             window.location.href = url.toString();
         });
-    }
+    });
 })();
 </script>
 }
