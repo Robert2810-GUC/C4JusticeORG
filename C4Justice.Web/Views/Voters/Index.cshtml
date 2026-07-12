@@ -331,11 +331,13 @@
                                 <th>Gender</th>
                                 <th>Race</th>
                                 <th style="text-align:right">Voter Count</th>
+                                <th style="text-align:right">County Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var row in Model.Results.Take(1000))
                             {
+                                var countyTotal = Model.CountyTotals.TryGetValue(row.County, out var ct) ? ct : 0;
                                 <tr>
                                     <td>@row.County</td>
                                     <td>
@@ -352,6 +354,7 @@
                                     <td>@row.Gender</td>
                                     <td>@row.Race</td>
                                     <td class="count-cell">@row.VoterCount.ToString("N0")</td>
+                                    <td class="count-cell" style="color:#b91c1c">@countyTotal.ToString("N0")</td>
                                 </tr>
                             }
                         </tbody>
@@ -359,6 +362,7 @@
                             <tr>
                                 <td colspan="5">Total</td>
                                 <td style="text-align:right">@Model.TotalVoterCount.ToString("N0")</td>
+                                <td></td>
                             </tr>
                         </tfoot>
                     </table>

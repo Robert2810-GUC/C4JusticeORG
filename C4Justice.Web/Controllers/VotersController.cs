@@ -73,6 +73,9 @@ public class VotersController : Controller
         {
             vm.Results = RunQuery(vm);
             vm.TotalVoterCount = vm.Results.Sum(r => r.VoterCount);
+            vm.CountyTotals = vm.Results
+                .GroupBy(r => r.County)
+                .ToDictionary(g => g.Key, g => g.Sum(r => r.VoterCount));
             vm.HasSearched = true;
         }
 
@@ -107,11 +110,16 @@ public class VotersController : Controller
 
         var rows = RunQuery(vm);
 
+        var countyTotals = rows
+            .GroupBy(r => r.County)
+            .ToDictionary(g => g.Key, g => g.Sum(r => r.VoterCount));
+
         var sb = new StringBuilder();
-        sb.AppendLine("County,Voter Status,Age Group,Gender,Race,Voter Count");
+        sb.AppendLine("County,Voter Status,Age Group,Gender,Race,Voter Count,County Total");
         foreach (var r in rows)
         {
-            sb.AppendLine($"\"{r.County}\",\"{r.VoterStatus}\",\"{r.AgeGroup}\",\"{r.Gender}\",\"{r.Race}\",{r.VoterCount}");
+            var countyTotal = countyTotals.TryGetValue(r.County, out var ct) ? ct : 0;
+            sb.AppendLine($"\"{r.County}\",\"{r.VoterStatus}\",\"{r.AgeGroup}\",\"{r.Gender}\",\"{r.Race}\",{r.VoterCount},{countyTotal}");
         }
 
         var filename = $"voters_{month ?? "all"}_{DateTime.Now:yyyyMMdd}.csv";

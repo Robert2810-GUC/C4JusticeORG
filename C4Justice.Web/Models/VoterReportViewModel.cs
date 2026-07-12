@@ -18,6 +18,7 @@ public class VoterReportViewModel
     public List<VoterResultRow> Results { get; set; } = new();
     public int TotalVoterCount { get; set; }
     public bool HasSearched { get; set; }
+    public Dictionary<string, int> CountyTotals { get; set; } = new();
 }
 
 public class VoterResultRow
